@@ -1,0 +1,38 @@
+name: Event stream to DynamoDB
+defaultTarget: dynamodb
+patterns:
+- name: organisationCreate
+  rule:
+    noun: organisation
+    verb: create
+  action:
+    target: dynamodb
+    params:
+      TableName: Example
+      Item:
+        pk: "organisation#{{id}}"
+        sk: "organisation"
+        id: "{{id}}"
+        name: "{{name}}"
+- name: organisationUpdate
+  rule:
+    noun: organisation
+    verb: update
+  action:
+    target: dynamodb
+    query: >
+      UPDATE "Example" 
+      SET AwardsWon=1 
+      WHERE Artist='{event.detail.artist}'
+      AND Title='{event.detail.title}'
+- name: organisationDelete
+  rule:
+    noun: organisation
+    verb: delete
+  action:
+    query: >
+      DELETE FROM "Example" 
+      WHERE "Artist" = '{event.detail.artist}'
+      AND "Title" = '{event.detail.title}'
+
+
