@@ -17,7 +17,18 @@ aws dynamodb create-table --table-name Example --attribute-definitions Attribute
 ```
 
 4. Run the tool locally: `npm run dev -- -f example.yml`
-5. Install local DynamoDB browser: `npm install -g dynamodb-admin`
+5. Install local DynamoDB browser:
+```
+npm install -g dynamodb-admin
+
+# For Windows:
+set DYNAMO_ENDPOINT=http://localhost:8000
+dynamodb-admin
+
+# For Mac/Linux:
+DYNAMO_ENDPOINT=http://localhost:8000 dynamodb-admin
+```
+
 6. Go to URL and view data: `http://localhost:8001/tables/Example`
 
 ## Software Used
