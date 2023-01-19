@@ -3,7 +3,7 @@ import { PutItemInput } from "aws-sdk/clients/dynamodb";
 const AWS = require("aws-sdk");
 
 const serviceConfigOptions: any = {
-  region: "us-east-1",
+  region: "eu-west-2",
   endpoint: "http://localhost:8000",
   credentials: {
     accessKeyId: "abc",
@@ -33,7 +33,7 @@ const dynamodbTableExists = async (tableName: string) => {
 };
 
 // a dynamodb function to write to a table
-const dynamodbWrite = async (params: PutItemInput) => {  
+const dynamodbWrite = async (params: PutItemInput) => {
   return await dyn.putItem(params).promise();
 };
 

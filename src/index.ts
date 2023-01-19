@@ -5,9 +5,6 @@ import {
 } from "./destinations/dynamodb";
 import { loadConfig, getProp } from "./yaml";
 
-// temp load events json
-const events = require("../events/organisations.seed.json");
-
 export interface CliParams {
   yml: string;
 }
@@ -22,6 +19,9 @@ export async function processEvents(params: CliParams) {
     console.log("YML file is invalid");
     console.log(e.errors);
   }
+
+  // the source property is the file location of a json file, load it into an object
+  const events = require(doc.source);
 
   for (let event of events) {
     for (let pattern of doc.patterns) {
@@ -38,7 +38,7 @@ export async function processEvents(params: CliParams) {
             // this is an sdk call with params
             if (!(await dynamodbTableExists(pattern.action.params.TableName))) {
               throw new Error(
-                `Table ${pattern.action.TableName} does not exist`
+                `Table '${pattern.action.params.TableName}' does not exist`
               );
             }
 
@@ -54,9 +54,11 @@ export async function processEvents(params: CliParams) {
               }
             }
             let singleItem: any = JSON.parse(rawItem);
-            pattern.action.params.Item = marshall(singleItem);
-            console.log("💥", pattern.action.params.Item);
-            //await dynamodbWrite(pattern.action.params);
+            const newItem = marshall(singleItem);
+            const params = { ...pattern.action.params };
+            params.Item = newItem;
+            await dynamodbWrite(params);
+            console.log(`${singleItem.id} written to ${pattern.action.params.TableName}`);
           }
         }
       }
