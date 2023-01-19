@@ -31,6 +31,21 @@ DYNAMO_ENDPOINT=http://localhost:8000 dynamodb-admin
 
 6. Go to URL and view data: `http://localhost:8001/tables/Example`
 
+## Query with the CLI
+
+```sh
+aws dynamodb query \
+    --endpoint-url http://localhost:8000 \
+    --region eu-west-2 \
+    --table-name Example \
+    --key-conditions '{
+        "pk":{
+            "ComparisonOperator":"EQ",
+            "AttributeValueList": [ {"S": "organisation#bf469ba7-4df1-4ba7-9af4-3c1f66322bba"} ]
+        }
+    }'
+```
+
 ## Software Used
 
 - [TypeScript](https://www.typescriptlang.org/), for writing good code
