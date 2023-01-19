@@ -10,12 +10,19 @@
     "noun": "organisation",
     "id": "53ff3def-9372-47f9-bc54-8b3f24945b7c",
     "name": "Nurali"
-  },
+  }
+  ,
   {
     "verb": "create",
     "noun": "organisation",
     "id": "443f12ee-b931-4dfe-ba7d-5ac2f5271f8b",
     "name": "Oceanica"
+  },
+  {
+    "verb": "update",
+    "noun": "organisation",
+    "id": "443f12ee-b931-4dfe-ba7d-5ac2f5271f8b",
+    "name": "Oceanica Ltd."
   },
   {
     "verb": "create",
@@ -418,5 +425,10 @@
     "noun": "organisation",
     "id": "63c0daaa-ddf7-4813-9424-20bc25485257",
     "name": "Progenex"
+  },
+  {
+    "verb": "delete",
+    "noun": "organisation",
+    "id": "bf469ba7-4df1-4ba7-9af4-3c1f66322bba"
   }
 ]

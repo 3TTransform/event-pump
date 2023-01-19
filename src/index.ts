@@ -2,6 +2,7 @@ import {
   marshall,
   dynamodbWrite,
   dynamodbTableExists,
+  dynamodbDelete,
 } from "./destinations/dynamodb";
 import { loadConfig, getProp } from "./yaml";
 
@@ -23,6 +24,7 @@ export async function processEvents(params: CliParams) {
   // the source property is the file location of a json file, load it into an object
   const events = require(doc.source);
 
+  // iterate the events in this file
   for (let event of events) {
     for (let pattern of doc.patterns) {
       // for each key and value in the pattern check for matching pattern in the event
@@ -33,9 +35,12 @@ export async function processEvents(params: CliParams) {
         }
       }
       if (matched) {
+        if (pattern.action.target === "debug") {
+          console.log("🎫", pattern.action);
+        }
         if (pattern.action.target === "dynamodb") {
           if (pattern.action.params) {
-            // this is an sdk call with params
+            // check that the table in this action exists before we action on it
             if (!(await dynamodbTableExists(pattern.action.params.TableName))) {
               throw new Error(
                 `Table '${pattern.action.params.TableName}' does not exist`
@@ -57,8 +62,22 @@ export async function processEvents(params: CliParams) {
             const newItem = marshall(singleItem);
             const params = { ...pattern.action.params };
             params.Item = newItem;
-            await dynamodbWrite(params);
-            console.log(`${singleItem.id} written to ${pattern.action.params.TableName}`);
+
+            const thisVerb = pattern.rule.verb;
+            if (thisVerb === "create" || thisVerb === "update") {
+              await dynamodbWrite(params);
+              console.log(
+                `${singleItem.id} written to ${pattern.action.params.TableName}`
+              );
+            }
+            if (thisVerb === "delete") {
+              params.Key = params.Item;
+              delete params.Item;
+              await dynamodbDelete(params);
+              console.log(
+                `${singleItem.id} deleted from ${pattern.action.params.TableName}`
+              );
+            }
           }
         }
       }

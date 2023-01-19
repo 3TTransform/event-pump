@@ -36,6 +36,9 @@ const dynamodbTableExists = async (tableName: string) => {
 const dynamodbWrite = async (params: PutItemInput) => {
   return await dyn.putItem(params).promise();
 };
+const dynamodbDelete = async (params: any) => {
+  return await dyn.deleteItem(params).promise();
+};
 
 // a function to automatically marshals Javascript types onto DynamoDB AttributeValues
 const marshall = (data: any) => {
@@ -63,4 +66,4 @@ const marshall = (data: any) => {
   return result;
 };
 
-export { dynamodbTableExists, dynamodbWrite, scanTable, marshall };
+export { dynamodbTableExists, dynamodbWrite, dynamodbDelete, scanTable, marshall };
