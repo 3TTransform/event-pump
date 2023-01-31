@@ -1,7 +1,7 @@
 [
   {
     "verb": "create",
-    "noun": "roles",
+    "noun": "role",
     "id": "03c895bd-0240-4b5f-a626-1501a85e4e92",
     "name": "Administrator",
     "ogranisationId": "00000000-0000-0000-0000-9ee9aeb46598",
@@ -25,14 +25,14 @@
   },
   {
     "verb": "create",
-    "noun": "roles",
+    "noun": "role",
     "id": "de5cd33e-2c96-44c2-ae08-25a9e842a66d",
     "name": "User",
     "ogranisationId": "00000000-0000-0000-0000-9ee9aeb46598"
   },
   {
     "verb": "update",
-    "noun": "roles",
+    "noun": "role",
     "id": "de5cd33e-2c96-44c2-ae08-25a9e842a66d",
     "name": "User",
     "allow": ["orgs:get", "profile:update", "profile:read", "permissions:read"]

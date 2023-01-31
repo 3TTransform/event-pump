@@ -1,0 +1,44 @@
+name: Event pump to DynamoDB
+source: ../events/roles.seed.json
+patterns:
+  - name: roleCreate
+    rule:
+      noun: role
+      verb: create
+    action:
+      target: dynamodb
+      params:
+        TableName: Example
+        Item:
+          pk: "role#{{id}}"
+          sk: "role"
+          id: "{{id}}"
+          name: "{{name}}"
+          ogranisationId: "{{ogranisationId}}"
+          allow: "{{allow}}"
+  - name: roleUpdate
+    rule:
+      noun: role
+      verb: update
+    action:
+      target: dynamodb
+      params:
+        TableName: Example
+        Item:
+          pk: "role#{{id}}"
+          sk: "role"
+          id: "{{id}}"
+          name: "{{name}}"
+          ogranisationId: "{{ogranisationId}}"
+          allow: "{{allow}}"
+  - name: roleDelete
+    rule:
+      noun: role
+      verb: delete
+    action:
+      target: dynamodb
+      params:
+        TableName: Example
+        Item:
+          pk: "role#{{id}}"
+          sk: "role"

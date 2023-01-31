@@ -1,0 +1,40 @@
+name: Event pump to DynamoDB
+source: ../events/permissions.seed.json
+patterns:
+  - name: permissionCreate
+    rule:
+      noun: permission
+      verb: create
+    action:
+      target: dynamodb
+      params:
+        TableName: Example
+        Item:
+          pk: "permission#{{id}}"
+          sk: "permission"
+          id: "{{id}}"
+          name: "{{name}}"
+  - name: permissionUpdate
+    rule:
+      noun: permission
+      verb: update
+    action:
+      target: dynamodb
+      params:
+        TableName: Example
+        Item:
+          pk: "permission#{{id}}"
+          sk: "permission"
+          id: "{{id}}"
+          name: "{{name}}"
+  - name: permissionDelete
+    rule:
+      noun: permission
+      verb: delete
+    action:
+      target: dynamodb
+      params:
+        TableName: Example
+        Item:
+          pk: "permission#{{id}}"
+          sk: "permission"
