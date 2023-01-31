@@ -4,7 +4,7 @@
     "noun": "role",
     "id": "03c895bd-0240-4b5f-a626-1501a85e4e92",
     "name": "Administrator",
-    "ogranisationId": "00000000-0000-0000-0000-9ee9aeb46598",
+    "ogranisationId": "7c464356-374a-4c85-b871-13ed8bd92d46",
     "allow": [
       "orgs:update",
       "orgs:get",
@@ -28,13 +28,14 @@
     "noun": "role",
     "id": "de5cd33e-2c96-44c2-ae08-25a9e842a66d",
     "name": "User",
-    "ogranisationId": "00000000-0000-0000-0000-9ee9aeb46598"
+    "ogranisationId": "7c464356-374a-4c85-b871-13ed8bd92d46"
   },
   {
     "verb": "update",
     "noun": "role",
     "id": "de5cd33e-2c96-44c2-ae08-25a9e842a66d",
     "name": "User",
+    "ogranisationId": "7c464356-374a-4c85-b871-13ed8bd92d46",
     "allow": ["orgs:get", "profile:update", "profile:read", "permissions:read"]
   }
 ]
