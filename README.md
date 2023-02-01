@@ -46,6 +46,29 @@ aws dynamodb query \
     }'
 ```
 
+## Add Reverse Index
+
+```sh
+aws dynamodb update-table \
+	--endpoint-url http://localhost:8000 \
+    --region eu-west-2 \
+    --table-name Example \
+	--attribute-definitions AttributeName=sk,AttributeType=S  \
+    --global-secondary-index-updates \
+        "[
+            {
+                \"Create\": {
+                    \"IndexName\": \"Reverse\",
+                    \"KeySchema\": [{\"AttributeName\":\"sk\",\"KeyType\":\"HASH\"},
+                                    {\"AttributeName\":\"pk\",\"KeyType\":\"RANGE\"}],
+                    \"Projection\":{
+                        \"ProjectionType\":\"ALL\"
+                    }
+                }
+            }
+        ]"
+```
+
 ## Software Used
 
 - [TypeScript](https://www.typescriptlang.org/), for writing good code
