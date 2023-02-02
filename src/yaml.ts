@@ -25,14 +25,4 @@ const loadConfig = async (ymlPath: string) => {
   return doc;
 };
 
-/* 
-given an object like this:
-{ cake: { name: "chocolate", price: 10 } }
-and a string like this:
-"cake.name"
-return the value of the property even if it is nested
-*/
-const getProp = (obj: any, path: string) => {
-    return path.split(".").reduce((o, i) => o[i], obj);
-};
-export { getProp, configSchema, loadConfig };
+export { configSchema, loadConfig };

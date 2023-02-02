@@ -13,7 +13,7 @@ patterns:
           pk: "organisation#{{id}}"
           sk: "organisation"
           id: "{{id}}"
-          name: "{{name}}"
+          organisationName: "{{organisationName}}"
   - name: organisationUpdate
     rule:
       noun: organisation
@@ -22,11 +22,11 @@ patterns:
       target: dynamodb
       params:
         TableName: Example
-        Item:
-          pk: "organisation#{{id}}"
-          sk: "organisation"
-          id: "{{id}}"
-          name: "{{name}}"
+        Key:
+          pk: "role#{{id}}"
+          sk: "role"
+        ExpressionAttributeValues:
+          ":organisationName": "{{organisationName}}"
   - name: organisationDelete
     rule:
       noun: organisation

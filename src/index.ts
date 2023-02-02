@@ -1,10 +1,12 @@
+import { UpdateItemInput } from "aws-sdk/clients/dynamodb";
 import {
-  marshall,
   dynamodbWrite,
   dynamodbTableExists,
   dynamodbDelete,
+  dynamodbUpdate,
 } from "./destinations/dynamodb";
-import { loadConfig, getProp } from "./yaml";
+import { loadConfig } from "./yaml";
+import { marshall, getProp, populateEventData } from './utils'
 
 export interface CliParams {
   yml: string;
@@ -47,30 +49,98 @@ export async function processEvents(params: CliParams) {
               );
             }
 
-            // for each key and value in the item, get the property from the event
-            let rawItem = JSON.stringify(pattern.action.params.Item);
-            const regex = /{{(.*?)}}/g;
-            const matches = rawItem.match(regex);
-            if (matches) {
-              for (let match of matches) {
-                const prop = match.replace(/{{|}}/g, "");
-                const eventValue = getProp(event, prop);
-                rawItem = rawItem.replace(`{{${prop}}}`, eventValue);
-              }
-            }
-            let singleItem: any = JSON.parse(rawItem);
-            const newItem = marshall(singleItem);
-            const params = { ...pattern.action.params };
-            params.Item = newItem;
-
             const thisVerb = pattern.rule.verb;
-            if (thisVerb === "create" || thisVerb === "update") {
+
+            if (thisVerb === "create") {
+              // for each key and value in the item, get the property from the event
+              let rawItem = JSON.stringify(pattern.action.params.Item);
+              const regex = /{{(.*?)}}/g;
+              const matches = rawItem.match(regex);
+              if (matches) {
+                for (let match of matches) {
+                  const prop = match.replace(/{{|}}/g, "");
+                  const eventValue = getProp(event, prop);
+
+                  if (eventValue === undefined) {
+                    rawItem = rawItem.replace(`"${prop}":"{{${prop}}}"`, "");
+                    rawItem = rawItem.replace(`,,`, ",");
+                    rawItem = rawItem.replace(`,}`, "}");
+                  }
+                  else {
+                    rawItem = rawItem.replace(`{{${prop}}}`, eventValue);
+                  }
+                }
+              }
+
+              let singleItem: any = JSON.parse(rawItem);
+              const newItem = marshall(singleItem);
+              const params = { ...pattern.action.params };
+              params.Item = newItem;
+
               await dynamodbWrite(params);
               console.log(
                 `${singleItem.id} written to ${pattern.action.params.TableName}`
               );
             }
+            if (thisVerb === "update") {
+
+              let singleItem = populateEventData(event, pattern.action.params.ExpressionAttributeValues);
+
+              // loop over the single item and build the 'UpdateExpression'
+              let updateExpression = 'set ';
+              const updateExpArr = [];
+
+              for (let [key, value] of Object.entries(singleItem)) {
+                updateExpArr.push(`${key.replace(':', '')} = ${key}`);
+              }
+
+              updateExpression += updateExpArr.join(', ');
+
+              const params = { ...pattern.action.params };
+              params.UpdateExpression = updateExpression;
+              params.ExpressionAttributeValues = singleItem;
+
+              params.Key = populateEventData(event, params.Key);
+
+              if (updateExpArr.length > 0) {
+                await dynamodbUpdate(params);
+                console.log(
+                  `${params.Key.pk.S} updated to ${pattern.action.params.TableName}`
+                );
+              }
+              else {
+                console.log(
+                  `${params.Key.pk.S} not updated to ${pattern.action.params.TableName}`
+                );
+              }
+
+            }
             if (thisVerb === "delete") {
+              // for each key and value in the item, get the property from the event
+              let rawItem = JSON.stringify(pattern.action.params.Item);
+              const regex = /{{(.*?)}}/g;
+              const matches = rawItem.match(regex);
+              if (matches) {
+                for (let match of matches) {
+                  const prop = match.replace(/{{|}}/g, "");
+                  const eventValue = getProp(event, prop);
+
+                  if (eventValue === undefined) {
+                    rawItem = rawItem.replace(`"${prop}":"{{${prop}}}"`, "");
+                    rawItem = rawItem.replace(`,,`, ",");
+                    rawItem = rawItem.replace(`,}`, "}");
+                  }
+                  else {
+                    rawItem = rawItem.replace(`{{${prop}}}`, eventValue);
+                  }
+                }
+              }
+
+              let singleItem: any = JSON.parse(rawItem);
+              const newItem = marshall(singleItem);
+              const params = { ...pattern.action.params };
+              params.Item = newItem;
+
               params.Key = params.Item;
               delete params.Item;
               await dynamodbDelete(params);
@@ -83,4 +153,5 @@ export async function processEvents(params: CliParams) {
       }
     }
   }
+
 }

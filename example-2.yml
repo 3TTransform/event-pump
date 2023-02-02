@@ -13,8 +13,8 @@ patterns:
           pk: "role#{{id}}"
           sk: "role"
           id: "{{id}}"
-          name: "{{name}}"
-          ogranisationId: "{{ogranisationId}}"
+          roleName: "{{roleName}}"
+          organisationId: "{{organisationId}}"
           allow: "{{allow}}"
   - name: roleUpdate
     rule:
@@ -24,13 +24,13 @@ patterns:
       target: dynamodb
       params:
         TableName: Example
-        Item:
+        Key:
           pk: "role#{{id}}"
           sk: "role"
-          id: "{{id}}"
-          name: "{{name}}"
-          ogranisationId: "{{ogranisationId}}"
-          allow: "{{allow}}"
+        ExpressionAttributeValues:
+          ":organisationId": "{{organisationId}}"
+          ":allow": "{{allow}}"
+          ":roleName": "{{roleName}}"
   - name: roleDelete
     rule:
       noun: role
