@@ -7,6 +7,7 @@ import {
 } from "./destinations/dynamodb";
 import { loadConfig } from "./yaml";
 import { marshall, getProp, populateEventData } from './utils'
+import { runSQL } from "./destinations/mssql";
 
 export interface CliParams {
   yml: string;
@@ -148,6 +149,17 @@ export async function processEvents(params: CliParams) {
                 `${singleItem.id} deleted from ${pattern.action.params.TableName}`
               );
             }
+          }
+        }
+        if (pattern.action.target === "sql"){
+          
+          let singleItem = populateEventData(event, pattern.action.params);
+          const thisVerb = pattern.rule.verb;
+          if (thisVerb === "create"){
+            console.log(singleItem.sql.S);
+            console.log(pattern.action.params.input);
+            const result = await runSQL(singleItem.sql.S);
+            console.log(JSON.stringify(result));
           }
         }
       }
