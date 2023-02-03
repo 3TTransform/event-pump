@@ -153,128 +153,13 @@ export async function processEvents(params: CliParams) {
         }
         if (pattern.action.target === "sql"){
           
-          //let singleItem = populateEventData(event, pattern.action.params);
-
+          let singleItem = populateEventData(event, pattern.action.params);
           const thisVerb = pattern.rule.verb;
           if (thisVerb === "create"){
-            // console.log(singleItem.sql.S);
-            // console.log(pattern.action.params.input);
-            // const result = await runSQL(singleItem.sql.S);
-            // console.log(JSON.stringify(result));
-
-            // for each key and value in the item, get the property from the event
-            let rawItem = JSON.stringify(pattern.action.params.Item);
-            const regex = /{{(.*?)}}/g;
-            const matches = rawItem.match(regex);
-            if (matches) {
-              for (let match of matches) {
-                const prop = match.replace(/{{|}}/g, "");
-                const eventValue = getProp(event, prop);
-
-                if (eventValue === undefined) {
-                  rawItem = rawItem.replace(`"${prop}":"{{${prop}}}"`, "");
-                  rawItem = rawItem.replace(`,,`, ",");
-                  rawItem = rawItem.replace(`,}`, "}");
-                }
-                else {
-                  rawItem = rawItem.replace(`{{${prop}}}`, eventValue);
-                }
-              }
-            }
-
-            let singleItem: any = JSON.parse(rawItem);
-            //console.log(singleItem);
-
-            let sql = `INSERT INTO ${pattern.action.params.TableName} `;
-            sql += '(ID, RoleName';
-            if (singleItem.organisationId) sql += ', OrganisationID';
-            if (singleItem.allow) sql += ', Allow';
-            sql += `) VALUES ('${singleItem.id}', '${singleItem.roleName}'`;
-            if (singleItem.organisationId) sql += `, '${singleItem.organisationId}'`;
-            if (singleItem.allow) sql += `, '${singleItem.allow}'`;
-            sql += ')';
-            
-            //console.log(sql);
-            await runSQL(sql);
-            
-            console.log(
-              `${singleItem.id} written to ${pattern.action.params.TableName}`
-            );
-          }
-          else if (thisVerb === "update"){
-
-            // for each key and value in the item, get the property from the event
-            let rawItem = JSON.stringify(pattern.action.params.Item);
-            const regex = /{{(.*?)}}/g;
-            const matches = rawItem.match(regex);
-            if (matches) {
-              for (let match of matches) {
-                const prop = match.replace(/{{|}}/g, "");
-                const eventValue = getProp(event, prop);
-
-                if (eventValue === undefined) {
-                  rawItem = rawItem.replace(`"${prop}":"{{${prop}}}"`, "");
-                  rawItem = rawItem.replace(`,,`, ",");
-                  rawItem = rawItem.replace(`,}`, "}");
-                }
-                else {
-                  rawItem = rawItem.replace(`{{${prop}}}`, eventValue);
-                }
-              }
-            }
-
-            let singleItem: any = JSON.parse(rawItem);
-            //console.log(singleItem);
-
-            let sql = `UPDATE ${pattern.action.params.TableName} SET`;
-            if (singleItem.roleName) sql += ` RoleName = '${singleItem.roleName}',`;
-            if (singleItem.organisationId) sql += ` OrganisationID = '${singleItem.organisationId}',`;
-            if (singleItem.allow) sql += ` Allow = '${singleItem.allow}',`;
-            // Remove last comma
-            sql = sql.substring(0, sql.length-1);
-            sql += ` WHERE ID = '${singleItem.id}'`;
-            
-            //console.log(sql);
-            await runSQL(sql);
-            
-            console.log(
-              `${singleItem.id} updated to ${pattern.action.params.TableName}`
-            );
-          }
-          else if (thisVerb === "delete"){
-
-            // for each key and value in the item, get the property from the event
-            let rawItem = JSON.stringify(pattern.action.params.Item);
-            const regex = /{{(.*?)}}/g;
-            const matches = rawItem.match(regex);
-            if (matches) {
-              for (let match of matches) {
-                const prop = match.replace(/{{|}}/g, "");
-                const eventValue = getProp(event, prop);
-
-                if (eventValue === undefined) {
-                  rawItem = rawItem.replace(`"${prop}":"{{${prop}}}"`, "");
-                  rawItem = rawItem.replace(`,,`, ",");
-                  rawItem = rawItem.replace(`,}`, "}");
-                }
-                else {
-                  rawItem = rawItem.replace(`{{${prop}}}`, eventValue);
-                }
-              }
-            }
-
-            let singleItem: any = JSON.parse(rawItem);
-            //console.log(singleItem);
-
-            let sql = `DELETE FROM ${pattern.action.params.TableName} `;
-            sql += ` WHERE ID = '${singleItem.id}'`;
-            
-            //console.log(sql);
-            await runSQL(sql);
-            
-            console.log(
-              `${singleItem.id} deleted form ${pattern.action.params.TableName}`
-            );
+            console.log(singleItem.sql.S);
+            console.log(pattern.action.params.input);
+            const result = await runSQL(singleItem.sql.S);
+            console.log(JSON.stringify(result));
           }
         }
       }

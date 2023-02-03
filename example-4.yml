@@ -8,32 +8,41 @@ patterns:
     action:
       target: sql
       params:
-        TableName: tbl_roles
-        Item:
-          id: "{{id}}"
-          roleName: "{{roleName}}"
-          organisationId: "{{organisationId}}"
-          allow: "{{allow}}"
+        sql: "INSERT INTO tbl_roles ([RoleName], [Allow]) VALUES('{{roleName}}','{{allow}}')"
+        # input:
+        #   - name: "role"
+        #     type: "NVARCHAR(50)"
+        #     value: "{{role}}"
+        #   - name: "allow"
+        #     type: "NVARCHAR(MAX)"
+        #     value: "{{allow}}"
+        # output:
+        #   - name: "id"
+        #     type: "UNIQUEIDENTIFIER"
+
   - name: roleUpdate
     rule:
       noun: role
-      verb: update
+      verb: create
     action:
       target: sql
       params:
-        TableName: tbl_roles
-        Item:
-          id: "{{id}}"
-          roleName: "{{roleName}}"
-          organisationId: "{{organisationId}}"
-          allow: "{{allow}}"
+        id: "{{id}}"
+        sql:
+          - "UPDATE tbl_roles SET "
+          - split: ","
+            list:
+            - "[RoleName] = {{roleName}}"
+            - "[Allow] = {{allow}}"
+          - "WHERE [ID] = {{id}}"
+        # sql: "UPDATE tbl_roles SET [Field1] = {{value1}}, ... WHERE [ID] = {{id}}"
+
   - name: roleDelete
     rule:
       noun: role
-      verb: delete
+      verb: create
     action:
       target: sql
       params:
-        TableName: tbl_roles
-        Item:
-          id: "{{id}}"
+        id: "{{id}}"
+        # sql: "DELETE FROM tbl_roles WHERE '{values}}'"
