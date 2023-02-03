@@ -1,9 +1,9 @@
 //import { sql } from "mssql";
+require("dotenv").config();
 const sql = require("mssql");
 
-const sqlUser = "sa-Event-Source";
-const sqlPassword = "password1";
-const sqlServer = "3TLAPTOP-10527";
+const { SQL_SERV: sqlServer, SQL_USER: sqlUser, SQL_PASS: sqlPassword } = process.env;
+
 const sqlDatabase = 'EventSource_example';
 const connectionString = `Data Source=${sqlServer};Initial Catalog=${sqlDatabase};User ID=${sqlUser};Password=${sqlPassword};Connection Timeout=1000;TrustServerCertificate=true;`;
 

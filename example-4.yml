@@ -8,7 +8,45 @@ patterns:
     action:
       target: sql
       params:
-        sql: "INSERT INTO tbl_roles ([RoleName], [Allow]) VALUES('{{roleName}}','{{allow}}')"
+        sql: >
+          INSERT INTO tbl_roles
+          ([RoleName])
+          VALUES ('{{roleName}}')
+  - name: roleUpdate
+    rule:
+      noun: role
+      verb: update
+    action:
+      target: sql
+      params:
+        sql: >
+          {{#if roleName}}
+            UPDATE tbl_roles
+            SET [RoleName]='{{roleName}}'
+            WHERE id='{{id}}'
+          {{/if}}
+      # id: "{{id}}"
+      # sql:
+      #   - "UPDATE tbl_roles SET "
+      #   - split: ","
+      #     list:
+      #     - "[RoleName] = {{roleName}}"
+      #     - "[Allow] = {{allow}}"
+      #   - "WHERE [ID] = {{id}}"
+      # sql: "UPDATE tbl_roles SET [Field1] = {{value1}}, ... WHERE [ID] = {{id}}"
+
+  # - name: roleDelete
+  #   rule:
+  #     noun: role
+  #     verb: create
+  #   action:
+  #     target: sql
+  #     params:
+  #       id: "{{id}}"
+        # sql: "DELETE FROM tbl_roles WHERE '{values}}'"
+
+
+        # sql: "INSERT INTO tbl_roles ([RoleName], [Allow]) VALUES('{{roleName}}','{{allow}}')"
         # input:
         #   - name: "role"
         #     type: "NVARCHAR(50)"
@@ -19,30 +57,3 @@ patterns:
         # output:
         #   - name: "id"
         #     type: "UNIQUEIDENTIFIER"
-
-  - name: roleUpdate
-    rule:
-      noun: role
-      verb: create
-    action:
-      target: sql
-      params:
-        id: "{{id}}"
-        sql:
-          - "UPDATE tbl_roles SET "
-          - split: ","
-            list:
-            - "[RoleName] = {{roleName}}"
-            - "[Allow] = {{allow}}"
-          - "WHERE [ID] = {{id}}"
-        # sql: "UPDATE tbl_roles SET [Field1] = {{value1}}, ... WHERE [ID] = {{id}}"
-
-  - name: roleDelete
-    rule:
-      noun: role
-      verb: create
-    action:
-      target: sql
-      params:
-        id: "{{id}}"
-        # sql: "DELETE FROM tbl_roles WHERE '{values}}'"
