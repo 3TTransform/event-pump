@@ -10,8 +10,8 @@ patterns:
       params:
         sql: >
           INSERT INTO tbl_roles
-          ([RoleName], [OrganisationID],[Allow])
-          VALUES ('{{roleName}}', '{{organisationId}}', '{{allow}}')
+          ([ID], [RoleName], [OrganisationID],[Allow])
+          VALUES (@ID, @RoleName, @OrganisationID, @Allow)
         input:
           - name: "ID"
             type: "UNIQUEIDENTIFIER"
@@ -32,12 +32,18 @@ patterns:
     action:
       target: sql
       params:
-        sql: >
-          {{#if roleName}}
-            UPDATE tbl_roles
-            SET [RoleName]='{{roleName}}'
-            WHERE id='{{id}}'
-          {{/if}}
+        sql: >          
+            UPDATE tbl_roles SET 
+            {{#if roleName}}
+              [RoleName] = @RoleName,
+            {{/if}}
+            {{#if allow}}
+              [Allow] = @Allow,
+            {{/if}}
+            {{#if organisationId}}
+              [OrganisationID] = @OrganisationID,
+            {{/if}}
+            WHERE [ID] = @ID          
         input:
           - name: "ID"
             type: "UNIQUEIDENTIFIER"

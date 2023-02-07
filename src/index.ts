@@ -6,10 +6,10 @@ import {
   dynamodbUpdate,
 } from "./destinations/dynamodb";
 import { loadConfig } from "./yaml";
-import { marshall, getProp, populateEventData } from './utils'
+import { marshall, getProp, populateEventData } from "./utils";
 import { runSQL } from "./destinations/mssql";
 
-import { replaceValues } from './template'
+import { replaceValues } from "./template";
 
 export interface CliParams {
   yml: string;
@@ -68,8 +68,7 @@ export async function processEvents(params: CliParams) {
                     rawItem = rawItem.replace(`"${prop}":"{{${prop}}}"`, "");
                     rawItem = rawItem.replace(`,,`, ",");
                     rawItem = rawItem.replace(`,}`, "}");
-                  }
-                  else {
+                  } else {
                     rawItem = rawItem.replace(`{{${prop}}}`, eventValue);
                   }
                 }
@@ -86,18 +85,20 @@ export async function processEvents(params: CliParams) {
               );
             }
             if (thisVerb === "update") {
-
-              let singleItem = populateEventData(event, pattern.action.params.ExpressionAttributeValues);
+              let singleItem = populateEventData(
+                event,
+                pattern.action.params.ExpressionAttributeValues
+              );
 
               // loop over the single item and build the 'UpdateExpression'
-              let updateExpression = 'set ';
+              let updateExpression = "set ";
               const updateExpArr = [];
 
               for (let [key, value] of Object.entries(singleItem)) {
-                updateExpArr.push(`${key.replace(':', '')} = ${key}`);
+                updateExpArr.push(`${key.replace(":", "")} = ${key}`);
               }
 
-              updateExpression += updateExpArr.join(', ');
+              updateExpression += updateExpArr.join(", ");
 
               const params = { ...pattern.action.params };
               params.UpdateExpression = updateExpression;
@@ -110,13 +111,11 @@ export async function processEvents(params: CliParams) {
                 console.log(
                   `${params.Key.pk.S} updated to ${pattern.action.params.TableName}`
                 );
-              }
-              else {
+              } else {
                 console.log(
                   `${params.Key.pk.S} not updated to ${pattern.action.params.TableName}`
                 );
               }
-
             }
             if (thisVerb === "delete") {
               // for each key and value in the item, get the property from the event
@@ -132,8 +131,7 @@ export async function processEvents(params: CliParams) {
                     rawItem = rawItem.replace(`"${prop}":"{{${prop}}}"`, "");
                     rawItem = rawItem.replace(`,,`, ",");
                     rawItem = rawItem.replace(`,}`, "}");
-                  }
-                  else {
+                  } else {
                     rawItem = rawItem.replace(`{{${prop}}}`, eventValue);
                   }
                 }
@@ -153,91 +151,23 @@ export async function processEvents(params: CliParams) {
             }
           }
         }
-        if (pattern.action.target === "sql"){
-
-          //let singleItem = populateEventData(event, pattern.action.params);
-
+        if (pattern.action.target === "sql") {
           let sql = pattern.action.params.sql;
           let input = pattern.action.params.input;
-          //console.log('input', input);
 
           const sqlStatement = populateEventData(event, input, false);
-          //console.log('sql', sql);
-          console.log('sqlStatement', sqlStatement);
-          await runSQL(sql, sqlStatement);
 
-        //  const thisVerb = pattern.rule.verb;
-        //   if (thisVerb === "create"){
-        //     // console.log(singleItem.sql.S);
-        //     // console.log(pattern.action.params.input);
-        //     // const result = await runSQL(singleItem.sql.S);
-        //     // console.log(JSON.stringify(result));
-
-        //     // for each key and value in the item, get the property from the event
-        //    // let rawItem = JSON.stringify(pattern.action.params.sql);
-        //     let rawItem = pattern.action.params.sql;
-
-        //     const sqlStatement = replaceValues(event, rawItem);
-        //     console.log('🛢', sqlStatement);
-
-        //     //await runSQL(sqlStatement);
-
-        //     // console.log(
-        //     //   `${singleItem.id} written to ${pattern.action.params.TableName}`
-        //     / / );
-        //   }
-        //   else if (thisVerb === "update"){
-
-        //     // for each key and value in the item, get the property from the event
-        //    // let rawItem = JSON.stringify(pattern.action.params.sql);
-        //    let rawItem = pattern.action.params.sql;
-
-        //     const sqlStatement = replaceValues(event, rawItem);
-        //     console.log('🛢', sqlStatement);
-
-        //     await runSQL(sqlStatement);
-
-        //     // console.log(
-        //     //   `${singleItem.id} updated to ${pattern.action.params.TableName}`
-        //     // );
-        //   }
-        //   else if (thisVerb === "delete"){
-
-        //     // for each key and value in the item, get the property from the event
-        //    // let rawItem = JSON.stringify(pattern.action.params.sql);
-        //    let rawItem = pattern.action.params.sql;
-        //     const regex = /{{(.*?)}}/g;
-        //     const matches = rawItem.match(regex);
-        //     if (matches) {
-        //       for (let match of matches) {
-        //         const prop = match.replace(/{{|}}/g, "");
-        //         const eventValue = getProp(event, prop);
-
-        //         if (eventValue === undefined) {
-        //           rawItem = rawItem.replace(`"${prop}":"{{${prop}}}"`, "");
-        //           rawItem = rawItem.replace(`,,`, ",");
-        //           rawItem = rawItem.replace(`,}`, "}");
-        //         }
-        //         else {
-        //           rawItem = rawItem.replace(`{{${prop}}}`, eventValue);
-        //         }
-        //       }
-        //     }
-
-        //     let singleItem: any = JSON.parse(rawItem);
-        //     //console.log(singleItem);
-
-        //     let sql = `DELETE FROM ${pattern.action.params.TableName} `;
-        //     sql += ` WHERE ID = '${singleItem.id}'`;
-
-        //     //console.log(sql);
-        //     await runSQL(sql);
-
-        //     console.log(
-        //       `${singleItem.id} deleted form ${pattern.action.params.TableName}`
-        //     );
+          const thisVerb = pattern.rule.verb;
+          let replacedSQL = replaceValues(event, sql);
+          replacedSQL = replacedSQL.replace(/,\s*WHERE/g, " WHERE");
+          try {
+            await runSQL(replacedSQL, sqlStatement);
+            console.log(`${event.id} ${thisVerb}d`);
+          } catch (err) {
+            console.log(`${event.id} failed`);
           }
         }
       }
     }
   }
+}

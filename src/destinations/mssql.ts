@@ -19,7 +19,7 @@ export const runSQL = async (sqlCommand, input) => {
     request.input(key.name, key.value);    
   }
 
-  //console.log(JSON.stringify(request.input));
+  //console.log(JSON.stringify(request));
 
   //outputs?.forEach(x => request.output(x));
 
