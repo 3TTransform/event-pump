@@ -10,8 +10,21 @@ patterns:
       params:
         sql: >
           INSERT INTO tbl_roles
-          ([RoleName])
-          VALUES ('{{roleName}}')
+          ([RoleName], [OrganisationID],[Allow])
+          VALUES ('{{roleName}}', '{{organisationId}}', '{{allow}}')
+        input:
+          - name: "ID"
+            type: "UNIQUEIDENTIFIER"
+            value: "{{id}}"
+          - name: "RoleName"
+            type: "NVARCHAR(50)"
+            value: "{{roleName}}"
+          - name: "Allow"
+            type: "NVARCHAR(MAX)"
+            value: "{{allow}}"
+          - name: "OrganisationID"
+            type: "UNIQUEIDENTIFIER"
+            value: "{{organisationId}}"  
   - name: roleUpdate
     rule:
       noun: role
@@ -25,6 +38,19 @@ patterns:
             SET [RoleName]='{{roleName}}'
             WHERE id='{{id}}'
           {{/if}}
+        input:
+          - name: "ID"
+            type: "UNIQUEIDENTIFIER"
+            value: "{{id}}"
+          - name: "RoleName"
+            type: "NVARCHAR(50)"
+            value: "{{roleName}}"
+          - name: "Allow"
+            type: "NVARCHAR(MAX)"
+            value: "{{allow}}"
+          - name: "OrganisationID"
+            type: "UNIQUEIDENTIFIER"
+            value: "{{organisationId}}"
       # id: "{{id}}"
       # sql:
       #   - "UPDATE tbl_roles SET "

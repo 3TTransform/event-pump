@@ -157,80 +157,87 @@ export async function processEvents(params: CliParams) {
 
           //let singleItem = populateEventData(event, pattern.action.params);
 
-          const thisVerb = pattern.rule.verb;
-          if (thisVerb === "create"){
-            // console.log(singleItem.sql.S);
-            // console.log(pattern.action.params.input);
-            // const result = await runSQL(singleItem.sql.S);
-            // console.log(JSON.stringify(result));
+          let sql = pattern.action.params.sql;
+          let input = pattern.action.params.input;
+          //console.log('input', input);
 
-            // for each key and value in the item, get the property from the event
-           // let rawItem = JSON.stringify(pattern.action.params.sql);
-            let rawItem = pattern.action.params.sql;
+          const sqlStatement = populateEventData(event, input, false);
+          //console.log('sql', sql);
+          console.log('sqlStatement', sqlStatement);
+          await runSQL(sql, sqlStatement);
 
-            const sqlStatement = replaceValues(event, rawItem);
-            console.log('🛢', sqlStatement);
+        //  const thisVerb = pattern.rule.verb;
+        //   if (thisVerb === "create"){
+        //     // console.log(singleItem.sql.S);
+        //     // console.log(pattern.action.params.input);
+        //     // const result = await runSQL(singleItem.sql.S);
+        //     // console.log(JSON.stringify(result));
 
-            await runSQL(sqlStatement);
+        //     // for each key and value in the item, get the property from the event
+        //    // let rawItem = JSON.stringify(pattern.action.params.sql);
+        //     let rawItem = pattern.action.params.sql;
 
-            // console.log(
-            //   `${singleItem.id} written to ${pattern.action.params.TableName}`
-            // );
-          }
-          else if (thisVerb === "update"){
+        //     const sqlStatement = replaceValues(event, rawItem);
+        //     console.log('🛢', sqlStatement);
 
-            // for each key and value in the item, get the property from the event
-           // let rawItem = JSON.stringify(pattern.action.params.sql);
-           let rawItem = pattern.action.params.sql;
+        //     //await runSQL(sqlStatement);
 
-            const sqlStatement = replaceValues(event, rawItem);
-            console.log('🛢', sqlStatement);
+        //     // console.log(
+        //     //   `${singleItem.id} written to ${pattern.action.params.TableName}`
+        //     / / );
+        //   }
+        //   else if (thisVerb === "update"){
 
-            await runSQL(sqlStatement);
+        //     // for each key and value in the item, get the property from the event
+        //    // let rawItem = JSON.stringify(pattern.action.params.sql);
+        //    let rawItem = pattern.action.params.sql;
 
-            // console.log(
-            //   `${singleItem.id} updated to ${pattern.action.params.TableName}`
-            // );
-          }
-          else if (thisVerb === "delete"){
+        //     const sqlStatement = replaceValues(event, rawItem);
+        //     console.log('🛢', sqlStatement);
 
-            // for each key and value in the item, get the property from the event
-           // let rawItem = JSON.stringify(pattern.action.params.sql);
-           let rawItem = pattern.action.params.sql;
-            const regex = /{{(.*?)}}/g;
-            const matches = rawItem.match(regex);
-            if (matches) {
-              for (let match of matches) {
-                const prop = match.replace(/{{|}}/g, "");
-                const eventValue = getProp(event, prop);
+        //     await runSQL(sqlStatement);
 
-                if (eventValue === undefined) {
-                  rawItem = rawItem.replace(`"${prop}":"{{${prop}}}"`, "");
-                  rawItem = rawItem.replace(`,,`, ",");
-                  rawItem = rawItem.replace(`,}`, "}");
-                }
-                else {
-                  rawItem = rawItem.replace(`{{${prop}}}`, eventValue);
-                }
-              }
-            }
+        //     // console.log(
+        //     //   `${singleItem.id} updated to ${pattern.action.params.TableName}`
+        //     // );
+        //   }
+        //   else if (thisVerb === "delete"){
 
-            let singleItem: any = JSON.parse(rawItem);
-            //console.log(singleItem);
+        //     // for each key and value in the item, get the property from the event
+        //    // let rawItem = JSON.stringify(pattern.action.params.sql);
+        //    let rawItem = pattern.action.params.sql;
+        //     const regex = /{{(.*?)}}/g;
+        //     const matches = rawItem.match(regex);
+        //     if (matches) {
+        //       for (let match of matches) {
+        //         const prop = match.replace(/{{|}}/g, "");
+        //         const eventValue = getProp(event, prop);
 
-            let sql = `DELETE FROM ${pattern.action.params.TableName} `;
-            sql += ` WHERE ID = '${singleItem.id}'`;
+        //         if (eventValue === undefined) {
+        //           rawItem = rawItem.replace(`"${prop}":"{{${prop}}}"`, "");
+        //           rawItem = rawItem.replace(`,,`, ",");
+        //           rawItem = rawItem.replace(`,}`, "}");
+        //         }
+        //         else {
+        //           rawItem = rawItem.replace(`{{${prop}}}`, eventValue);
+        //         }
+        //       }
+        //     }
 
-            //console.log(sql);
-            await runSQL(sql);
+        //     let singleItem: any = JSON.parse(rawItem);
+        //     //console.log(singleItem);
 
-            console.log(
-              `${singleItem.id} deleted form ${pattern.action.params.TableName}`
-            );
+        //     let sql = `DELETE FROM ${pattern.action.params.TableName} `;
+        //     sql += ` WHERE ID = '${singleItem.id}'`;
+
+        //     //console.log(sql);
+        //     await runSQL(sql);
+
+        //     console.log(
+        //       `${singleItem.id} deleted form ${pattern.action.params.TableName}`
+        //     );
           }
         }
       }
     }
   }
-
-}

@@ -9,7 +9,7 @@ const getProp = (obj: any, path: string) => {
     return path.split(".").reduce((o, i) => o[i], obj);
 };
 
-const populateEventData = (event, object) => {
+const populateEventData = (event, object, shouldmarshall = true ) => {
     let rawItem = JSON.stringify(object);
     const regex = /{{(.*?)}}/g;
     const matches = rawItem.match(regex);
@@ -30,9 +30,10 @@ const populateEventData = (event, object) => {
             }
         }
     }
-    return marshall(JSON.parse(rawItem));
+    if (shouldmarshall)  return marshall(JSON.parse(rawItem));
+    
+    return JSON.parse(rawItem);
 }
-
 
 // a function to automatically marshals Javascript types onto DynamoDB AttributeValues
 const marshall = (data: any) => {
