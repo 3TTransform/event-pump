@@ -3,10 +3,9 @@ const Handlebars = require("handlebars");
 Handlebars.registerHelper("removeLastChar", function(options) {
   let result = options.fn(this);
   return result.replace(/,\s*$/, " ");
-}); // try this
+});
 
-Handlebars.registerHelper("commadelimlist", (options) => {
-  console.log(options);
+Handlebars.registerHelper("commadelimlist", function(options) {
   let result = options.fn(this);
   while (result.match(/,\s*,/)) {
     result = result.replaceAll(/,\s*,/, ',');
