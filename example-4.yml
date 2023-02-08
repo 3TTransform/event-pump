@@ -8,7 +8,7 @@ patterns:
     action:
       target: sql
       params:
-        sql: >
+        sql: >          
           INSERT INTO tbl_roles
           ([ID], [RoleName], [OrganisationID],[Allow])
           VALUES (@ID, @RoleName, @OrganisationID, @Allow)
@@ -32,7 +32,7 @@ patterns:
     action:
       target: sql
       params:
-        sql: >
+        sql: >            
             UPDATE tbl_roles SET
             {{#removeLastChar}}
               {{#if roleName}}
@@ -59,3 +59,16 @@ patterns:
           - name: "OrganisationID"
             type: "UNIQUEIDENTIFIER"
             value: "{{organisationId}}"
+  - name: roleDelete
+    rule:
+      noun: role
+      verb: delete
+    action:
+      target: sql
+      params:
+        sql: >            
+            DELETE FROM tbl_roles
+            WHERE [ID] = @ID
+        input:
+          - name: "ID"
+            value: "{{id}}"

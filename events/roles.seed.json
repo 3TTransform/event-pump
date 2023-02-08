@@ -50,5 +50,10 @@
     "noun": "role",
     "id": "de5cd33e-2c96-44c2-ae08-25a9e842a66d",
     "roleName": "UserTest3"
+  },
+  {
+    "verb": "delete",
+    "noun": "role",
+    "id": "de5cd33e-2c96-44c2-ae08-25a9e842a66d"
   }
 ]

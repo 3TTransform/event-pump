@@ -26,7 +26,6 @@ export async function processEvents(params: CliParams) {
     console.log("YML file is invalid");
     console.log(e.errors);
   }
-
   // the source property is the file location of a json file, load it into an object
   const events = require(doc.source);
 
