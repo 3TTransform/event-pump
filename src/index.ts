@@ -161,13 +161,13 @@ export async function processEvents(params: CliParams) {
           const thisVerb = pattern.rule.verb;
 
           let replacedSQL = replaceValues(event, sql);
-          console.log(replacedSQL);
+          //console.log(replacedSQL);
           replacedSQL = replacedSQL.replace(/,\s*WHERE/g, " WHERE");
           try {
             await runSQL(replacedSQL, sqlStatement);
             console.log(`${event.id} ${thisVerb}d`);
           } catch (err) {
-            console.log(`${event.id} failed`);
+            console.log(`${event.id} failed ${err.message}`);
           }
         }
       }
