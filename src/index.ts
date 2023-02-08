@@ -10,6 +10,7 @@ import { marshall, getProp, populateEventData } from "./utils";
 import { runSQL } from "./destinations/mssql";
 
 import { replaceValues } from "./template";
+import Handlebars from "handlebars";
 
 export interface CliParams {
   yml: string;
@@ -158,7 +159,9 @@ export async function processEvents(params: CliParams) {
           const sqlStatement = populateEventData(event, input, false);
 
           const thisVerb = pattern.rule.verb;
+
           let replacedSQL = replaceValues(event, sql);
+          console.log(replacedSQL);
           replacedSQL = replacedSQL.replace(/,\s*WHERE/g, " WHERE");
           try {
             await runSQL(replacedSQL, sqlStatement);

@@ -24,7 +24,7 @@ patterns:
             value: "{{allow}}"
           - name: "OrganisationID"
             type: "UNIQUEIDENTIFIER"
-            value: "{{organisationId}}"  
+            value: "{{organisationId}}"
   - name: roleUpdate
     rule:
       noun: role
@@ -32,18 +32,20 @@ patterns:
     action:
       target: sql
       params:
-        sql: >          
-            UPDATE tbl_roles SET 
-            {{#if roleName}}
-              [RoleName] = @RoleName,
-            {{/if}}
-            {{#if allow}}
-              [Allow] = @Allow,
-            {{/if}}
-            {{#if organisationId}}
-              [OrganisationID] = @OrganisationID,
-            {{/if}}
-            WHERE [ID] = @ID          
+        sql: >
+            UPDATE tbl_roles SET
+            {{#removeLastChar}}
+              {{#if roleName}}
+                [RoleName] = @RoleName,
+              {{/if}}
+              {{#if allow}}
+                [Allow] = @Allow,
+              {{/if}}
+              {{#if organisationId}}
+                [OrganisationID] = @OrganisationID,
+              {{/if}}
+            {{/removeLastChar}}
+            WHERE [ID] = @ID
         input:
           - name: "ID"
             type: "UNIQUEIDENTIFIER"
@@ -57,35 +59,3 @@ patterns:
           - name: "OrganisationID"
             type: "UNIQUEIDENTIFIER"
             value: "{{organisationId}}"
-      # id: "{{id}}"
-      # sql:
-      #   - "UPDATE tbl_roles SET "
-      #   - split: ","
-      #     list:
-      #     - "[RoleName] = {{roleName}}"
-      #     - "[Allow] = {{allow}}"
-      #   - "WHERE [ID] = {{id}}"
-      # sql: "UPDATE tbl_roles SET [Field1] = {{value1}}, ... WHERE [ID] = {{id}}"
-
-  # - name: roleDelete
-  #   rule:
-  #     noun: role
-  #     verb: create
-  #   action:
-  #     target: sql
-  #     params:
-  #       id: "{{id}}"
-        # sql: "DELETE FROM tbl_roles WHERE '{values}}'"
-
-
-        # sql: "INSERT INTO tbl_roles ([RoleName], [Allow]) VALUES('{{roleName}}','{{allow}}')"
-        # input:
-        #   - name: "role"
-        #     type: "NVARCHAR(50)"
-        #     value: "{{role}}"
-        #   - name: "allow"
-        #     type: "NVARCHAR(MAX)"
-        #     value: "{{allow}}"
-        # output:
-        #   - name: "id"
-        #     type: "UNIQUEIDENTIFIER"
