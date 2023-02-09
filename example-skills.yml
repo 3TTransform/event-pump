@@ -1,0 +1,22 @@
+name: Build a table for a person's competency
+source: ../events/competency.seed.json
+patterns: 
+  - name: create_attestation 
+    rule:
+      noun: attestation
+      verb: create
+    action: 
+      target: sql
+      params:
+        sql: >
+          INSERT INTO tbl_skills
+          ([userID], [CourseName], [IsPassed])
+          VALUES (@userID, @CourseName, @IsPassed)
+
+        input:
+          - name: userID           
+            value: "{{userID}}"
+          - name: CourseName          
+            value: "{{courseName}}"
+          - name: IsPassed
+            value: "{{isPassed}}"

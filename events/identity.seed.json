@@ -1,0 +1,77 @@
+[
+    {
+        "verb": "create",
+        "noun": "organisation",
+        "id": "7c464356-374a-4c85-b871-13ed8bd92d46",
+        "organisationName": "Momentia"
+    },
+    {
+        "verb": "create",
+        "noun": "organisation",
+        "id": "53ff3def-9372-47f9-bc54-8b3f24945b7c",
+        "organisationName": "Nurali"
+    },
+    {
+        "verb": "create",
+        "noun": "organisation",
+        "id": "443f12ee-b931-4dfe-ba7d-5ac2f5271f8b",
+        "organisationName": "Oceanica"
+    },
+    {
+        "verb": "create",
+        "noun": "role",
+        "id": "de5cd33e-2c96-44c2-ae08-25a9e842a66d",
+        "roleName": "User",
+        "organisationId": "443f12ee-b931-4dfe-ba7d-5ac2f5271f8b"
+    },
+    {
+        "verb": "create",
+        "noun": "role",
+        "id": "de5cd33e-2c96-44c2-ae08-25a9e842a66d",
+        "roleName": "User",
+        "organisationId": "53ff3def-9372-47f9-bc54-8b3f24945b7c"
+    },
+    {
+        "verb": "delete",
+        "noun": "role",
+        "id": "de5cd33e-2c96-44c2-ae08-25a9e842a66d",
+        "roleName": "User",
+        "organisationId": "53ff3def-9372-47f9-bc54-8b3f24945b7c"
+    },
+    {
+        "verb": "create",
+        "noun": "role",
+        "id": "de5cd33e-2c96-44c2-ae08-25a9e842a66d",
+        "roleName": "admin",
+        "organisationId": "53ff3def-9372-47f9-bc54-8b3f24945b7c"
+    },
+    {
+        "verb": "create",
+        "noun": "role",
+        "id": "de5cd33e-2c96-44c2-ae08-25a9e842a66d",
+        "roleName": "specialist",
+        "organisationId": "53ff3def-9372-47f9-bc54-8b3f24945b7c"
+    },
+    {
+        "verb": "create",
+        "noun": "role",
+        "id": "de5cd33e-2c96-44c2-ae08-25a9e842a66d",
+        "roleName": "developer",
+        "organisationId": "53ff3def-9372-47f9-bc54-8b3f24945b7c"
+    },
+    {
+        "verb": "create",
+        "noun": "role",
+        "id": "de5cd33e-2c96-44c2-ae08-25a9e842a66d",
+        "roleName": "developer",
+        "organisationId": "7c464356-374a-4c85-b871-13ed8bd92d46"
+    },
+    {
+        "verb": "create",
+        "noun": "role",
+        "id": "de5cd33e-2c96-44c2-ae08-25a9e842a66d",
+        "roleName": "analyst",
+        "organisationId": "7c464356-374a-4c85-b871-13ed8bd92d46"
+    }
+
+]

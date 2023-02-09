@@ -1,0 +1,57 @@
+name: Build a pie chart based on Organisation data
+source: ../events/identity.seed.json
+patterns: 
+  - name: create_orgs 
+    rule:
+      noun: organisation
+      verb: create
+    action: 
+      target: sql
+      params:
+        sql: >
+          INSERT INTO tbl_orgs_role_count
+          ([OrgID], [OrgName], [OrgRoleCount])
+          VALUES (@OrgID, @OrgName, @OrgRoleCount)
+
+        input:
+          - name: OrgName
+           # type: NVARCHAR()
+            value: "{{organisationName}}"
+          - name: OrgID
+          #  type: UNIQUEIDENTIFIER
+            value: "{{id}}"
+          - name: OrgRoleCount
+            value: "0"
+
+  - name: increment_roles 
+    rule:
+      noun: role
+      verb: create
+    action: 
+      target: sql
+      params:
+        sql: >
+          UPDATE tbl_orgs_role_count SET
+          OrgRoleCount = OrgRoleCount + 1
+          WHERE [OrgID] = @OrgID
+        input:
+          - name: OrgID
+            value: "{{organisationId}}"
+        
+  - name: decrement_roles
+    rule:
+      noun: role
+      verb: delete
+    action: 
+      target: sql
+      params:
+        sql: >
+          UPDATE tbl_orgs_role_count SET
+          OrgRoleCount = OrgRoleCount - 1
+          WHERE [OrgID] = @OrgID
+        input:
+          - name: OrgID
+            value: "{{organisationId}}"
+
+
+        
