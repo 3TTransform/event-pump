@@ -1,4 +1,4 @@
-import { UpdateItemInput } from "aws-sdk/clients/dynamodb";
+//import { UpdateItemInput } from "aws-sdk/clients/dynamodb";
 import {
   dynamodbWrite,
   dynamodbTableExists,
@@ -6,11 +6,10 @@ import {
   dynamodbUpdate,
 } from "./destinations/dynamodb";
 import { loadConfig } from "./yaml";
-import { marshall, getProp, populateEventData } from "./utils";
+import { marshall, populateEventData } from "./utils";
 import { runSQL } from "./destinations/mssql";
 
 import { replaceValues } from "./template";
-import Handlebars from "handlebars";
 
 export interface CliParams {
   yml: string;
@@ -55,26 +54,11 @@ export async function processEvents(params: CliParams) {
             const thisVerb = pattern.rule.verb;
 
             if (thisVerb === "create") {
-              // for each key and value in the item, get the property from the event
-              let rawItem = JSON.stringify(pattern.action.params.Item);
-              const regex = /{{(.*?)}}/g;
-              const matches = rawItem.match(regex);
-              if (matches) {
-                for (let match of matches) {
-                  const prop = match.replace(/{{|}}/g, "");
-                  const eventValue = getProp(event, prop);
-
-                  if (eventValue === undefined) {
-                    rawItem = rawItem.replace(`"${prop}":"{{${prop}}}"`, "");
-                    rawItem = rawItem.replace(`,,`, ",");
-                    rawItem = rawItem.replace(`,}`, "}");
-                  } else {
-                    rawItem = rawItem.replace(`{{${prop}}}`, eventValue);
-                  }
-                }
-              }
-
-              let singleItem: any = JSON.parse(rawItem);
+              const singleItem = populateEventData(
+                event,
+                pattern.action.params.Item,
+                false
+              );
               const newItem = marshall(singleItem);
               const params = { ...pattern.action.params };
               params.Item = newItem;
@@ -118,26 +102,11 @@ export async function processEvents(params: CliParams) {
               }
             }
             if (thisVerb === "delete") {
-              // for each key and value in the item, get the property from the event
-              let rawItem = JSON.stringify(pattern.action.params.Item);
-              const regex = /{{(.*?)}}/g;
-              const matches = rawItem.match(regex);
-              if (matches) {
-                for (let match of matches) {
-                  const prop = match.replace(/{{|}}/g, "");
-                  const eventValue = getProp(event, prop);
-
-                  if (eventValue === undefined) {
-                    rawItem = rawItem.replace(`"${prop}":"{{${prop}}}"`, "");
-                    rawItem = rawItem.replace(`,,`, ",");
-                    rawItem = rawItem.replace(`,}`, "}");
-                  } else {
-                    rawItem = rawItem.replace(`{{${prop}}}`, eventValue);
-                  }
-                }
-              }
-
-              let singleItem: any = JSON.parse(rawItem);
+              const singleItem = populateEventData(
+                event,
+                pattern.action.params.Item,
+                false
+              );
               const newItem = marshall(singleItem);
               const params = { ...pattern.action.params };
               params.Item = newItem;
@@ -146,7 +115,7 @@ export async function processEvents(params: CliParams) {
               delete params.Item;
               await dynamodbDelete(params);
               console.log(
-                `${singleItem.id} deleted from ${pattern.action.params.TableName}`
+                `${params.Key.pk.S} deleted from ${pattern.action.params.TableName}`
               );
             }
           }
@@ -160,7 +129,6 @@ export async function processEvents(params: CliParams) {
           const thisVerb = pattern.rule.verb;
 
           let replacedSQL = replaceValues(event, sql);
-          //console.log(replacedSQL);
           replacedSQL = replacedSQL.replace(/,\s*WHERE/g, " WHERE");
           try {
             await runSQL(replacedSQL, sqlStatement);
