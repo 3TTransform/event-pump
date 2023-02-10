@@ -10,8 +10,8 @@ patterns:
       params:
         sql: >
           INSERT INTO tbl_skills
-          ([userID], [CourseName], [IsPassed])
-          VALUES (@userID, @CourseName, @IsPassed)
+          ([id],[userID], [CourseName], [IsPassed])
+          VALUES (@ID, @userID, @CourseName, @IsPassed)
 
         input:
           - name: userID           
@@ -20,3 +20,5 @@ patterns:
             value: "{{courseName}}"
           - name: IsPassed
             value: "{{isPassed}}"
+          - name: ID
+            value: "{{id}}"
