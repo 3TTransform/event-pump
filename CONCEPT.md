@@ -6,19 +6,26 @@ Read the events from an event store, cherry pick the events we are interested in
 
 ## Acceptance Criteria
 
-- Must be open source
-- Must be installable over the Internet via script or package manager
-- Must be a cross platform terminal application that can run locally, as well as in the pipeline
+- 🤪 Must be open source 
+- 🤪 Must be installable over the Internet via script or package manager
+- 🤪 Must be a cross platform terminal application that can run locally, as well as in the pipeline
+- The event store can be one of 3 things
+    - 🤪 JSON Files
+    - DynamoDB
+    - OpenSearch
+- The Event Store input should be extendable by plugins
 - Memory usage must not be related to amount of input events, no amount of input events must cause a memory problem.
 - Must be extremely fast, able to deal with millions of input events
-- Must be able to filter events based on similar syntax to event bridge rule definitions
-- Must have at least 3 actions for each event:
-    - Hydrate a service via Event replay (using a custom source and detail-type)
+- 🤪 Must be able to filter events based on similar syntax to event bridge rule definitions
+- Must have at least 2 actions for each event:
     - Hydrate a service via Lambda invoke (mimic event)
     - Hydrate a service via Storage populate (bypass Lambda logic)
-        - DynamoDB
+        - 🤪 DynamoDB
         - OpenSearch
-- Must be able to stagger actions to preserve original event ordering
+        - Postgres
+        - SQL Server
+    - The Hydration of the storage should be managed by Plugins and Extendable
+- 🤪 Must preserve original event ordering
 - Must support dry runs
 - Must be able to produce a report on the run, dry or otherwise
 
