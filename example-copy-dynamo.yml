@@ -1,0 +1,12 @@
+name: Event pump to DynamoDB
+patterns:
+  - name: copyTable
+    rule:
+      noun: table
+      verb: copy
+    action:
+      target: dynamodb
+      params:
+        sourceTableName: Example
+        targetTableName: Example2
+  
