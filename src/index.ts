@@ -25,17 +25,16 @@ export async function processEvents(params: CliParams) {
   } catch (e) {
     console.log("YML file is invalid");
     console.log(e.errors);
-  }  
+  }
 
   if (doc.patterns[0].name == "copyTable") {
     const sTable = doc.patterns[0].action.params.sourceTableName;
-    const tTable = doc.patterns[0].action.params.targetTableName;  
-
-    copyTable(sTable, tTable);
+    const tTable = doc.patterns[0].action.params.targetTableName;
+    const region = doc.patterns[0].action.params.region;
+    copyTable(region, sTable, tTable);
   } else {
-
     // the source property is the file location of a json file, load it into an object
-    const events = require(doc.source);    
+    const events = require(doc.source);
 
     // iterate the events in this file
     for (let event of events) {
@@ -54,15 +53,7 @@ export async function processEvents(params: CliParams) {
           if (pattern.action.target === "dynamodb") {
             if (pattern.action.params) {
               // check that the table in this action exists before we action on it
-              if (
-                !(await dynamodbTableExists(pattern.action.params.TableName)) ||
-                (!(await dynamodbTableExists(
-                  pattern.action.params.sourceTableName
-                )) &&
-                  !(await dynamodbTableExists(
-                    pattern.action.params.targetTableName
-                  )))
-              ) {
+              if (!(await dynamodbTableExists(pattern.action.params.TableName))) {
                 throw new Error(
                   `Table '${pattern.action.params.TableName}' does not exist`
                 );

@@ -1,21 +1,21 @@
 const AWS = require("aws-sdk");
 
-if (process.env.AWS_DEFAULT_REGION) {
-  AWS.config.update({ region: process.env.AWS_DEFAULT_REGION });
-}
+const copyTable = async (region: string, sourceTableName: string, targetTableName: string) => {
+  if (process.env.AWS_DEFAULT_REGION) {
+    AWS.config.update({ region: process.env.AWS_DEFAULT_REGION });
+  }
+  
+  // allow local endpoints by specifying the ENDPOINT_OVERRIDE variable like this:
+  // export ENDPOINT_OVERRIDE=http://localhost:8000
+  let serviceConfigOptions: any = {};
+  if (process.env.ENDPOINT_OVERRIDE) {
+    serviceConfigOptions.endpoint = process.env.ENDPOINT_OVERRIDE;
+    serviceConfigOptions.region = region;
+  }
+  
+  // Initialize the DynamoDB client
+  const dynamodb = new AWS.DynamoDB(serviceConfigOptions);
 
-// allow local endpoints by specifying the ENDPOINT_OVERRIDE variable like this:
-// export ENDPOINT_OVERRIDE=http://localhost:8000
-let serviceConfigOptions: any = {};
-if (process.env.ENDPOINT_OVERRIDE) {
-  serviceConfigOptions.endpoint = process.env.ENDPOINT_OVERRIDE;
-  serviceConfigOptions.region = "eu-west-2";
-}
-
-// Initialize the DynamoDB client
-const dynamodb = new AWS.DynamoDB(serviceConfigOptions);
-
-const copyTable = async (sourceTableName: string, targetTableName: string) => {
   // Retrieve data from the source table
   const scanParams = { TableName: sourceTableName };
   dynamodb.scan(scanParams, function (err, data) {
@@ -35,7 +35,6 @@ const copyTable = async (sourceTableName: string, targetTableName: string) => {
         TableName: targetTableName,
         Item: item,
       };
-      //console.log(PutItemInput)
       await dynamodb.putItem(PutItemInput).promise();
     });
   });

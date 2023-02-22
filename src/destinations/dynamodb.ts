@@ -2,15 +2,18 @@ import { PutItemInput, UpdateItemInput } from "aws-sdk/clients/dynamodb";
 require("dotenv").config();
 
 const AWS = require("aws-sdk");
-if (process.env.AWS_DEFAULT_REGION) {
-  AWS.config.update({ region: process.env.AWS_DEFAULT_REGION });
-}
+// if (process.env.AWS_DEFAULT_REGION) {
+//   AWS.config.update({ region: process.env.AWS_DEFAULT_REGION });
+// }
+
 
 // allow local endpoints by specifying the ENDPOINT_OVERRIDE variable like this:
 // export ENDPOINT_OVERRIDE=http://localhost:8000
+// export REGION_OVERRIDE=eu-west-2
 let serviceConfigOptions: any = {};
 if (process.env.ENDPOINT_OVERRIDE) {
   serviceConfigOptions.endpoint = process.env.ENDPOINT_OVERRIDE;
+  serviceConfigOptions.region = process.env.REGION_OVERRIDE;
 }
 
 const dyn: any = new AWS.DynamoDB(serviceConfigOptions);
