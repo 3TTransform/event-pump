@@ -2,10 +2,9 @@ import { PutItemInput, UpdateItemInput } from "aws-sdk/clients/dynamodb";
 require("dotenv").config();
 
 const AWS = require("aws-sdk");
-// if (process.env.AWS_DEFAULT_REGION) {
-//   AWS.config.update({ region: process.env.AWS_DEFAULT_REGION });
-// }
-
+if (process.env.AWS_DEFAULT_REGION) {
+  AWS.config.update({ region: process.env.AWS_DEFAULT_REGION });
+}
 
 // allow local endpoints by specifying the ENDPOINT_OVERRIDE variable like this:
 // export ENDPOINT_OVERRIDE=http://localhost:8000
@@ -20,8 +19,7 @@ const dyn: any = new AWS.DynamoDB(serviceConfigOptions);
 
 const scanTable = async (tableName: string) => {
   try {
-    const data = await dyn.scan({ TableName: tableName }).promise();
-    console.log(data);
+    return await dyn.scan({ TableName: tableName }).promise();
   } catch (err) {
     console.log(err);
   }
@@ -50,10 +48,15 @@ const dynamodbDelete = async (params: any) => {
   return await dyn.deleteItem(params).promise();
 };
 
+const unmarshal = (data) => {
+  return AWS.DynamoDB.Converter.unmarshall(data);
+};
+
 export {
   dynamodbTableExists,
   dynamodbWrite,
   dynamodbUpdate,
   dynamodbDelete,
   scanTable,
+  unmarshal,
 };

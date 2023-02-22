@@ -6,9 +6,9 @@ const {
   SQL_SERV: sqlServer,
   SQL_USER: sqlUser,
   SQL_PASS: sqlPassword,
+  SQL_DB: sqlDatabase,
 } = process.env;
 
-const sqlDatabase = "EventSource_example";
 const connectionString = `Data Source=${sqlServer};Initial Catalog=${sqlDatabase};User ID=${sqlUser};Password=${sqlPassword};Connection Timeout=1000;TrustServerCertificate=true;`;
 
 const poolPromise = new sql.ConnectionPool(connectionString);

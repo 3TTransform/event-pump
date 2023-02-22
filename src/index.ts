@@ -1,9 +1,10 @@
-//import { UpdateItemInput } from "aws-sdk/clients/dynamodb";
 import {
   dynamodbWrite,
   dynamodbTableExists,
   dynamodbDelete,
   dynamodbUpdate,
+  scanTable,
+  unmarshal,
 } from "./destinations/dynamodb";
 import { copyTable } from "./destinations/copydynamodb";
 import { loadConfig } from "./yaml";
@@ -33,8 +34,21 @@ export async function processEvents(params: CliParams) {
     const region = doc.patterns[0].action.params.region;
     copyTable(region, sTable, tTable);
   } else {
+    let events;
     // the source property is the file location of a json file, load it into an object
-    const events = require(doc.source);
+    if (typeof doc.source === "string") {
+      events = require(doc.source);
+    } else {
+      if (doc.source.type === "dynamodb") {
+        const table = doc.source.table;
+        // get the events from the source dynamo table
+        const unmarshaledEvents = await scanTable(table);
+        events = unmarshaledEvents.Items.map((item) => {
+          return unmarshal(item);
+        });
+      }
+    }
+
 
     // iterate the events in this file
     for (let event of events) {
@@ -51,9 +65,13 @@ export async function processEvents(params: CliParams) {
             console.log("🎫", pattern.action);
           }
           if (pattern.action.target === "dynamodb") {
+
             if (pattern.action.params) {
+
               // check that the table in this action exists before we action on it
-              if (!(await dynamodbTableExists(pattern.action.params.TableName))) {
+              if (
+                !(await dynamodbTableExists(pattern.action.params.TableName))
+              ) {
                 throw new Error(
                   `Table '${pattern.action.params.TableName}' does not exist`
                 );
@@ -61,7 +79,7 @@ export async function processEvents(params: CliParams) {
 
               const thisVerb = pattern.rule.verb;
 
-              if (thisVerb === "create") {
+              if (thisVerb === "create" || thisVerb === "received") {
                 const singleItem = populateEventData(
                   event,
                   pattern.action.params.Item,

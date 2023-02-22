@@ -1,0 +1,23 @@
+name: Event pump to DynamoDB
+source: 
+  type: dynamodb
+  table: Example
+patterns:
+  - name: fileReceived
+    rule:
+      noun: organisation
+      verb: create
+    action:
+      target: sql
+      params:
+        sql: >          
+          INSERT INTO tbl_events
+          ([action], [context])
+          VALUES (@action, @context)
+        input:
+          - name: "action"
+            type: "NVARCHAR(MAX)"
+            value: "{{organisationName}}"
+          - name: "context"
+            type: "NVARCHAR(MAX)"
+            value: "{{noun}}"
