@@ -17,6 +17,9 @@ export interface CliParams {
   yml: string;
 }
 
+/**
+ * @param { object } params - The command line parameters
+ */
 export async function processEvents(params: CliParams) {
   let doc;
 
