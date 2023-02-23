@@ -1,5 +1,5 @@
 name: Event pump to SQL
-source: ../events/roles.seed.json
+source: ../examples/events/roles.seed.json
 patterns:
   - name: roleCreate
     rule:
@@ -8,7 +8,7 @@ patterns:
     action:
       target: sql
       params:
-        sql: >          
+        sql: >
           INSERT INTO tbl_roles
           ([ID], [RoleName], [OrganisationID],[Allow])
           VALUES (@ID, @RoleName, @OrganisationID, @Allow)
@@ -32,7 +32,7 @@ patterns:
     action:
       target: sql
       params:
-        sql: >            
+        sql: >
             UPDATE tbl_roles SET
             {{#removeLastChar}}
               {{#if roleName}}
@@ -66,7 +66,7 @@ patterns:
     action:
       target: sql
       params:
-        sql: >            
+        sql: >
             DELETE FROM tbl_roles
             WHERE [ID] = @ID
         input:

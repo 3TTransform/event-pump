@@ -1,5 +1,5 @@
 name: Build a table for a person's competency
-source: ../events/competency.seed.json
+source: ../examples/events/competency.seed.json
 sourceIDName: id
 patterns:
   - name: create_attestation

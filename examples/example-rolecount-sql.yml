@@ -1,11 +1,11 @@
 name: Build a pie chart based on Organisation data
-source: ../events/identity.seed.json
-patterns: 
-  - name: create_orgs 
+source: ../examples/events/identity.seed.json
+patterns:
+  - name: create_orgs
     rule:
       noun: organisation
       verb: create
-    action: 
+    action:
       target: sql
       params:
         sql: >
@@ -23,11 +23,11 @@ patterns:
           - name: OrgRoleCount
             value: "0"
 
-  - name: increment_roles 
+  - name: increment_roles
     rule:
       noun: role
       verb: create
-    action: 
+    action:
       target: sql
       params:
         sql: >
@@ -37,12 +37,12 @@ patterns:
         input:
           - name: OrgID
             value: "{{organisationId}}"
-        
+
   - name: decrement_roles
     rule:
       noun: role
       verb: delete
-    action: 
+    action:
       target: sql
       params:
         sql: >
@@ -54,4 +54,3 @@ patterns:
             value: "{{organisationId}}"
 
 
-        

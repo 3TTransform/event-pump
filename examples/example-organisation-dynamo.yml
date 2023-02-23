@@ -1,5 +1,5 @@
 name: Event pump to DynamoDB
-source: ../events/organisations.seed.json
+source: ../examples/events/organisations.seed.json
 patterns:
   - name: organisationCreate
     rule:
