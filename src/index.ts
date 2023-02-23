@@ -94,6 +94,7 @@ export async function processEvents(params: CliParams) {
                 params.Item = newItem;
 
                 await dynamodbWrite(params);
+                // TODO: specify id field name in YML
                 console.log(
                   `${singleItem.id} written to ${pattern.action.params.TableName}`
                 );
