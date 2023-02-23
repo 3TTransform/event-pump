@@ -1,11 +1,11 @@
 name: Build a table for a person's competency
 source: ../events/competency.seed.json
-patterns: 
-  - name: create_attestation 
+patterns:
+  - name: create_attestation
     rule:
       noun: attestation
       verb: create
-    action: 
+    action:
       target: sql
       params:
         sql: >
@@ -14,9 +14,9 @@ patterns:
           VALUES (@ID, @userID, @CourseName, @IsPassed)
 
         input:
-          - name: userID           
+          - name: userID
             value: "{{userID}}"
-          - name: CourseName          
+          - name: CourseName
             value: "{{courseName}}"
           - name: IsPassed
             value: "{{isPassed}}"

@@ -21,7 +21,7 @@ export async function processEvents(params: CliParams) {
   let doc;
 
   try {
-    // load and vanidate the config file
+    // load and validate the config file
     doc = await loadConfig(params.yml);
   } catch (e) {
     console.log("YML file is invalid");

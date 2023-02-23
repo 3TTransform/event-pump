@@ -1,4 +1,3 @@
-//import { sql } from "mssql";
 require("dotenv").config();
 const sql = require("mssql");
 
