@@ -52,6 +52,7 @@ export async function processEvents(params: CliParams) {
       }
     }
 
+    const idColumnName = doc.sourceIDName ?? 'id';
 
     // iterate the events in this file
     for (let event of events) {
@@ -159,11 +160,12 @@ export async function processEvents(params: CliParams) {
 
             let replacedSQL = replaceValues(event, sql);
             replacedSQL = replacedSQL.replace(/,\s*WHERE/g, " WHERE");
+
             try {
               await runSQL(replacedSQL, sqlStatement);
-              console.log(`${event.id} ${thisVerb}d`);
+              console.log(`${event[idColumnName]} ${thisVerb}d`);
             } catch (err) {
-              console.log(`${event.id} failed ${err.message}`);
+              console.log(`${event[idColumnName]} failed ${err.message}`);
             }
           }
         }
