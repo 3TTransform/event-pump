@@ -9,6 +9,12 @@ export interface CliParams {
   yml: string;
 }
 
+const actionMap = {
+  ion: ionHydrateOne,
+  dynamodb: dynamodbHydrateOne,
+  mssql: mssqlHydrateOne,
+};
+
 /**
  * @param { object } params - The command line parameters
  */
@@ -19,8 +25,8 @@ export async function processEvents(params: CliParams) {
     // load and validate the config file
     doc = await loadConfig(params.yml);
   } catch (e) {
-    console.log("YML file is invalid");
-    console.log(e.errors);
+    console.error("YML file is invalid");
+    throw e;
   }
   const progressBar = customProgressBar(doc);
 
@@ -38,16 +44,6 @@ export async function processEvents(params: CliParams) {
     // update the progress bar
     progressBar.update(events.indexOf(event));
 
-    for (let pattern of doc.patterns) {
-      // for each key and value in the pattern check for matching pattern in the event
-      let matched = true;
-      for (let [key, value] of Object.entries(pattern.rule)) {
-        if (event[key] !== value) {
-          matched = false;
-        }
-      }
-    }
-
     // iterate the events in this file
     for (let event of events) {
       for (let pattern of doc.patterns) {
@@ -58,14 +54,14 @@ export async function processEvents(params: CliParams) {
             matched = false;
           }
         }
-        if (pattern.action.target === "ion") {
-          ionHydrateOne(pattern, event, isFirstEvent);
-        }
-        if (pattern.action.target === "dynamodb") {
-          dynamodbHydrateOne(pattern, event, isFirstEvent);
-        }
-        if (pattern.action.target === "mssql") {
-          mssqlHydrateOne(pattern, event, isFirstEvent);
+        if (matched) {
+          // if pattern.action.target does not exist in the actionMap, throw an error
+          if (!actionMap[pattern.action?.target]) {
+            throw new Error(
+              `Action target ${pattern.action.target} is not supported`
+            );
+          }
+          actionMap[pattern.action.target](pattern, event, isFirstEvent);
         }
       }
     }

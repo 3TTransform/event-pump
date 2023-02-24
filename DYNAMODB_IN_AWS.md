@@ -9,9 +9,6 @@ https://awscli.amazonaws.com/v2/documentation/api/latest/topic/config-vars.html
 
 We have enabled DynamoDb tables in AWS by allowing the credentials to be used from the terminal, but we are unable to specify the endpoint for the local docker version of DynamoDb like this `--endpoint-url http://localhost:8000` 
 
-in `src/destinations/dynamodb.ts` we need to allow the endpoint to be specified either via an extra command to the CLI application like:
-`event-pump --file example.yml --endpoint http://localhost:8000`
-
 ...or by an environment variable ike `ENDPOINT_OVERRIDE` to be accessed like `process.env.ENDPOINT_OVERRIDE` or similar.
 
 ## 3. Specify The Region

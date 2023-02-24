@@ -5,8 +5,8 @@ import { processEvents } from "./index";
 
 program
   .version("0.0.1")
-  .option("-f, --yml <string>", "YML file to load")
-  .action((props, options) => { 
+  .option("-f, --yml <string>", "YML config file to load")
+  .action((props) => {
     processEvents(props);
   });
 
