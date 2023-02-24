@@ -6,7 +6,7 @@ patterns:
       noun: role
       verb: create
     action:
-      target: sql
+      target: mssql
       params:
         sql: >
           INSERT INTO tbl_roles
@@ -30,7 +30,7 @@ patterns:
       noun: role
       verb: update
     action:
-      target: sql
+      target: mssql
       params:
         sql: >
             UPDATE tbl_roles SET
@@ -64,7 +64,7 @@ patterns:
       noun: role
       verb: delete
     action:
-      target: sql
+      target: mssql
       params:
         sql: >
             DELETE FROM tbl_roles

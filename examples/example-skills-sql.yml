@@ -6,7 +6,7 @@ patterns:
       noun: attestation
       verb: create
     action:
-      target: sql
+      target: mssql
       params:
         sql: >
           INSERT INTO tbl_skills

@@ -6,7 +6,7 @@ patterns:
       noun: organisation
       verb: create
     action:
-      target: sql
+      target: mssql
       params:
         sql: >
           INSERT INTO tbl_orgs_role_count
@@ -28,7 +28,7 @@ patterns:
       noun: role
       verb: create
     action:
-      target: sql
+      target: mssql
       params:
         sql: >
           UPDATE tbl_orgs_role_count SET
@@ -43,7 +43,7 @@ patterns:
       noun: role
       verb: delete
     action:
-      target: sql
+      target: mssql
       params:
         sql: >
           UPDATE tbl_orgs_role_count SET

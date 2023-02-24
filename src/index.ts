@@ -2,7 +2,7 @@ import { dynamodbHydrateOne } from "./connectors/dynamodb";
 import { loadConfig } from "./yaml";
 import { mssqlHydrateOne } from "./connectors/mssql";
 import { ionHydrateOne } from "./connectors/ion";
-import { blankFileIfExists, customProgressBar } from "./utils";
+import { customProgressBar } from "./utils";
 import fs from "fs";
 
 export interface CliParams {
@@ -64,7 +64,7 @@ export async function processEvents(params: CliParams) {
         if (pattern.action.target === "dynamodb") {
           dynamodbHydrateOne(pattern, event, isFirstEvent);
         }
-        if (pattern.action.target === "sql") {
+        if (pattern.action.target === "mssql") {
           mssqlHydrateOne(pattern, event, isFirstEvent);
         }
       }
