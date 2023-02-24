@@ -1,7 +1,7 @@
 import yaml from "js-yaml";
 import fs from "fs";
 
-import { object, array, string, number, date, InferType } from "yup";
+import { object, array, string } from "yup";
 
 const configSchema = object({
   name: string(),

@@ -1,8 +1,9 @@
-import { dynamodbHydrateOne } from "./connectors/dynamodb";
+import { dynamodbHydrateOne, scanTable } from "./destinations/dynamodb";
 import { loadConfig } from "./yaml";
-import { mssqlHydrateOne } from "./connectors/mssql";
-import { ionHydrateOne } from "./connectors/ion";
+import { mssqlHydrateOne } from "./destinations/mssql";
+import { ionHydrateOne } from "./destinations/ion";
 import { customProgressBar } from "./utils";
+
 import fs from "fs";
 
 export interface CliParams {
@@ -30,8 +31,20 @@ export async function processEvents(params: CliParams) {
   }
   const progressBar = customProgressBar(doc);
 
-  // load using fs instead
-  const events = JSON.parse(fs.readFileSync(doc.source, "utf8"));
+  let events;
+
+  if (typeof doc.source === "string") {
+    events = JSON.parse(fs.readFileSync(doc.source, "utf8"));
+  } else {
+    if (doc.source.type === "dynamodb") {
+      const table = doc.source.table;
+      // get the events from the source dynamo table
+      const unmarshaledEvents: any = await scanTable(table);
+      if (unmarshaledEvents && unmarshaledEvents.Items) {
+        events = unmarshaledEvents.Items.map((item) => unmarshal(item));
+      }
+    }
+  }
 
   // so that we can do something only on the first event
   let isFirstEvent = true;
@@ -69,4 +82,7 @@ export async function processEvents(params: CliParams) {
   }
   progressBar.update(events.length);
   progressBar.stop();
+}
+function unmarshal(item: any) {
+  throw new Error("Function not implemented.");
 }
