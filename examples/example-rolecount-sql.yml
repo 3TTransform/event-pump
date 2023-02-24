@@ -1,7 +1,7 @@
 name: Build a pie chart based on Organisation data
-source: ../examples/events/identity.seed.json
-patterns:
-  - name: create_orgs
+source: ./examples/events/identity.seed.json
+patterns: 
+  - name: create_orgs 
     rule:
       noun: organisation
       verb: create

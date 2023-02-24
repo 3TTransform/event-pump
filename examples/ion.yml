@@ -1,0 +1,17 @@
+name: AWS Ion Example
+source: ./examples/events/competency.seed.json
+patterns:
+  - name: ionExample
+    rule:
+      noun: attestation
+      verb: create
+    action:
+      target: ion
+      file: ./output/attestations.ion        
+      shape:
+        pk: "attestation#{{id}}"
+        sk: "attestation"
+        id: "{{id}}"
+        userID: "{{userID}}"
+        courseName: "{{courseName}}"
+        isPassed: "{{isPassed}}"

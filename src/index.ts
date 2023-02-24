@@ -1,17 +1,9 @@
-import {
-  dynamodbWrite,
-  dynamodbTableExists,
-  dynamodbDelete,
-  dynamodbUpdate,
-  scanTable,
-  unmarshal,
-} from "./destinations/dynamodb";
-import { copyTable } from "./destinations/copydynamodb";
+import { dynamodbHydrateOne } from "./connectors/dynamodb";
 import { loadConfig } from "./yaml";
-import { marshall, populateEventData } from "./utils";
-import { runSQL } from "./destinations/mssql";
-
-import { replaceValues } from "./template";
+import { mssqlHydrateOne } from "./connectors/mssql";
+import { ionHydrateOne } from "./connectors/ion";
+import { blankFileIfExists, customProgressBar } from "./utils";
+import fs from "fs";
 
 export interface CliParams {
   yml: string;
@@ -30,29 +22,31 @@ export async function processEvents(params: CliParams) {
     console.log("YML file is invalid");
     console.log(e.errors);
   }
+  const progressBar = customProgressBar(doc);
 
-  if (doc.patterns[0].name == "copyTable") {
-    const sTable = doc.patterns[0].action.params.sourceTableName;
-    const tTable = doc.patterns[0].action.params.targetTableName;
-    const region = doc.patterns[0].action.params.region;
-    copyTable(region, sTable, tTable);
-  } else {
-    let events;
-    // the source property is the file location of a json file, load it into an object
-    if (typeof doc.source === "string") {
-      events = require(doc.source);
-    } else {
-      if (doc.source.type === "dynamodb") {
-        const table = doc.source.table;
-        // get the events from the source dynamo table
-        const unmarshaledEvents = await scanTable(table);
-        events = unmarshaledEvents.Items.map((item) => {
-          return unmarshal(item);
-        });
+  // load using fs instead
+  const events = JSON.parse(fs.readFileSync(doc.source, "utf8"));
+
+  // so that we can do something only on the first event
+  let firstEvent = true;
+
+  // create a progress bar
+  progressBar.start(events.length, 0);
+
+  // iterate the events in this set
+  for (let event of events) {
+    progressBar.update(events.indexOf(event)); // update the progress bar
+    for (let pattern of doc.patterns) {
+      // for each key and value in the pattern check for matching pattern in the event
+      let matched = true;
+      for (let [key, value] of Object.entries(pattern.rule)) {
+        if (event[key] !== value) {
+          matched = false;
+        }
       }
     }
 
-    const idColumnName = doc.sourceIDName ?? 'id';
+    const idColumnName = doc.sourceIDName ?? "id";
 
     // iterate the events in this file
     for (let event of events) {
@@ -64,113 +58,23 @@ export async function processEvents(params: CliParams) {
             matched = false;
           }
         }
-        if (matched) {
-          if (pattern.action.target === "debug") {
-            console.log("🎫", pattern.action);
+        if (pattern.action.target === "ion") {
+          if (firstEvent) {
+            blankFileIfExists(pattern.action.file);
           }
-          if (pattern.action.target === "dynamodb") {
 
-            if (pattern.action.params) {
-
-              // check that the table in this action exists before we action on it
-              if (
-                !(await dynamodbTableExists(pattern.action.params.TableName))
-              ) {
-                throw new Error(
-                  `Table '${pattern.action.params.TableName}' does not exist`
-                );
-              }
-
-              const thisVerb = pattern.rule.verb;
-
-              if (thisVerb === "create" || thisVerb === "received") {
-                const singleItem = populateEventData(
-                  event,
-                  pattern.action.params.Item,
-                  false
-                );
-                const newItem = marshall(singleItem);
-                const params = { ...pattern.action.params };
-                params.Item = newItem;
-
-                await dynamodbWrite(params);
-                // TODO: specify id field name in YML
-                console.log(
-                  `${singleItem.id} written to ${pattern.action.params.TableName}`
-                );
-              }
-              if (thisVerb === "update") {
-                let singleItem = populateEventData(
-                  event,
-                  pattern.action.params.ExpressionAttributeValues
-                );
-
-                // loop over the single item and build the 'UpdateExpression'
-                let updateExpression = "set ";
-                const updateExpArr = [];
-
-                for (let [key, value] of Object.entries(singleItem)) {
-                  updateExpArr.push(`${key.replace(":", "")} = ${key}`);
-                }
-
-                updateExpression += updateExpArr.join(", ");
-
-                const params = { ...pattern.action.params };
-                params.UpdateExpression = updateExpression;
-                params.ExpressionAttributeValues = singleItem;
-
-                params.Key = populateEventData(event, params.Key);
-
-                if (updateExpArr.length > 0) {
-                  await dynamodbUpdate(params);
-                  console.log(
-                    `${params.Key.pk.S} updated to ${pattern.action.params.TableName}`
-                  );
-                } else {
-                  console.log(
-                    `${params.Key.pk.S} not updated to ${pattern.action.params.TableName}`
-                  );
-                }
-              }
-              if (thisVerb === "delete") {
-                const singleItem = populateEventData(
-                  event,
-                  pattern.action.params.Item,
-                  false
-                );
-                const newItem = marshall(singleItem);
-                const params = { ...pattern.action.params };
-                params.Item = newItem;
-
-                params.Key = params.Item;
-                delete params.Item;
-                await dynamodbDelete(params);
-                console.log(
-                  `${params.Key.pk.S} deleted from ${pattern.action.params.TableName}`
-                );
-              }
-            }
-          }
-          if (pattern.action.target === "sql") {
-            let sql = pattern.action.params.sql;
-            let input = pattern.action.params.input;
-
-            const sqlStatement = populateEventData(event, input, false);
-
-            const thisVerb = pattern.rule.verb;
-
-            let replacedSQL = replaceValues(event, sql);
-            replacedSQL = replacedSQL.replace(/,\s*WHERE/g, " WHERE");
-
-            try {
-              await runSQL(replacedSQL, sqlStatement);
-              console.log(`${event[idColumnName]} ${thisVerb}d`);
-            } catch (err) {
-              console.log(`${event[idColumnName]} failed ${err.message}`);
-            }
-          }
+          ionHydrateOne(pattern, event);
+        }
+        if (pattern.action.target === "dynamodb") {
+          dynamodbHydrateOne(pattern, event);
+        }
+        if (pattern.action.target === "sql") {
+          mssqlHydrateOne(pattern, event);
         }
       }
     }
+    firstEvent = false;
   }
+  progressBar.update(events.length);
+  progressBar.stop();
 }
