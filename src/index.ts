@@ -28,14 +28,16 @@ export async function processEvents(params: CliParams) {
   const events = JSON.parse(fs.readFileSync(doc.source, "utf8"));
 
   // so that we can do something only on the first event
-  let firstEvent = true;
+  let isFirstEvent = true;
 
   // create a progress bar
   progressBar.start(events.length, 0);
 
   // iterate the events in this set
   for (let event of events) {
-    progressBar.update(events.indexOf(event)); // update the progress bar
+    // update the progress bar
+    progressBar.update(events.indexOf(event));
+
     for (let pattern of doc.patterns) {
       // for each key and value in the pattern check for matching pattern in the event
       let matched = true;
@@ -45,8 +47,6 @@ export async function processEvents(params: CliParams) {
         }
       }
     }
-
-    const idColumnName = doc.sourceIDName ?? "id";
 
     // iterate the events in this file
     for (let event of events) {
@@ -59,21 +59,17 @@ export async function processEvents(params: CliParams) {
           }
         }
         if (pattern.action.target === "ion") {
-          if (firstEvent) {
-            blankFileIfExists(pattern.action.file);
-          }
-
-          ionHydrateOne(pattern, event);
+          ionHydrateOne(pattern, event, isFirstEvent);
         }
         if (pattern.action.target === "dynamodb") {
-          dynamodbHydrateOne(pattern, event);
+          dynamodbHydrateOne(pattern, event, isFirstEvent);
         }
         if (pattern.action.target === "sql") {
-          mssqlHydrateOne(pattern, event);
+          mssqlHydrateOne(pattern, event, isFirstEvent);
         }
       }
     }
-    firstEvent = false;
+    isFirstEvent = false;
   }
   progressBar.update(events.length);
   progressBar.stop();

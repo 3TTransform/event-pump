@@ -45,7 +45,7 @@ const dynamodbDelete = async (params: any) => {
   return await dyn.deleteItem(params).promise();
 };
 
-const dynamodbHydrateOne = async (pattern: any, event: any) => {
+const dynamodbHydrateOne = async (pattern: any, event: any, isFirstEvent: boolean) => {
   // check that the table in this action exists before we action on it
   if (!(await dynamodbTableExists(pattern.action.params.TableName))) {
     throw new Error(

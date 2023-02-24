@@ -1,4 +1,8 @@
-import { populateEventData, createFolderFromPath } from "../utils";
+import {
+  populateEventData,
+  createFolderFromPath,
+  blankFileIfExists,
+} from "../utils";
 
 const ion = require("ion-js");
 const fs = require("fs");
@@ -13,7 +17,10 @@ const ionWriter = {
   },
 };
 
-const ionHydrateOne = async (pattern: any, event: any) => {
+const ionHydrateOne = async (pattern: any, event: any, firstEvent: boolean) => {
+  if (firstEvent) {
+    blankFileIfExists(pattern.action.file);
+  }
   const singleItem = populateEventData(event, pattern.action.shape, false);
   ionWriter.write(singleItem, pattern.action.file);
 };

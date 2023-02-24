@@ -29,7 +29,11 @@ const runSQL = async (sqlCommand, input) => {
   return result;
 };
 
-export const mssqlHydrateOne = async (pattern, event) => {
+export const mssqlHydrateOne = async (
+  pattern: any,
+  event: any,
+  isFirstEvent: boolean
+) => {
   let sql = pattern.action.params.sql;
   let input = pattern.action.params.input;
 
