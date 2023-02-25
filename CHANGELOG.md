@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added [SQL Server](https://www.microsoft.com/en-gb/sql-server/sql-server-downloads) destination
 - Added [DynamoDb](https://aws.amazon.com/dynamodb/) event-source
 - Added [AWS Ion](https://amazon-ion.github.io/ion-docs/) destination
+- Added a progress bar
 
 
 
