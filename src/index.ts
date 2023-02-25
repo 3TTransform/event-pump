@@ -6,8 +6,11 @@ const ddb = new dynamo();
 import { loadConfig } from "./yaml";
 import { mssqlHydrateOne } from "./destinations/mssql";
 import { ionHydrateOne } from "./destinations/ion";
-import { customProgressBar } from "./utils";
+import { customProgressBar, parseCSV } from "./utils";
 import fs from "fs";
+
+// to parse csv files
+import { parse } from "@fast-csv/parse";
 
 export interface CliParams {
   yml: string;
@@ -28,19 +31,39 @@ export async function processEvents(params: CliParams) {
   }
   const progressBar = customProgressBar(doc);
 
-  let events;
+  let events = [];
 
-  if (typeof doc.source === "string") {
-    events = JSON.parse(fs.readFileSync(doc.source, "utf8"));
-  } else {
-    if (doc.source.type === "dynamodb") {
+  if (!doc.source) {
+    throw new Error("No source defined");
+  }
+  switch (doc.source.type) {
+    case "dynamodb":
+    // get the events from the source dynamo table
+    case "json":
+      events = JSON.parse(fs.readFileSync(doc.source.file, "utf8"));
+      break;
+    case "csv":
+      const csvData = fs.readFileSync(doc.source.file, "utf8");
+      const rows = csvData.split("\n");
+      const headers = rows[0];
+      rows.forEach((row, index) => {
+        if (index === 0) {
+          return;
+        }
+        const parsedData = parseCSV(headers, row);
+        events.push(parsedData);
+      });
+      break;
+    case "dynamodb":
       const table = doc.source.table;
       // get the events from the source dynamo table
       const unmarshaledEvents: any = await ddb.scanTable(table);
       if (unmarshaledEvents && unmarshaledEvents.Items) {
         events = unmarshaledEvents.Items.map((item) => unmarshal(item));
       }
-    }
+      break;
+    default:
+      throw new Error(`Source ${doc.source.type} is not supported`);
   }
 
   // so that we can do something only on the first event

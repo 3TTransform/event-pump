@@ -1,5 +1,7 @@
 name: Event pump to DynamoDB
-source: ./examples/events/roles.seed.json
+source: 
+  type: json
+  file: ./examples/events/roles.seed.json
 patterns:
   - name: roleCreate
     rule:

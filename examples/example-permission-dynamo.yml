@@ -1,5 +1,7 @@
 name: Event pump to DynamoDB
-source: ./examples/events/permissions.seed.json
+source: 
+  type: json
+  file: ./examples/events/permissions.seed.json
 patterns:
   - name: permissionCreate
     rule:

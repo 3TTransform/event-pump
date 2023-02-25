@@ -1,5 +1,7 @@
 name: Build a table for a person's competency
-source: ./examples/events/competency.seed.json
+source: 
+  type: json
+  file: ./examples/events/competency.seed.json
 patterns: 
   - name: create_attestation 
     rule:

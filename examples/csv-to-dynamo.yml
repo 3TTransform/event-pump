@@ -1,0 +1,81 @@
+name: AWS Ion Example
+source:
+  type: csv
+  file: ./examples/events/pets.seed.csv
+patterns:
+  - name: petCreate
+    rule:
+      noun: pets
+      verb: create
+    action:
+      target: dynamodb
+      params:
+        TableName: Example
+        Item:
+          pk: "pets#{{id}}"
+          sk: "pets"
+          id: "{{id}}"
+          myName: "{{name}}"
+          ownerId: "{{owner}}"
+  - name: petUpdate
+    rule:
+      noun: pets
+      verb: update
+    action:
+      target: dynamodb
+      params:
+        TableName: Example
+        Key:
+          pk: "pets#{{id}}"
+          sk: "pets"
+        ExpressionAttributeValues:
+          ":myName": "{{name}}"
+  - name: petDelete
+    rule:
+      noun: pets
+      verb: delete
+    action:
+      target: dynamodb
+      params:
+        TableName: Example
+        Item:
+          pk: "pets#{{id}}"
+          sk: "pets"
+
+  - name: ownerCreate
+    rule:
+      noun: users
+      verb: create
+    action:
+      target: dynamodb
+      params:
+        TableName: Example
+        Item:
+          pk: "users#{{id}}"
+          sk: "users"
+          id: "{{id}}"
+          myName: "{{name}}"
+  - name: ownerUpdate
+    rule:
+      noun: users
+      verb: update
+    action:
+      target: dynamodb
+      params:
+        TableName: Example
+        Key:
+          pk: "users#{{id}}"
+          sk: "users"
+        ExpressionAttributeValues:
+          ":myName": "{{name}}"
+  - name: ownerDelete
+    rule:
+      noun: users
+      verb: delete
+    action:
+      target: dynamodb
+      params:
+        TableName: Example
+        Item:
+          pk: "users#{{id}}"
+          sk: "users"          

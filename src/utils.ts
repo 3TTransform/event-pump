@@ -97,6 +97,22 @@ const customProgressBar = (doc: any) => {
   });
 };
 
+function parseCSV(headers, row) {
+  // Split the headers and row into arrays
+  const headerArr = headers.split(",");
+  const rowArr = row.split(",");
+
+  // Map the row data to the corresponding headers and create a new object
+  const resultObj = {};
+  headerArr.forEach((header, index) => {
+    if (rowArr[index]) {
+      resultObj[header.trim()] = rowArr[index].trim();
+    }
+  });
+
+  return resultObj;
+}
+
 export {
   populateEventData,
   marshall,
@@ -104,4 +120,5 @@ export {
   createFolderFromPath,
   blankFileIfExists,
   customProgressBar,
+  parseCSV,
 };
