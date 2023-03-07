@@ -1,0 +1,41 @@
+name: Event pump to DynamoDB
+source: 
+  type: json
+  file: ./examples/events/licensing.seed.json
+patterns:
+  - name: machineCreate
+    rule:
+      noun: machine
+      verb: create
+    action:
+      target: dynamodb
+      params:
+        TableName: Example
+        Item:
+          pk: MACHINE#{{orgID}}#{{machineID}}
+          sk: MACHINE
+  - name: productCreate
+    rule:
+      noun: product
+      verb: create
+    action:
+      target: dynamodb
+      params:
+        TableName: Example
+        Item:
+          pk: PRODUCT#{{orgID}}#{{productID}}
+          sk: PRODUCT
+          productName: "{{productName}}"
+  - name: productAssociate
+    rule:
+      noun: productMachine
+      verb: create
+    action:
+      target: dynamodb
+      params:
+        TableName: Example
+        Item:
+          pk: MP#{{machineID}}
+          sk: MP#{{productID}}
+          productName: "{{productName}}"
+          expiryDate: "{{expiryDate}}"

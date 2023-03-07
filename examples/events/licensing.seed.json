@@ -1,0 +1,51 @@
+[
+    {
+        "noun" : "machine",
+        "verb" : "create",
+        "machineID" : "ABD",
+        "orgID" : "DANTECH"
+    },
+    {
+        "noun" : "machine",
+        "verb" : "create",
+        "machineID" : "XYZ",
+        "orgID" : "DANTECH"
+    },
+    {
+        "noun" : "product",
+        "verb" : "create",
+        "productID" : "123",
+        "orgID" : "DANTECH",
+        "productName" : "Training Hamsters"
+    },
+    {
+        "noun" : "product",
+        "verb" : "create",
+        "productID" : "321",
+        "orgID" : "DANTECH",
+        "productName" : "Herding Cats"
+    },
+    {
+        "noun" : "productMachine",
+        "verb" : "create",
+        "productID" : "123",
+        "machineID" : "ABD",
+        "productName" : "Training Hamsters",
+        "expiryDate" : 1678602978
+    },
+    {
+        "noun" : "productMachine",
+        "verb" : "create",
+        "productID" : "321",
+        "machineID" : "ABD",
+        "productName" : "Herding Cats",
+        "expiryDate" : 1677602978
+    },
+    {
+        "noun" : "product",
+        "verb" : "create",
+        "productID" : "321",
+        "orgID" : "LEETECH",
+        "productName" : "Herding Cats"
+    }
+]

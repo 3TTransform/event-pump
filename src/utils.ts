@@ -42,6 +42,7 @@ const createFolderFromPath = (filename: string) => {
   // get the folder from pattern.action.file
   const folder = filename.substring(0, filename.lastIndexOf("/"));
   // check if the folder exists, if not create it
+
   const folderExists = fs.existsSync(folder);
   if (!folderExists) {
     fs.mkdirSync(folder, { recursive: true });
