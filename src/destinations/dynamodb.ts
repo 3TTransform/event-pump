@@ -1,6 +1,7 @@
 import {
   DeleteItemInput,
   PutItemInput,
+  GetItemInput,
   UpdateItemInput,
 } from "aws-sdk/clients/dynamodb";
 import { marshall, populateEventData } from "../utils";
@@ -25,14 +26,16 @@ class dyanmo {
 
     this.dyn = new AWS.DynamoDB(serviceConfigOptions);
   }
-  scanTable = async (tableName: string) => {
+  scanTable = async (tableName: string, shouldLog: boolean = false) => {
     try {
       const data = await this.dyn.scan({ TableName: tableName }).promise();
-      console.log(data);
+      if (shouldLog) console.log(data);
+      return data;
     } catch (err) {
       console.log(err);
     }
   };
+
   dynamodbTableExists = async (tableName: string) => {
     const data = await this.dyn.listTables().promise();
     if (data.TableNames) {
@@ -44,6 +47,9 @@ class dyanmo {
   };
   dynamodbWrite = async (params: PutItemInput) => {
     return await this.dyn.putItem(params).promise();
+  };
+  dynamodbGet = async (params: GetItemInput) => {
+    return await this.dyn.getItem(params).promise();
   };
   dynamodbUpdate = async (params: UpdateItemInput) => {
     return await this.dyn.updateItem(params).promise();
@@ -76,6 +82,18 @@ class dyanmo {
       params.Item = newItem;
 
       await this.dynamodbWrite(params);
+    }
+    if (thisVerb === "get") {
+      const singleItem = populateEventData(
+        event,
+        pattern.action.params.Item,
+        false
+      );
+      const newItem = marshall(singleItem);
+      const params = { ...pattern.action.params };
+      params.Item = newItem;
+
+      await this.dynamodbGet(params);
     }
     if (thisVerb === "update") {
       let singleItem = populateEventData(
