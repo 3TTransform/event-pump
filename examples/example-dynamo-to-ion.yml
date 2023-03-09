@@ -1,0 +1,14 @@
+name: DynamoDB to Ion
+source: 
+  type: dynamodb
+  table: Example
+patterns:
+  - name: fileReceivedIon
+    rule:
+      sk: organisation
+    action:
+      target: ion
+      file: ./output/organisations.ion        
+      shape:
+        pk: "org#{{pk}}"
+        organisationName: "{{organisationName}}"   

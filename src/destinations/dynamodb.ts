@@ -4,7 +4,7 @@ import {
   GetItemInput,
   UpdateItemInput,
 } from "aws-sdk/clients/dynamodb";
-import { marshall, populateEventData } from "../utils";
+import { populateEventData } from "../utils";
 
 const AWS = require("aws-sdk");
 if (!process.env.AWS_DEFAULT_REGION) {
@@ -26,14 +26,16 @@ class dyanmo {
 
     this.dyn = new AWS.DynamoDB(serviceConfigOptions);
   }
+  marshal = (item) => {
+    return AWS.DynamoDB.Converter.marshal(item);
+  };
+  unmarshal = (item) => {
+    return AWS.DynamoDB.Converter.unmarshall(item);
+  };
   scanTable = async (tableName: string, shouldLog: boolean = false) => {
-    try {
-      const data = await this.dyn.scan({ TableName: tableName }).promise();
-      if (shouldLog) console.log(data);
-      return data;
-    } catch (err) {
-      console.log(err);
-    }
+    const data = await this.dyn.scan({ TableName: tableName }).promise();
+    if (shouldLog) console.log(data);
+    return data;
   };
 
   dynamodbTableExists = async (tableName: string) => {
@@ -74,10 +76,9 @@ class dyanmo {
     if (thisVerb === "create") {
       const singleItem = populateEventData(
         event,
-        pattern.action.params.Item,
-        false
+        pattern.action.params.Item
       );
-      const newItem = marshall(singleItem);
+      const newItem = this.marshal(singleItem);
       const params = { ...pattern.action.params };
       params.Item = newItem;
 
@@ -86,10 +87,9 @@ class dyanmo {
     if (thisVerb === "get") {
       const singleItem = populateEventData(
         event,
-        pattern.action.params.Item,
-        false
+        pattern.action.params.Item
       );
-      const newItem = marshall(singleItem);
+      const newItem = this.marshal(singleItem);
       const params = { ...pattern.action.params };
       params.Item = newItem;
 
@@ -124,10 +124,9 @@ class dyanmo {
     if (thisVerb === "delete") {
       const singleItem = populateEventData(
         event,
-        pattern.action.params.Item,
-        false
+        pattern.action.params.Item
       );
-      const newItem = marshall(singleItem);
+      const newItem = this.marshal(singleItem);
       const params = { ...pattern.action.params };
       params.Item = newItem;
 

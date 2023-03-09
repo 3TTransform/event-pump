@@ -1,12 +1,11 @@
-name: Event pump to DynamoDB
+name: DynamoDb to SQL
 source: 
   type: dynamodb
   table: Example
 patterns:
   - name: fileReceived
     rule:
-      noun: organisation
-      verb: create
+      sk: organisation
     action:
       target: mssql
       params:
@@ -20,4 +19,4 @@ patterns:
             value: "{{organisationName}}"
           - name: "context"
             type: "NVARCHAR(MAX)"
-            value: "{{noun}}"
+            value: "{{sk}}"

@@ -13,27 +13,36 @@ const ddb = new dynamo();
 */
 
 // scanTable
-test("scanTable", async (t) => {
+test("🍏 scanTable", async (t) => {
   const table = "Example";
   const result = await ddb.scanTable(table);
   t.truthy(result);
 });
 
+test("🍎 scanTable (not exists)", async (t) => {
+  await t.throwsAsync(
+    async () => {
+      await ddb.scanTable("Example2");
+    },
+    { message: "Requested resource not found" }
+  );
+});
+
 // dynamodbTableExists
-test("dynamodbTableExists (exists)", async (t) => {
+test("🍏 dynamodbTableExists (exists)", async (t) => {
   const table = "Example";
   const result = await ddb.dynamodbTableExists(table);
   t.true(result);
 });
 
-test("dynamodbTableExists (Does not exist)", async (t) => {
+test("🍏 dynamodbTableExists (Does not exist)", async (t) => {
   const table = "Example2";
   const result = await ddb.dynamodbTableExists(table);
   t.false(result);
 });
 
 // dynamodb CRUD
-test("dynamodbCRUD", async (t) => {
+test("🍏 dynamodbCRUD", async (t) => {
   // dynamodbWrite
   const params = {
     TableName: "Example",
@@ -45,7 +54,7 @@ test("dynamodbCRUD", async (t) => {
     },
   };
   const result = await ddb.dynamodbWrite(params);
-	t.assert(Object.entries(result).length === 0);
+  t.assert(Object.entries(result).length === 0);
 
   // dynamodbGet
   const params2 = {
@@ -58,23 +67,23 @@ test("dynamodbCRUD", async (t) => {
   const result2 = await ddb.dynamodbGet(params2);
   t.assert(result2.Item.organisationName.S, "Test Organisation");
 
-	// dynamodbUpdate
+  // dynamodbUpdate
   const params3 = {
     TableName: "Example",
     Key: {
       pk: { S: "organisation#1234" },
       sk: { S: "organisation" },
     },
-		UpdateExpression: 'SET id=:id, organisationName=:organisationName',
-		ExpressionAttributeValues: {
-			":id": { S: '1234'},
-			":organisationName": { S: 'Test Organisation 3'}
-		}
+    UpdateExpression: "SET id=:id, organisationName=:organisationName",
+    ExpressionAttributeValues: {
+      ":id": { S: "1234" },
+      ":organisationName": { S: "Test Organisation 3" },
+    },
   };
   const result3 = await ddb.dynamodbUpdate(params3);
-	t.assert(Object.entries(result3).length === 0);
+  t.assert(Object.entries(result3).length === 0);
 
-	// dynamodbGet
+  // dynamodbGet
   const params4 = {
     TableName: "Example",
     Key: {
@@ -94,9 +103,9 @@ test("dynamodbCRUD", async (t) => {
     },
   };
   const result5 = await ddb.dynamodbDelete(params5);
-	t.assert(Object.entries(result5).length === 0);
+  t.assert(Object.entries(result5).length === 0);
 
-	// dynamodbGet
+  // dynamodbGet
   const params6 = {
     TableName: "Example",
     Key: {

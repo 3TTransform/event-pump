@@ -10,7 +10,7 @@ import { customProgressBar, parseCSV } from "./utils";
 import fs from "fs";
 
 // to parse csv files
-import { parse } from "@fast-csv/parse";
+//import { parse } from "@fast-csv/parse";
 
 export interface CliParams {
   yml: string;
@@ -37,8 +37,6 @@ export async function processEvents(params: CliParams) {
     throw new Error("No source defined");
   }
   switch (doc.source.type) {
-    case "dynamodb":
-    // get the events from the source dynamo table
     case "json":
       events = JSON.parse(fs.readFileSync(doc.source.file, "utf8"));
       break;
@@ -59,7 +57,7 @@ export async function processEvents(params: CliParams) {
       // get the events from the source dynamo table
       const unmarshaledEvents: any = await ddb.scanTable(table);
       if (unmarshaledEvents && unmarshaledEvents.Items) {
-        events = unmarshaledEvents.Items.map((item) => unmarshal(item));
+        events = unmarshaledEvents.Items.map((item) => ddb.unmarshal(item));
       }
       break;
     default:
@@ -91,6 +89,7 @@ export async function processEvents(params: CliParams) {
         switch (pattern.action.target) {
           case "ion":
             await ionHydrateOne(pattern, event, isFirstEvent);
+            console.log(event);
             break;
           case "dynamodb":
             await ddb.dynamodbHydrateOne(pattern, event, isFirstEvent);
@@ -109,7 +108,4 @@ export async function processEvents(params: CliParams) {
   }
   progressBar.update(events.length);
   progressBar.stop();
-}
-function unmarshal(item: any) {
-  throw new Error("Function not implemented.");
 }

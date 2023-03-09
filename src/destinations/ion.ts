@@ -17,7 +17,7 @@ const ionHydrateOne = async (
   }
 
   // replace the values in the event with the values from the pattern
-  const singleItem = populateEventData(event, pattern.action.shape, false);
+  const singleItem = populateEventData(event, pattern.action.shape);
 
   // convert to ion
   const ionData = ion.load(JSON.stringify(singleItem));

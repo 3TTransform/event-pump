@@ -1,7 +1,7 @@
 import test from "ava";
 import fs from "fs";
 
-import { getProp, marshall, populateEventData,  createFolderFromPath,  blankFileIfExists, customProgressBar,  parseCSV } from "../utils";
+import { getProp, populateEventData,  createFolderFromPath,  blankFileIfExists, customProgressBar,  parseCSV } from "../utils";
 
 test("getProp", async (t) => {
   const deepObj = {
@@ -35,25 +35,6 @@ test("getProp", async (t) => {
   cases.forEach((test) => {
     t.true(test.expected === getProp(test.obj, test.path));
   });
-});
-
-test("marshall", async (t) => {
-  let result = marshall({ cake: { name: "chocolate", price: 10 } });
-  t.is(
-    JSON.stringify(result),
-    JSON.stringify({
-      cake: {
-        M: {
-          name: {
-            S: "chocolate",
-          },
-          price: {
-            N: "10",
-          },
-        },
-      },
-    })
-  );
 });
 
 test("populateEventData", async (t) => {

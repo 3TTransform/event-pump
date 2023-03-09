@@ -37,15 +37,15 @@ export const mssqlHydrateOne = async (
   let sql = pattern.action.params.sql;
   let input = pattern.action.params.input;
 
-  const sqlStatement = populateEventData(event, input, false);
+  const sqlStatement = populateEventData(event, input);
 
-  const thisVerb = pattern.rule.verb;
+  //const thisVerb = pattern.rule.verb;
 
   let replacedSQL = replaceValues(event, sql);
   replacedSQL = replacedSQL.replace(/,\s*WHERE/g, " WHERE");
   try {
     await runSQL(replacedSQL, sqlStatement);
-    console.log(`${event.id} ${thisVerb}d`);
+    //console.log(`${event.id} ${thisVerb}d`);
   } catch (err) {
     console.log(`${event.id} failed ${err.message}`);
   }
