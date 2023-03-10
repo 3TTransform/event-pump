@@ -74,6 +74,7 @@ class dyanmo {
     const thisVerb = pattern.rule.verb;
 
     if (thisVerb === "create") {
+      // TODO: Check this still works after populateEventData was changed
       const singleItem = populateEventData(
         event,
         pattern.action.params.Item
@@ -85,6 +86,7 @@ class dyanmo {
       await this.dynamodbWrite(params);
     }
     if (thisVerb === "get") {
+      // TODO: Check this still works after populateEventData was changed
       const singleItem = populateEventData(
         event,
         pattern.action.params.Item
@@ -96,6 +98,7 @@ class dyanmo {
       await this.dynamodbGet(params);
     }
     if (thisVerb === "update") {
+      // TODO: Check this still works after populateEventData was changed
       let singleItem = populateEventData(
         event,
         pattern.action.params.ExpressionAttributeValues
@@ -115,6 +118,7 @@ class dyanmo {
       params.UpdateExpression = updateExpression;
       params.ExpressionAttributeValues = singleItem;
 
+  // TODO: Check this still works after populateEventData was changed
       params.Key = populateEventData(event, params.Key);
 
       if (updateExpArr.length > 0) {
@@ -122,6 +126,7 @@ class dyanmo {
       }
     }
     if (thisVerb === "delete") {
+      // TODO: Check this still works after populateEventData was changed
       const singleItem = populateEventData(
         event,
         pattern.action.params.Item

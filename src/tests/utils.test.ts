@@ -1,9 +1,9 @@
 import test from "ava";
 import fs from "fs";
 
-import { getProp, populateEventData,  createFolderFromPath,  blankFileIfExists, customProgressBar,  parseCSV } from "../utils";
+import { getProp, populateEventData, createFolderFromPath, blankFileIfExists, customProgressBar, parseCSV } from "../utils";
 
-test("getProp", async (t) => {
+test("🍏 getProp", async (t) => {
   const deepObj = {
     a: 1,
     b: {
@@ -37,29 +37,47 @@ test("getProp", async (t) => {
   });
 });
 
-test("populateEventData", async (t) => {
+
+test("🍎 getProp", async (t) => {
+  const cases = [
+    { obj: null, path: "b.d.f.g", expected: "Cannot read properties of null (reading \'b\')" },
+    { obj: { cake: { name: "chocolate", price: 10 } }, path: null, expected: "Cannot read properties of null (reading \'split\')" },
+    { obj: null, path: null, expected: "Cannot read properties of null (reading \'split\')" },
+    { obj: undefined, path: "b.d.f.g", expected: "Cannot read properties of undefined (reading \'b\')" },
+    { obj: { cake: { name: "chocolate", price: 10 } }, path: undefined, expected: "Cannot read properties of undefined (reading \'split\')" },
+    { obj: undefined, path: undefined, expected: "Cannot read properties of undefined (reading \'split\')" },
+  ];
+  cases.forEach((test) => {
+    t.throws(() => {
+      getProp(test.obj, test.path);
+    },
+      { instanceOf: TypeError, message: test.expected });
+  });
+});
+
+test("🍏 populateEventData", async (t) => {
   let result = populateEventData(
-    { cake: { name: "{{cakeType}}", price: "{{cakePrice}}" } },
-    {
-      cakeType: "Cheese",
-      cakePrice: 50,
-    }
+    { cakeType: "Cheese",  cakePrice: 50 },
+    { cake: { name: "{{cakeType}}", price: "{{cakePrice}}" } }
   );
   t.is(
     JSON.stringify(result),
-    JSON.stringify({ cakeType: { S: "Cheese" }, cakePrice: { N: "50" } })
+    JSON.stringify({ cake: { name: "Cheese", price: "50" } })
   );
 });
 
-test("createFolderFromPath", async (t) => {
+
+
+
+test("🍏 createFolderFromPath", async (t) => {
   const filename = "isthistheresult/stupidFileName.txt";
   createFolderFromPath(filename);
   const folder = filename.substring(0, filename.lastIndexOf("/"));
-  t.true( fs.existsSync(folder));
+  t.true(fs.existsSync(folder));
   fs.rmdirSync(folder);
 });
 
-test("blankFileIfExists", async (t) => {
+test("🍏 blankFileIfExists", async (t) => {
   const filename = "testFile.txt";
   fs.writeFileSync(filename, "test text");
   blankFileIfExists(filename);
@@ -69,14 +87,14 @@ test("blankFileIfExists", async (t) => {
   fs.unlinkSync(filename);
 });
 
-test("customProgressBar", async (t) => {
+test("🍏 customProgressBar", async (t) => {
   const result = customProgressBar({
-    name: "test"    
+    name: "test"
   });
   t.truthy(result);
 });
-   
-test("parseCSV", async (t) => {
+
+test("🍏 parseCSV", async (t) => {
   const headerArr = "a,b,c,d,e,f";
   const rowArr = "1,2,3,4,5,6"
   const result = parseCSV(headerArr, rowArr);

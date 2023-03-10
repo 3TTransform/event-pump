@@ -37,6 +37,7 @@ export const mssqlHydrateOne = async (
   let sql = pattern.action.params.sql;
   let input = pattern.action.params.input;
 
+  // TODO: Check this still works after populateEventData was changed
   const sqlStatement = populateEventData(event, input);
 
   //const thisVerb = pattern.rule.verb;
