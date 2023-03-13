@@ -27,7 +27,7 @@ class dyanmo {
     this.dyn = new AWS.DynamoDB(serviceConfigOptions);
   }
   marshal = (item) => {
-    return AWS.DynamoDB.Converter.marshal(item);
+    return AWS.DynamoDB.Converter.marshall(item);
   };
   unmarshal = (item) => {
     return AWS.DynamoDB.Converter.unmarshall(item);

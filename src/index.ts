@@ -89,7 +89,6 @@ export async function processEvents(params: CliParams) {
         switch (pattern.action.target) {
           case "ion":
             await ionHydrateOne(pattern, event, isFirstEvent);
-            console.log(event);
             break;
           case "dynamodb":
             await ddb.dynamodbHydrateOne(pattern, event, isFirstEvent);

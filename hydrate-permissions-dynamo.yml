@@ -1,0 +1,18 @@
+name: DynamoDb Local Permissions Example
+source: 
+  type: json
+  file: ./example.json
+patterns:
+  - name: dynamoExample
+    rule:
+      noun: permission
+      verb: create
+    action:
+      target: dynamodb
+      params:
+        TableName: Example
+        Item:
+          pk: "permissions#{{id}}"
+          sk: "permissions"
+          id: "{{id}}"
+          name: "{{name}}"

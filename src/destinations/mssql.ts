@@ -46,7 +46,6 @@ export const mssqlHydrateOne = async (
   replacedSQL = replacedSQL.replace(/,\s*WHERE/g, " WHERE");
   try {
     await runSQL(replacedSQL, sqlStatement);
-    //console.log(`${event.id} ${thisVerb}d`);
   } catch (err) {
     console.log(`${event.id} failed ${err.message}`);
   }
