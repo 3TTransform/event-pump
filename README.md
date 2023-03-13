@@ -12,69 +12,18 @@ npm install event-pump -g
 event-pump --version
 ```
 
-## Quick Start Example
+# Docs
 
-```sh
-touch example.json
-```
-Paste this:
+- 🎉 [Configuration YML](docs/config.md)
+- 🎉 [Event Sources](docs/sources.md)
+- 🎉 [Event Destinations](docs/destinations.md)
 
-```json
-[  
-  {
-    "verb": "create",
-    "noun": "permission",
-    "id": "de5cd33e-2c96-44c2-ae08-25a9e842a611",
-    "name": "Add"
-  },
-  {
-    "verb": "create",
-    "noun": "permission",
-    "id": "de5cd33e-2c96-44c2-ae08-25a9e842a612",
-    "name": "Read"
-  },
-  {
-    "verb": "create",
-    "noun": "permission",
-    "id": "de5cd33e-2c96-44c2-ae08-25a9e842a606",
-    "name": "Remove"
-  }
-]
-```
+# Examples
 
-```sh
-touch hydrate-permissions.yml
-```
+- 🎁 [AWS Ion Example](docs/example-awsion.md)
+- 🎁 [DynamoDb Example](docs/example-dynamodb.md)
 
-Paste this:
-```yml
-name: AWS Ion Permissions Example
-source: 
-  type: json
-  file: ./example.json
-patterns:
-  - name: ionExample
-    rule:
-      noun: permission
-      verb: create
-    action:
-      target: ion
-      file: ./permissons.ion        
-      shape:
-        pk: "attestation#{{id}}"
-        sk: "attestation"
-        id: "{{id}}"
-        name: "{{name}}"
-```
-
-Now hydrate your Ion from your JSON:
-
-```sh
-event-pump hydrate-permissions.yml
-```
-
-
-## Software Used
+## Contributing
 
 - [TypeScript](https://www.typescriptlang.org/), for writing good code
 - [Ava](https://www.npmjs.com/package/ava), for writing good tests
@@ -83,41 +32,43 @@ event-pump hydrate-permissions.yml
 
 Your application will be installable from `npm` or by sharing your native executables.
 
-## Develop
-
 ### **dev**
-
-`npm run dev`
-
+```sh
+npm run dev
+```
 Runs the CLI application.
 
 You can pass arguments to your application by running `npm run dev -- --your-argument`. The extra `--` is so that your arguments are passed to your CLI application, and not `npm`.
 
 ### **clean**
 
-`npm run clean`
+```sh
+npm run clean
+```
 
 Removes any built code and any built executables.
 
 ### **build**
-
-`npm run build`
-
+```sh
+npm run build
+```
 Cleans, then builds the TypeScript code.
 
 Your built code will be in the `./dist/` directory.
 
 ### **test**
 
-`npm run test`
+```sh
+npm run test
+```
 
 Cleans, then builds, and tests the built code.
 
 ### **bundle**
-
-`npm run bundle`
-
+```sh
+npm run bundle
+```
 Cleans, then builds, then bundles into native executables for Windows, Mac, and Linux.
 
-Your shareable executables will be in the `./exec/` directory.
+> 💡 Your shareable executables will be in the `./exec/` directory.
 
