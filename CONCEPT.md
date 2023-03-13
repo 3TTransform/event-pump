@@ -3,43 +3,6 @@
 ## Goal
 
 Read the events from an event store, cherry pick the events we are interested in to update a data store.
-
-## Acceptance Criteria
-
-- 🤪 Must be open source 
-- 🤪 Must be installable over the Internet via script or package manager
-- 🤪 Must be a cross platform terminal application that can run locally, as well as in the pipeline
-- The event store can be one of 3 things
-    - 🤪 JSON Files
-    - DynamoDB
-    - OpenSearch
-- The Event Store input should be extendable by plugins
-- Memory usage must not be related to amount of input events, no amount of input events must cause a memory problem.
-- Must be extremely fast, able to deal with millions of input events
-- 🤪 Must be able to filter events based on similar syntax to event bridge rule definitions
-- Must have at least 2 actions for each event:
-    - Hydrate a service via Lambda invoke (mimic event)
-    - Hydrate a service via Storage populate (bypass Lambda logic)
-        - 🤪 DynamoDB
-        - OpenSearch
-        - Postgres
-        - SQL Server
-    - The Hydration of the storage should be managed by Plugins and Extendable
-- 🤪 Must preserve original event ordering
-- Must support dry runs
-- Must be able to produce a report on the run, dry or otherwise
-
-## Why Open Source?
-
-There are several reasons why a for-profit SaaS (Software as a Service) company might choose to make some of its tooling open source:
-
-0. **Paying back our debt**: Most of the software we use is open source. Toolsing, browsers, javasscrip libraries. It's time to pay back some of that by building and contributing to open source projects.
-1. **Attracting developers**: Open sourcing tooling can be a way for a SaaS company to attract developers who are interested in using and contributing to the tool. This can lead to a larger and more active developer community around the tool, which can be beneficial for the company.
-2. **Improving the tool**: By making the tool open source, the company can allow others to contribute to its development and improvement. This can lead to a better and more robust tool, which can be beneficial for the company and its customers.
-3. **Building trust and transparency**: Open sourcing tooling can help a SaaS company build trust with its customers and the broader community. It allows others to see how the tool works and to verify that it is secure and reliable.
-4. **Reducing costs**: Depending on the specific circumstances, open sourcing tooling can potentially reduce costs for the SaaS company. For example, if the company can leverage contributions from the community to develop and maintain the tool, it may not have to allocate as many resources to this effort.
-5. **Promoting the company's brand**: Open sourcing tooling can also be a way for a SaaS company to promote its brand and reputation. It can demonstrate the company's commitment to open source values and help it stand out in a competitive market.
-
 ## Background
 
 At it's core, this terminal application:
