@@ -1,9 +1,9 @@
 {
-  "name": "event-pump-cli",
-  "private": true,
+  "name": "@3t-transform/event-pump",
+  "private": false,
   "version": "1.0.0",
   "description": "A tool to seed data-sources with events",
-  "author": "Lee Nattress",
+  "author": "3T Transform",
   "keywords": [
     "eventstore",
     "eventsource",
