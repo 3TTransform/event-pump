@@ -1,6 +1,6 @@
 # event-pump
 
-![Header logo](transform-header.jpg)
+![Header logo](https://i.imgur.com/eImlHXR.jpg)
 
 
 [![github](https://img.shields.io/badge/%20-3T%20Transform-black?style=for-the-badge&logo=github)](https://github.com/3TTransform)
@@ -84,4 +84,4 @@ Cleans, then builds, then bundles into native executables for Windows, Mac, and 
 
 
 
-![Footer logo](transform-footer.png)
+![Footer logo](https://i.imgur.com/BUVAMRF.png)

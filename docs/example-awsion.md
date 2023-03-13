@@ -37,7 +37,7 @@ Paste this:
 name: AWS Ion Permissions Example
 source: 
   type: json
-  file: ./example.json
+  file: ./test.json
 patterns:
   - name: ionExample
     rule:
