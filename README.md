@@ -1,5 +1,7 @@
 # event-pump
 
+![Header logo](transform-header.jpg)
+
 # 🎫 An event driven ETL tool
 
 - Read the events from an event store
@@ -72,3 +74,14 @@ Cleans, then builds, then bundles into native executables for Windows, Mac, and 
 
 > 💡 Your shareable executables will be in the `./exec/` directory.
 
+
+## About Us
+
+[![github](https://img.shields.io/badge/%20-3T%20Transform-black?style=for-the-badge&logo=github)](https://github.com/3TTransform)
+[![website](https://img.shields.io/badge/%20-3T%20Transform-orange?style=for-the-badge)](https://www.3t-transform.com)
+[![blog](https://img.shields.io/badge/%20-Dev%20blog-lightgrey?style=for-the-badge&logo=dev.to
+)](https://blog.3tplatform.com)
+[![linkedin](https://img.shields.io/badge/linkedin-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/company/3t-transform/mycompany/)
+[![twitter](https://img.shields.io/badge/twitter-1DA1F2?style=for-the-badge&logo=twitter&logoColor=white)](https://twitter.com/3t_transform?lang=en)
+
+![Footer logo](transform-footer.png)
