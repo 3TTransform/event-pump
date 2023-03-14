@@ -1,5 +1,5 @@
 name: DynamoDB to Ion
-source: 
+source:
   type: dynamodb
   table: Example
 patterns:
@@ -8,7 +8,7 @@ patterns:
       sk: organisation
     action:
       target: ion
-      file: ./output/organisations.ion        
+      file: ./output/organisations.ion
       shape:
-        pk: "org#{{pk}}"
-        organisationName: "{{organisationName}}"   
+        pk: "organisation#{{pk}}"
+        organisationName: "{{organisationName}}"

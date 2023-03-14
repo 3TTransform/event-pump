@@ -32,10 +32,12 @@ class dyanmo {
   unmarshal = (item) => {
     return AWS.DynamoDB.Converter.unmarshall(item);
   };
-  scanTable = async (tableName: string, shouldLog: boolean = false) => {
-    const data = await this.dyn.scan({ TableName: tableName }).promise();
-    if (shouldLog) console.log(data);
-    return data;
+  scanTable = async (tableName: string, lastEvaluatedKey: any = null) => {
+    return await this.dyn.scan({
+      TableName: tableName,
+      Limit: 10,
+      ExclusiveStartKey: lastEvaluatedKey
+    }).promise();
   };
 
   dynamodbTableExists = async (tableName: string) => {
@@ -118,7 +120,7 @@ class dyanmo {
       params.UpdateExpression = updateExpression;
       params.ExpressionAttributeValues = singleItem;
 
-  // TODO: Check this still works after populateEventData was changed
+      // TODO: Check this still works after populateEventData was changed
       params.Key = populateEventData(event, params.Key);
 
       if (updateExpArr.length > 0) {
