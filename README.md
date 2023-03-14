@@ -1,6 +1,6 @@
 # event-pump
 
-![Header logo](https://i.imgur.com/eImlHXR.jpg)
+![Header logo](https://raw.githubusercontent.com/3TTransform/event-pump/master/transform-header.jpg)
 
 
 [![github](https://img.shields.io/badge/%20-3T%20Transform-black?style=for-the-badge&logo=github)](https://github.com/3TTransform)
@@ -10,6 +10,8 @@
 [![linkedin](https://img.shields.io/badge/linkedin-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/company/3t-transform/mycompany/)
 [![twitter](https://img.shields.io/badge/twitter-1DA1F2?style=for-the-badge&logo=twitter&logoColor=white)](https://twitter.com/3t_transform?lang=en)
 # 🎫 An event driven ETL tool
+
+![event-pump diagram](https://raw.githubusercontent.com/3TTransform/event-pump/master/docs/event-pump-diagram.png)
 
 - Read the events from an event store
 - Using rules, cherry pick the events we are interested in
@@ -26,10 +28,20 @@ event-pump --version
 - 🎉 [Event Sources](https://github.com/3TTransform/event-pump/blob/master/docs/sources.md)
 - 🎉 [Event Destinations](https://github.com/3TTransform/event-pump/blob/master/docs/destinations.md)
 
-# Examples
+## Tutorials
 
 - 🎁 [AWS Ion Example](https://github.com/3TTransform/event-pump/blob/master/docs/example-awsion.md)
 - 🎁 [DynamoDb Example](https://github.com/3TTransform/event-pump/blob/master/docs/example-dynamodb.md)
+
+## Source Examples
+- 🚰 [JSON source](#)
+- 🚰 [DynamoDb Source](#)
+- 🚰 [JSON Source](#)
+
+## Destination Examples
+- 🪣 [Ion Destination](#)
+- 🪣 [DynamoDb Destination](#)
+- 🪣 [SQL Server Destination](#)
 
 ## Contributing
 
@@ -83,4 +95,4 @@ Cleans, then builds, then bundles into native executables for Windows, Mac, and 
 
 
 
-![Footer logo](https://i.imgur.com/BUVAMRF.png)
+![Footer logo](https://raw.githubusercontent.com/3TTransform/event-pump/master/transform-footer.png)
