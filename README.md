@@ -22,15 +22,14 @@ event-pump --version
 ```
 
 # Docs
-
-- 🎉 [Configuration YML](docs/config.md)
-- 🎉 [Event Sources](docs/sources.md)
-- 🎉 [Event Destinations](docs/destinations.md)
+- 🎉 [Configuration YML](https://github.com/3TTransform/event-pump/blob/master/docs/config.md)
+- 🎉 [Event Sources](https://github.com/3TTransform/event-pump/blob/master/docs/sources.md)
+- 🎉 [Event Destinations](https://github.com/3TTransform/event-pump/blob/master/docs/destinations.md)
 
 # Examples
 
-- 🎁 [AWS Ion Example](docs/example-awsion.md)
-- 🎁 [DynamoDb Example](docs/example-dynamodb.md)
+- 🎁 [AWS Ion Example](https://github.com/3TTransform/event-pump/blob/master/docs/example-awsion.md)
+- 🎁 [DynamoDb Example](https://github.com/3TTransform/event-pump/blob/master/docs/example-dynamodb.md)
 
 ## Contributing
 

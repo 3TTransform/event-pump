@@ -13,7 +13,7 @@ name: AWS Ion Example
 
 ## `source`
 
-This defines the [source of our events](sources.md). We define the type hre and the location of the source, be it a file, or a table if the source is DynamoDb.
+This defines the [source of our events](https://github.com/3TTransform/event-pump/blob/master/sources.md). We define the type hre and the location of the source, be it a file, or a table if the source is DynamoDb.
 
 _Example for CSV:_
 ```yml
@@ -38,7 +38,7 @@ source:
 
 Patterns allow us to match each event found in the source to a rule and then perform actions against it.
 
-_Example for [DynamoDb destination](destinations.md):_
+_Example for [DynamoDb destination](https://github.com/3TTransform/event-pump/blob/master/destinations.md):_
 ```yml
 patterns:
   - name: petCreate
@@ -98,4 +98,4 @@ The `target` of the `action` can currently be one of:
 - DynamoDb
 - SQL Server
 
-More in depth discussion on the destinations [can be found here](destinations.md)
+More in depth discussion on the destinations [can be found here](https://github.com/3TTransform/event-pump/blob/master/destinations.md)
