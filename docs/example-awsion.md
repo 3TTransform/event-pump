@@ -6,7 +6,7 @@ touch example.json
 Paste this:
 
 ```json
-[  
+[
   {
     "verb": "create",
     "noun": "permission",
@@ -35,9 +35,9 @@ touch hydrate-permissions.yml
 Paste this:
 ```yml
 name: AWS Ion Permissions Example
-source: 
+source:
   type: json
-  file: ./test.json
+  file: ./example.json
 patterns:
   - name: ionExample
     rule:
@@ -45,7 +45,7 @@ patterns:
       verb: create
     action:
       target: ion
-      file: ./permissons.ion        
+      file: ./permissons.ion
       shape:
         pk: "attestation#{{id}}"
         sk: "attestation"
@@ -56,5 +56,5 @@ patterns:
 Now hydrate your Ion from your JSON:
 
 ```sh
-event-pump hydrate-permissions.yml
+event-pump -f hydrate-permissions.yml
 ```

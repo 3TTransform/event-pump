@@ -32,7 +32,7 @@ touch example.json
 Paste this:
 
 ```json
-[  
+[
   {
     "verb": "create",
     "noun": "permission",
@@ -61,7 +61,7 @@ touch hydrate-permissions-dynamo.yml
 Paste this:
 ```yml
 name: DynamoDb Local Permissions Example
-source: 
+source:
   type: json
   file: ./example.json
 patterns:
@@ -89,7 +89,7 @@ Now hydrate your Ion from your JSON:
 > 💥 We must specify the `AWS_DEFAULT_REGION` in order to run data into DynamoDb. Do it like this: `export AWS_DEFAULT_REGION=eu-west-2` as an example.
 
 ```sh
-event-pump hydrate-permissions-dynamo.yml
+event-pump -f hydrate-permissions-dynamo.yml
 ```
 
 7. Go to URL and view your records in the local dynamoDb table: `http://localhost:8001/tables/Example`
