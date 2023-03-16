@@ -48,11 +48,13 @@ const createFolderFromPath = (filename: string) => {
   }
 };
 
-const blankFileIfExists = (filename: string) => {
+const blankFileIfExists = (filename: string): boolean => {
   const fileExists = fs.existsSync(filename);
   if (fileExists) {
     fs.writeFileSync(filename, "");
+    return true;
   }
+  return false;
 };
 
 const customProgressBar = (doc: any) => {
