@@ -240,3 +240,58 @@ test("🍏 parseCSV", async (t) => {
     JSON.stringify({ a: '1', b: '2', c: '3', d: '4', e: '5', f: '6' })
   );
 });
+test("🍎 parseCSV(undefined header, undefined row)", async (t) => {
+
+  t.throws(() => {
+    const result = parseCSV(undefined, undefined);
+  }, {
+    instanceOf: TypeError,
+    message: 'Cannot read properties of undefined (reading \'split\')'
+  });
+});
+test("🍎 parseCSV(null header, null row)", async (t) => {
+
+  t.throws(() => {
+    const result = parseCSV(null, null);
+  }, {
+    instanceOf: TypeError,
+    message: 'Cannot read properties of null (reading \'split\')'
+  });
+});
+test("🍏 parseCSV('' header, '' row)", async (t) => {
+  const result = parseCSV('', '');
+  t.is(
+    JSON.stringify(result),
+    JSON.stringify({})
+  );
+});
+test("🍏 parseCSV('col1,col2,col3' header, '1,2' row)", async (t) => {
+  const result = parseCSV('col1,col2,col3', '1,2');
+  t.is(
+    JSON.stringify(result),
+    JSON.stringify({col1:"1",col2:"2"})
+  );
+});
+test("🍏 parseCSV('col1,col2' header, '1,2,3' row)", async (t) => {
+  const result = parseCSV('col1,col2', '1,2,3');
+  t.is(
+    JSON.stringify(result),
+    JSON.stringify({col1:"1",col2:"2"})
+  );
+});
+test("🍎 parseCSV('col1,col2' header, null row)", async (t) => {
+  t.throws(() => {
+    const result = parseCSV('col1,col2', null);
+  }, {
+    instanceOf: TypeError,
+    message: 'Cannot read properties of null (reading \'split\')'
+  });
+});
+test("🍎 parseCSV(null header, '1,2,3' row)", async (t) => {
+  t.throws(() => {
+    const result = parseCSV(null, '1,2,3');
+  }, {
+    instanceOf: TypeError,
+    message: 'Cannot read properties of null (reading \'split\')'
+  });
+});
