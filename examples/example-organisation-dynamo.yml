@@ -9,6 +9,7 @@ patterns:
       verb: create
     action:
       target: dynamodb
+      type: create
       params:
         TableName: Example
         Item:
@@ -22,19 +23,22 @@ patterns:
       verb: update
     action:
       target: dynamodb
+      type: update
+      values:
+        id: "{{id}}"
+        organisationName: "{{organisationName}}"         
       params:
         TableName: Example
         Key:
-          pk: "role#{{id}}"
-          sk: "role"
-        ExpressionAttributeValues:
-          ":organisationName": "{{organisationName}}"
+          pk: "organisation#{{id}}"
+          sk: "organisation"
   - name: organisationDelete
     rule:
       noun: organisation
       verb: delete
     action:
       target: dynamodb
+      type: delete
       params:
         TableName: Example
         Item:

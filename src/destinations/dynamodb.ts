@@ -24,6 +24,35 @@ class dyanmo {
 
     this.dyn = new AWS.DynamoDB(serviceConfigOptions);
   }
+  generateUpdateQuery = (fields: any) => {
+    // take in an object and delete verything that is null
+    Object.keys(fields).forEach((key) => {
+      if (fields[key] === undefined) {
+        delete fields[key];
+      }
+    });
+    // 'fields' is now an object with all null things removed
+    const exp: any = {
+      UpdateExpression: "",
+      ExpressionAttributeNames: {},
+      ExpressionAttributeValues: {},
+    };
+
+    exp.UpdateExpression += `SET `;
+
+    // loop through the fields we have left and build our expression
+    Object.entries(fields).forEach(([key, item]) => {
+      exp.UpdateExpression += ` #${key} = :${key},`;
+      exp.ExpressionAttributeNames[`#${key}`] = key;
+      exp.ExpressionAttributeValues[`:${key}`] = item;
+    });
+
+    // remove the last comma on the text field
+    exp.UpdateExpression = exp.UpdateExpression.slice(0, -1);
+
+    //return our shiny new expression
+    return exp;
+  };
   marshal = (item) => {
     return AWS.DynamoDB.Converter.marshall(item);
   };
@@ -73,7 +102,7 @@ class dyanmo {
       );
     }
 
-    const thisVerb = pattern.rule.verb;
+    const thisVerb = pattern.action.type;
 
     if (thisVerb === "create") {
       // TODO: Check this still works after populateEventData was changed
@@ -94,32 +123,12 @@ class dyanmo {
       await this.dynamodbGet(params);
     }
     if (thisVerb === "update") {
-      // TODO: Check this still works after populateEventData was changed
-      let singleItem = populateEventData(
-        event,
-        pattern.action.params.ExpressionAttributeValues
-      );
-
-      // loop over the single item and build the 'UpdateExpression'
-      let updateExpression = "set ";
-      const updateExpArr = [];
-
-      for (let [key, value] of Object.entries(singleItem)) {
-        updateExpArr.push(`${key.replace(":", "")} = ${key}`);
-      }
-
-      updateExpression += updateExpArr.join(", ");
-
-      const params = { ...pattern.action.params };
-      params.UpdateExpression = updateExpression;
-      params.ExpressionAttributeValues = singleItem;
-
-      // TODO: Check this still works after populateEventData was changed
-      params.Key = populateEventData(event, params.Key);
-
-      if (updateExpArr.length > 0) {
-        await this.dynamodbUpdate(params);
-      }
+      const singleItem = populateEventData(event, pattern.action);
+      const updateQuery = this.generateUpdateQuery(singleItem.values);
+      updateQuery.TableName = pattern.action.params.TableName;
+      updateQuery.Key = this.marshal(singleItem.params.Key);
+      updateQuery.ExpressionAttributeValues = this.marshal(updateQuery.ExpressionAttributeValues);
+      await this.dynamodbUpdate(updateQuery);
     }
     if (thisVerb === "delete") {
       // TODO: Check this still works after populateEventData was changed
