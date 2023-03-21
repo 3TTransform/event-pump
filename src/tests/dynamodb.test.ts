@@ -24,7 +24,7 @@ test("🍎 scanTable (not exists)", async (t) => {
     async () => {
       await ddb.scanTable("Example2");
     },
-    { message: "Requested resource not found" }
+    { message: "Cannot do operations on a non-existent table" }
   );
 });
 
