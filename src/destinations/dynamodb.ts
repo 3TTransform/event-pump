@@ -7,21 +7,19 @@ import {
 import { populateEventData } from "../utils";
 
 const AWS = require("aws-sdk");
-if (!process.env.AWS_DEFAULT_REGION) {
-  throw new Error("AWS_DEFAULT_REGION is not set");
-}
-AWS.config.update({ region: process.env.AWS_DEFAULT_REGION });
+AWS.config.update({ region: process.env.AWS_DEFAULT_REGION || "us-east-2" });
 
 class dyanmo {
   dyn: any;
   constructor() {
     // allow local endpoints by specifying the ENDPOINT_OVERRIDE variable like this:
     // export ENDPOINT_OVERRIDE=http://localhost:8000
-    // export AWS_DEFAULT_REGION=eu-west-2
+    // export AWS_DEFAULT_REGION=us-east-2
     let serviceConfigOptions: any = {};
     if (process.env.ENDPOINT_OVERRIDE) {
       serviceConfigOptions.endpoint = process.env.ENDPOINT_OVERRIDE;
-      serviceConfigOptions.region = process.env.AWS_DEFAULT_REGION;
+      serviceConfigOptions.region =
+        process.env.AWS_DEFAULT_REGION || "us-east-2";
     }
 
     this.dyn = new AWS.DynamoDB(serviceConfigOptions);
@@ -33,11 +31,13 @@ class dyanmo {
     return AWS.DynamoDB.Converter.unmarshall(item);
   };
   scanTable = async (tableName: string, lastEvaluatedKey: any = null) => {
-    return await this.dyn.scan({
-      TableName: tableName,
-      Limit: 10,
-      ExclusiveStartKey: lastEvaluatedKey
-    }).promise();
+    return await this.dyn
+      .scan({
+        TableName: tableName,
+        Limit: 10,
+        ExclusiveStartKey: lastEvaluatedKey,
+      })
+      .promise();
   };
 
   dynamodbTableExists = async (tableName: string) => {
@@ -77,10 +77,7 @@ class dyanmo {
 
     if (thisVerb === "create") {
       // TODO: Check this still works after populateEventData was changed
-      const singleItem = populateEventData(
-        event,
-        pattern.action.params.Item
-      );
+      const singleItem = populateEventData(event, pattern.action.params.Item);
       const newItem = this.marshal(singleItem);
       const params = { ...pattern.action.params };
       params.Item = newItem;
@@ -89,10 +86,7 @@ class dyanmo {
     }
     if (thisVerb === "get") {
       // TODO: Check this still works after populateEventData was changed
-      const singleItem = populateEventData(
-        event,
-        pattern.action.params.Item
-      );
+      const singleItem = populateEventData(event, pattern.action.params.Item);
       const newItem = this.marshal(singleItem);
       const params = { ...pattern.action.params };
       params.Item = newItem;
@@ -129,10 +123,7 @@ class dyanmo {
     }
     if (thisVerb === "delete") {
       // TODO: Check this still works after populateEventData was changed
-      const singleItem = populateEventData(
-        event,
-        pattern.action.params.Item
-      );
+      const singleItem = populateEventData(event, pattern.action.params.Item);
       const newItem = this.marshal(singleItem);
       const params = { ...pattern.action.params };
       params.Item = newItem;

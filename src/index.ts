@@ -19,7 +19,6 @@ export interface CliParams {
 const processPage = async (doc: any, events: any, isFirstEvent: boolean = false) => {
   // iterate the events in this set
   for (let event of events) {
-
     // iterate the events in this file
     for (let pattern of doc.patterns) {
       // for each key and value in the pattern check for matching pattern in the event
@@ -77,6 +76,7 @@ export async function processEvents(params: CliParams) {
   switch (doc.source.type) {
     case "json":
       events = JSON.parse(fs.readFileSync(doc.source.file, "utf8"));
+      await processPage(doc, events);
       break;
     case "csv":
       const csvData = fs.readFileSync(doc.source.file, "utf8");
