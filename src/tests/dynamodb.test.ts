@@ -1,4 +1,5 @@
-// import test from "ava";
+import test from 'ava'; 
+test('foo', t => { t.pass(); });
 // require("dotenv").config();
 // import dynamo from "../destinations/dynamodb";
 // const ddb = new dynamo();
