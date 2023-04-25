@@ -1,7 +1,6 @@
 import { replaceValues } from "../template";
 import { populateEventData } from "../utils";
 
-//import { sql } from "mssql";
 require("dotenv").config();
 const sql = require("mssql");
 

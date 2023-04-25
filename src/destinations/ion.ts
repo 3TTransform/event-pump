@@ -15,8 +15,6 @@ const ionHydrateOne = async (
   if (isFirstEvent) {
     blankFileIfExists(pattern.action.file); // clear the file
   }
-  // TODO: 💥 This is brokena nd gives the wrong results in the Ion file...
-
   // replace the values in the event with the values from the pattern
   const singleItem = populateEventData(event, pattern.action.shape);
 

@@ -9,7 +9,7 @@ import { populateEventData } from "../utils";
 const AWS = require("aws-sdk");
 AWS.config.update({ region: process.env.AWS_DEFAULT_REGION || "us-east-2" });
 
-class dyanmo {
+class Dyanmo {
   dyn: any;
   constructor() {
     // allow local endpoints by specifying the ENDPOINT_OVERRIDE variable like this:
@@ -105,7 +105,6 @@ class dyanmo {
     const thisActionType = pattern.action.type;
 
     if (thisActionType === "put") {
-      // TODO: Check this still works after populateEventData was changed
       const singleItem = populateEventData(event, pattern.action.params.Item);
       const newItem = this.marshal(singleItem);
       const params = { ...pattern.action.params };
@@ -122,7 +121,6 @@ class dyanmo {
       await this.dynamodbUpdate(updateQuery);
     }
     if (thisActionType === "delete") {
-      // TODO: Check this still works after populateEventData was changed
       const singleItem = populateEventData(event, pattern.action.params.Item);
       const newItem = this.marshal(singleItem);
       const params = { ...pattern.action.params };
@@ -135,4 +133,4 @@ class dyanmo {
   };
 }
 
-export default dyanmo;
+export default Dyanmo;
