@@ -12,29 +12,38 @@ import colors from "ansi-colors";
 const getProp = (obj: any, path: string) => {
   return path.split(".").reduce((o, i) => o[i], obj);
 };
-
 const populateEventData = (event: any, object: any) => {
-  let rawItem = JSON.stringify(object);
-  const regex = /{{(.*?)}}/g;
-  const matches = rawItem.match(regex);
+  if (!object || !event) {
+    return object;
+  }
+  return JSON.parse(JSON.stringify(object), (key, value) => {
 
-  if (matches) {
+    if (typeof value !== 'string') {
+      return value;
+    }
+    const fullMatch = value.match(/^{{([^{}]*?)}}$/g);
+    if (fullMatch && fullMatch.length === 1) {
+      const prop = fullMatch[0].replace(/{{|}}/g, "");
+      return getProp(event, prop);
+    }
+
+    const matches = value.match(/{{(.*?)}}/g);
+    if (!matches) {
+      return value;
+    }
+
     for (let match of matches) {
       const prop = match.replace(/{{|}}/g, "");
       const eventValue = getProp(event, prop);
-
-      if (eventValue === undefined) {
-        rawItem = rawItem.replace(`":${prop}":"{{${prop}}}"`, "");
-        rawItem = rawItem.replace(`,,`, ",");
-        rawItem = rawItem.replace(`,}`, "}");
-        rawItem = rawItem.replace(`{,`, "{");
-      } else {
-        rawItem = rawItem.replace(`{{${prop}}}`, eventValue);
+      if (eventValue) {
+        value = value.replace(`{{${prop}}}`, eventValue);
+      }
+      else {
+        value = value.replace(`{{${prop}}}`, '');
       }
     }
-  }
-
-  return JSON.parse(rawItem);
+    return value;
+  });
 };
 
 const createFolderFromPath = (filename: string) => {

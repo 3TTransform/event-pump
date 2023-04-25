@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2019-09/schema",
+  "$id": "http://example.com/example.json",
+  "title": "Root Schema",
+  "type": "object",
+  "default": {},
+  "required": ["name", "source", "patterns"],
+  "properties": {
+    "name": {
+      "title": "The name Schema",
+      "type": "string",
+      "default": ""
+    },
+    "source": {
+      "title": "The source Schema",
+      "type": "object",
+      "default": {},
+      "required": ["type"],
+      "properties": {
+        "type": {
+          "title": "The type Schema",
+          "type": "string",
+          "default": ""
+        },
+        "file": {
+          "title": "The file Schema",
+          "type": "string",
+          "default": ""
+        },
+        "table": {
+          "title": "The table Schema",
+          "type": "string",
+          "default": ""
+        }
+      }
+    },
+    "patterns": {
+      "title": "The patterns Schema",
+      "type": "array",
+      "default": [],
+      "items": {
+        "title": "A Schema",
+        "type": "object",
+        "required": ["rule", "action"],
+        "properties": {
+          "name": {
+            "title": "The name Schema",
+            "type": "string"
+          },
+          "rule": {
+            "title": "The rule Schema",
+            "type": "object",
+            "additionalProperties": true
+          },
+          "action": {
+            "title": "The action Schema",
+            "type": "object",
+            "additionalProperties": true
+          }
+        }
+      }
+    }
+  }
+}

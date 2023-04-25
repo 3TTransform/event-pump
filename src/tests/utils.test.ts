@@ -55,17 +55,26 @@ test("🍎 getProp", async (t) => {
   });
 });
 
-test("🍏 populateEventData", async (t) => {
+test("🍏 populateEventData (object)", async (t) => {
   let result = populateEventData(
-    { cakeType: "Cheese", cakePrice: 50 },
-    { cake: { name: "{{cakeType}}", price: "{{cakePrice}}" } }
+    { cakeType: "Cheese", cakePrice: 50, cakeExists: null, cakeIsLie: true },
+    { cake: { name: "{{cakeType}}", price: "{{cakePrice}}", exists: "{{cakeExists}}", isLie: "{{cakeIsLie}}" } }
   );
   t.is(
     JSON.stringify(result),
-    JSON.stringify({ cake: { name: "Cheese", price: "50" } })
+    JSON.stringify({ cake: { name: "Cheese", price: 50, "exists": null, "isLie": true } })
   );
 });
-
+test("🍏 populateEventData (static text)", async (t) => {
+  let result = populateEventData(
+    { cakeType: "Cheese", cakePrice: 50 },
+    "{{cakeType}}"
+  );
+  t.is(
+    JSON.stringify(result),
+    JSON.stringify("Cheese")
+  );
+});
 test("🍎 populateEventData missing }", async (t) => {
   let result = populateEventData(
     { cakeType: "Cheese", cakePrice: 50 },
@@ -73,7 +82,7 @@ test("🍎 populateEventData missing }", async (t) => {
   );
   t.is(
     JSON.stringify(result),
-    JSON.stringify({ cake: { name: "{{cakeType}", price: "{{cakePrice}}" } })
+    JSON.stringify({ cake: { name: "{{cakeType}", price: 50 } })
   );
 });
 
@@ -88,15 +97,14 @@ test("🍎 populateEventData missing {", async (t) => {
   );
 });
 test("🍎 populateEventData null/object", async (t) => {
-  t.throws(() => {
-    let result = populateEventData(
-      null,
-      { cake: { name: "{{cakeType}}", price: "{cakePrice}}" } }
-    );
-  }, {
-    instanceOf: TypeError,
-    message: "Cannot read properties of null (reading \'cakeType\')"
-  });
+  let result = populateEventData(
+    null,
+    { cake: { name: "{{cakeType}}", price: "{cakePrice}}" } }
+  );
+  t.is(
+    JSON.stringify(result),
+    JSON.stringify({ cake: { name: "{{cakeType}}", price: "{cakePrice}}" } })
+  );
 });
 test("🍎 populateEventData event/null", async (t) => {
   let result = populateEventData(
@@ -111,34 +119,31 @@ test("🍎 populateEventData null/null", async (t) => {
 });
 
 test("🍎 populateEventData undefined/object", async (t) => {
-  t.throws(() => {
-    let result = populateEventData(
-      undefined,
-      { cake: { name: "{{cakeType}}", price: "{cakePrice}}" } }
-    );
-  }, {
-    instanceOf: TypeError,
-    message: "Cannot read properties of undefined (reading \'cakeType\')"
-  });
+  let result = populateEventData(
+    undefined,
+    { cake: { name: "{{cakeType}}", price: "{cakePrice}}" } }
+  );
+  t.is(
+    JSON.stringify(result),
+    JSON.stringify({ cake: { name: "{{cakeType}}", price: "{cakePrice}}" } })
+  );
 });
 test("🍎 populateEventData event/undefined", async (t) => {
-  t.throws(() => {
-    let result = populateEventData(
-      { cakeType: "Cheese", cakePrice: 50 },
-      undefined
-    );
-  }, {
-    instanceOf: TypeError,
-    message: "Cannot read properties of undefined (reading \'match\')"
-  });
+  let result = populateEventData(
+    { cakeType: "Cheese", cakePrice: 50 },
+    undefined
+  );
+  t.is(
+    JSON.stringify(result),
+    undefined
+  );
 });
 test("🍎 populateEventData undefined/undefined", async (t) => {
-  t.throws(() => {
-    let result = populateEventData(undefined, undefined);
-  }, {
-    instanceOf: TypeError,
-    message: "Cannot read properties of undefined (reading \'match\')"
-  });
+  let result = populateEventData(undefined, undefined);
+  t.is(
+    JSON.stringify(result),
+    undefined
+  );
 });
 
 test("🍏 createFolderFromPath('TestFolder/TestFile.txt')", async (t) => {
@@ -270,14 +275,14 @@ test("🍏 parseCSV('col1,col2,col3' header, '1,2' row)", async (t) => {
   const result = parseCSV('col1,col2,col3', '1,2');
   t.is(
     JSON.stringify(result),
-    JSON.stringify({col1:"1",col2:"2"})
+    JSON.stringify({ col1: "1", col2: "2" })
   );
 });
 test("🍏 parseCSV('col1,col2' header, '1,2,3' row)", async (t) => {
   const result = parseCSV('col1,col2', '1,2,3');
   t.is(
     JSON.stringify(result),
-    JSON.stringify({col1:"1",col2:"2"})
+    JSON.stringify({ col1: "1", col2: "2" })
   );
 });
 test("🍎 parseCSV('col1,col2' header, null row)", async (t) => {

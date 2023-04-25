@@ -34,18 +34,14 @@ export const mssqlHydrateOne = async (
   event: any,
   isFirstEvent: boolean
 ) => {
-  let sql = pattern.action.params.sql;
-  let input = pattern.action.params.input;
 
-  // TODO: Check this still works after populateEventData was changed
-  const sqlStatement = populateEventData(event, input);
+  const populatedParameters = populateEventData(event, pattern.action.params.input);
 
-  //const thisVerb = pattern.rule.verb;
-
-  let replacedSQL = replaceValues(event, sql);
+  let replacedSQL = replaceValues(event, pattern.action.params.sql);
   replacedSQL = replacedSQL.replace(/,\s*WHERE/g, " WHERE");
+
   try {
-    await runSQL(replacedSQL, sqlStatement);
+    await runSQL(replacedSQL, populatedParameters);
   } catch (err) {
     console.log(`${event.id} failed ${err.message}`);
   }
