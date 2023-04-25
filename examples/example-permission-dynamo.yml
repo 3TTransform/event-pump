@@ -9,7 +9,7 @@ patterns:
       verb: create
     action:
       target: dynamodb
-      type: create
+      type: put
       params:
         TableName: Example
         Item:

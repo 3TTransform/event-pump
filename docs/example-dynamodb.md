@@ -71,6 +71,7 @@ patterns:
       verb: create
     action:
       target: dynamodb
+      type: put
       params:
         TableName: Example
         Item:

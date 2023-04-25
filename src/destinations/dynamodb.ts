@@ -102,9 +102,9 @@ class dyanmo {
       );
     }
 
-    const thisVerb = pattern.action.type;
+    const thisActionType = pattern.action.type;
 
-    if (thisVerb === "create") {
+    if (thisActionType === "put") {
       // TODO: Check this still works after populateEventData was changed
       const singleItem = populateEventData(event, pattern.action.params.Item);
       const newItem = this.marshal(singleItem);
@@ -113,16 +113,7 @@ class dyanmo {
 
       await this.dynamodbWrite(params);
     }
-    if (thisVerb === "get") {
-      // TODO: Check this still works after populateEventData was changed
-      const singleItem = populateEventData(event, pattern.action.params.Item);
-      const newItem = this.marshal(singleItem);
-      const params = { ...pattern.action.params };
-      params.Item = newItem;
-
-      await this.dynamodbGet(params);
-    }
-    if (thisVerb === "update") {
+    if (thisActionType === "update") {
       const singleItem = populateEventData(event, pattern.action);
       const updateQuery = this.generateUpdateQuery(singleItem.values);
       updateQuery.TableName = pattern.action.params.TableName;
@@ -130,7 +121,7 @@ class dyanmo {
       updateQuery.ExpressionAttributeValues = this.marshal(updateQuery.ExpressionAttributeValues);
       await this.dynamodbUpdate(updateQuery);
     }
-    if (thisVerb === "delete") {
+    if (thisActionType === "delete") {
       // TODO: Check this still works after populateEventData was changed
       const singleItem = populateEventData(event, pattern.action.params.Item);
       const newItem = this.marshal(singleItem);

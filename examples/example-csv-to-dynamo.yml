@@ -9,7 +9,6 @@ patterns:
       verb: create
     action:
       target: dynamodb
-      type: put
       params:
         TableName: Example
         Item:
@@ -24,7 +23,6 @@ patterns:
       verb: update
     action:
       target: dynamodb
-      type: update
       params:
         TableName: Example
         Key:
@@ -38,7 +36,6 @@ patterns:
       verb: delete
     action:
       target: dynamodb
-      type: delete
       params:
         TableName: Example
         Item:
@@ -51,7 +48,6 @@ patterns:
       verb: create
     action:
       target: dynamodb
-      type: put
       params:
         TableName: Example
         Item:
@@ -65,7 +61,6 @@ patterns:
       verb: update
     action:
       target: dynamodb
-      type: update
       params:
         TableName: Example
         Key:
@@ -79,7 +74,6 @@ patterns:
       verb: delete
     action:
       target: dynamodb
-      type: delete
       params:
         TableName: Example
         Item:

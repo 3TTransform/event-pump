@@ -29,13 +29,14 @@ action:
 
 ## DynamoDb
 
-> AWS DynamoDb is a NoSQL database. The `event-pump` tool supports DynamoDb as a destination. Data in the `params` object in the config yml as shown here is sent directly to the `aws-sdk` [found here](https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/DynamoDB.html). we currently support `put`, `update` and `delete`.
+> AWS DynamoDb is a NoSQL database. The `event-pump` tool supports DynamoDb as a destination. Data in the `params` object in the config yml as shown here is sent directly to the `aws-sdk` [found here](https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/DynamoDB.html). We currently support `put`, `update` and `delete`.
 
 _Example for DynamoDb:_
 
 ```yml
 action:
   target: dynamodb
+  type: put
   params:
     TableName: BakedGoodness
     Item:
