@@ -29,27 +29,32 @@ const processPage = async (doc: any, events: any, isFirstEvent: boolean = false)
         }
       }
 
-      if (matched && pattern.action) {
-        //case swtich on the action target
-        switch (pattern.action.target) {
-          case "ion":
-            await ionHydrateOne(pattern, event, isFirstEvent);
-            break;
-          case "dynamodb":
-            await ddb.dynamodbHydrateOne(pattern, event, isFirstEvent);
-            break;
-          case "mssql":
-            await mssqlHydrateOne(pattern, event, isFirstEvent);
-            break;
-          default:
-            throw new Error(
-              `Action target ${pattern.action.target} is not supported`
-            );
-        }
+      if (matched && pattern.action) {        
+        await dohandler(event, pattern, isFirstEvent);
       }
     }
 
   }
+}
+
+async function dohandler(event, pattern, isFirstEvent) {
+  //case swtich on the action target
+  switch (pattern.action.target) {
+    case "ion":
+      await ionHydrateOne(pattern, event, isFirstEvent);
+      break;
+    case "dynamodb":
+      await ddb.dynamodbHydrateOne(pattern, event, isFirstEvent);
+      break;
+    case "mssql":
+      await mssqlHydrateOne(pattern, event, isFirstEvent);
+      break;
+    default:
+      throw new Error(
+        `Action target ${pattern.action.target} is not supported`
+      );
+  }
+
 }
 
 /**
