@@ -1,7 +1,7 @@
-import test from "ava";
+import test from 'ava';
 
-import {  } from "../destinations/mssql";
+import {  } from '../destinations/mssql';
 
-test("mssqlHydrateOne", async (t) => {
-  t.pass();
+test('mssqlHydrateOne', async (t) => {
+    t.pass();
 });

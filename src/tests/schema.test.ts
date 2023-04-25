@@ -1,6 +1,6 @@
-import test from "ava";
-test("exampletest", async (t) => {
-  t.pass();
+import test from 'ava';
+test('exampletest', async (t) => {
+    t.pass();
 });
 
 // import yaml from 'js-yaml';

@@ -1,5 +1,5 @@
-import test from "ava";
-import fs from "fs";
+import test from 'ava';
+import fs from 'fs';
 
 import {
     getProp,
@@ -7,9 +7,9 @@ import {
     createFolderFromPath,
     blankFileIfExists,
     parseCSV,
-} from "../utils";
+} from '../utils';
 
-test("🍏 getProp", async (t) => {
+test('🍏 getProp', async (t) => {
     const deepObj = {
         a: 1,
         b: {
@@ -25,21 +25,21 @@ test("🍏 getProp", async (t) => {
 
     const cases = [
         {
-            obj: { cake: { name: "chocolate", price: 10 } },
-            path: "cake.name",
-            expected: "chocolate",
+            obj: { cake: { name: 'chocolate', price: 10 } },
+            path: 'cake.name',
+            expected: 'chocolate',
         },
         {
-            obj: { cake: { name: "chocolate", price: 10 } },
-            path: "cake.price",
+            obj: { cake: { name: 'chocolate', price: 10 } },
+            path: 'cake.price',
             expected: 10,
         },
         {
             obj: { cake: { lie: true } },
-            path: "cake.lies",
+            path: 'cake.lies',
             expected: undefined,
         },
-        { obj: deepObj, path: "b.d.f.g", expected: 4 },
+        { obj: deepObj, path: 'b.d.f.g', expected: 4 },
     ];
 
     cases.forEach((test) => {
@@ -47,37 +47,37 @@ test("🍏 getProp", async (t) => {
     });
 });
 
-test("🍎 getProp", async (t) => {
+test('🍎 getProp', async (t) => {
     const cases = [
         {
             obj: null,
-            path: "b.d.f.g",
-            expected: "Cannot read properties of null (reading 'b')",
+            path: 'b.d.f.g',
+            expected: 'Cannot read properties of null (reading \'b\')',
         },
         {
-            obj: { cake: { name: "chocolate", price: 10 } },
+            obj: { cake: { name: 'chocolate', price: 10 } },
             path: null,
-            expected: "Cannot read properties of null (reading 'split')",
+            expected: 'Cannot read properties of null (reading \'split\')',
         },
         {
             obj: null,
             path: null,
-            expected: "Cannot read properties of null (reading 'split')",
+            expected: 'Cannot read properties of null (reading \'split\')',
         },
         {
             obj: undefined,
-            path: "b.d.f.g",
-            expected: "Cannot read properties of undefined (reading 'b')",
+            path: 'b.d.f.g',
+            expected: 'Cannot read properties of undefined (reading \'b\')',
         },
         {
-            obj: { cake: { name: "chocolate", price: 10 } },
+            obj: { cake: { name: 'chocolate', price: 10 } },
             path: undefined,
-            expected: "Cannot read properties of undefined (reading 'split')",
+            expected: 'Cannot read properties of undefined (reading \'split\')',
         },
         {
             obj: undefined,
             path: undefined,
-            expected: "Cannot read properties of undefined (reading 'split')",
+            expected: 'Cannot read properties of undefined (reading \'split\')',
         },
     ];
     cases.forEach((test) => {
@@ -90,110 +90,110 @@ test("🍎 getProp", async (t) => {
     });
 });
 
-test("🍏 populateEventData (object)", async (t) => {
-    let result = populateEventData(
+test('🍏 populateEventData (object)', async (t) => {
+    const result = populateEventData(
         {
-            cakeType: "Cheese",
+            cakeType: 'Cheese',
             cakePrice: 50,
             cakeExists: null,
             cakeIsLie: true,
         },
         {
             cake: {
-                name: "{{cakeType}}",
-                price: "{{cakePrice}}",
-                exists: "{{cakeExists}}",
-                isLie: "{{cakeIsLie}}",
+                name: '{{cakeType}}',
+                price: '{{cakePrice}}',
+                exists: '{{cakeExists}}',
+                isLie: '{{cakeIsLie}}',
             },
         }
     );
     t.is(
         JSON.stringify(result),
         JSON.stringify({
-            cake: { name: "Cheese", price: 50, exists: null, isLie: true },
+            cake: { name: 'Cheese', price: 50, exists: null, isLie: true },
         })
     );
 });
-test("🍏 populateEventData (static text)", async (t) => {
-    let result = populateEventData(
-        { cakeType: "Cheese", cakePrice: 50 },
-        "{{cakeType}}"
+test('🍏 populateEventData (static text)', async (t) => {
+    const result = populateEventData(
+        { cakeType: 'Cheese', cakePrice: 50 },
+        '{{cakeType}}'
     );
-    t.is(JSON.stringify(result), JSON.stringify("Cheese"));
+    t.is(JSON.stringify(result), JSON.stringify('Cheese'));
 });
-test("🍎 populateEventData missing }", async (t) => {
-    let result = populateEventData(
-        { cakeType: "Cheese", cakePrice: 50 },
-        { cake: { name: "{{cakeType}", price: "{{cakePrice}}" } }
+test('🍎 populateEventData missing }', async (t) => {
+    const result = populateEventData(
+        { cakeType: 'Cheese', cakePrice: 50 },
+        { cake: { name: '{{cakeType}', price: '{{cakePrice}}' } }
     );
     t.is(
         JSON.stringify(result),
-        JSON.stringify({ cake: { name: "{{cakeType}", price: 50 } })
+        JSON.stringify({ cake: { name: '{{cakeType}', price: 50 } })
     );
 });
 
-test("🍎 populateEventData missing {", async (t) => {
-    let result = populateEventData(
-        { cakeType: "Cheese", cakePrice: 50 },
-        { cake: { name: "{{cakeType}}", price: "{cakePrice}}" } }
+test('🍎 populateEventData missing {', async (t) => {
+    const result = populateEventData(
+        { cakeType: 'Cheese', cakePrice: 50 },
+        { cake: { name: '{{cakeType}}', price: '{cakePrice}}' } }
     );
     t.is(
         JSON.stringify(result),
-        JSON.stringify({ cake: { name: "Cheese", price: "{cakePrice}}" } })
+        JSON.stringify({ cake: { name: 'Cheese', price: '{cakePrice}}' } })
     );
 });
-test("🍎 populateEventData null/object", async (t) => {
-    let result = populateEventData(null, {
-        cake: { name: "{{cakeType}}", price: "{cakePrice}}" },
+test('🍎 populateEventData null/object', async (t) => {
+    const result = populateEventData(null, {
+        cake: { name: '{{cakeType}}', price: '{cakePrice}}' },
     });
     t.is(
         JSON.stringify(result),
         JSON.stringify({
-            cake: { name: "{{cakeType}}", price: "{cakePrice}}" },
+            cake: { name: '{{cakeType}}', price: '{cakePrice}}' },
         })
     );
 });
-test("🍎 populateEventData event/null", async (t) => {
-    let result = populateEventData({ cakeType: "Cheese", cakePrice: 50 }, null);
+test('🍎 populateEventData event/null', async (t) => {
+    const result = populateEventData({ cakeType: 'Cheese', cakePrice: 50 }, null);
     t.is(result, null);
 });
-test("🍎 populateEventData null/null", async (t) => {
-    let result = populateEventData(null, null);
+test('🍎 populateEventData null/null', async (t) => {
+    const result = populateEventData(null, null);
     t.is(result, null);
 });
 
-test("🍎 populateEventData undefined/object", async (t) => {
-    let result = populateEventData(undefined, {
-        cake: { name: "{{cakeType}}", price: "{cakePrice}}" },
+test('🍎 populateEventData undefined/object', async (t) => {
+    const result = populateEventData(undefined, {
+        cake: { name: '{{cakeType}}', price: '{cakePrice}}' },
     });
     t.is(
         JSON.stringify(result),
         JSON.stringify({
-            cake: { name: "{{cakeType}}", price: "{cakePrice}}" },
+            cake: { name: '{{cakeType}}', price: '{cakePrice}}' },
         })
     );
 });
-test("🍎 populateEventData event/undefined", async (t) => {
-    let result = populateEventData(
-        { cakeType: "Cheese", cakePrice: 50 },
+test('🍎 populateEventData event/undefined', async (t) => {
+    const result = populateEventData(
+        { cakeType: 'Cheese', cakePrice: 50 },
         undefined
     );
     t.is(JSON.stringify(result), undefined);
 });
-test("🍎 populateEventData undefined/undefined", async (t) => {
-    let result = populateEventData(undefined, undefined);
+test('🍎 populateEventData undefined/undefined', async (t) => {
+    const result = populateEventData(undefined, undefined);
     t.is(JSON.stringify(result), undefined);
 });
 
-test("🍏 createFolderFromPath('TestFolder/TestFile.txt')", async (t) => {
-    const filename = "TestFolder/TestFile.txt";
+test('🍏 createFolderFromPath(\'TestFolder/TestFile.txt\')', async (t) => {
+    const filename = 'TestFolder/TestFile.txt';
     createFolderFromPath(filename);
-    const folder = filename.substring(0, filename.lastIndexOf("/"));
+    const folder = filename.substring(0, filename.lastIndexOf('/'));
     t.true(fs.existsSync(folder));
     fs.rmdirSync(folder);
 });
 
-test("🍎 createFolderFromPath(null)", async (t) => {
+test('🍎 createFolderFromPath(null)', async (t) => {
     const filename = null;
     t.throws(
         () => {
@@ -201,12 +201,12 @@ test("🍎 createFolderFromPath(null)", async (t) => {
         },
         {
             instanceOf: TypeError,
-            message: "Cannot read properties of null (reading 'substring')",
+            message: 'Cannot read properties of null (reading \'substring\')',
         }
     );
 });
 
-test("🍎 createFolderFromPath(undefined)", async (t) => {
+test('🍎 createFolderFromPath(undefined)', async (t) => {
     const filename = undefined;
     t.throws(
         () => {
@@ -215,7 +215,7 @@ test("🍎 createFolderFromPath(undefined)", async (t) => {
         {
             instanceOf: TypeError,
             message:
-                "Cannot read properties of undefined (reading 'substring')",
+                'Cannot read properties of undefined (reading \'substring\')',
         }
     );
 });
@@ -231,9 +231,9 @@ test("🍎 createFolderFromPath(undefined)", async (t) => {
 //   });
 // });
 
-test("🍏 blankFileIfExists('testFile.txt')", async (t) => {
-    const filename = "testFile.txt";
-    fs.writeFileSync(filename, "test text");
+test('🍏 blankFileIfExists(\'testFile.txt\')', async (t) => {
+    const filename = 'testFile.txt';
+    fs.writeFileSync(filename, 'test text');
     const result = blankFileIfExists(filename);
     t.true(result);
     const stats = fs.statSync(filename);
@@ -242,86 +242,86 @@ test("🍏 blankFileIfExists('testFile.txt')", async (t) => {
     fs.unlinkSync(filename);
 });
 
-test("🍎 blankFileIfExists(null)", async (t) => {
+test('🍎 blankFileIfExists(null)', async (t) => {
     const filename = null;
     const result = blankFileIfExists(filename);
     t.false(result);
 });
 
-test("🍎 blankFileIfExists(undefined)", async (t) => {
+test('🍎 blankFileIfExists(undefined)', async (t) => {
     const filename = undefined;
     const result = blankFileIfExists(filename);
     t.false(result);
 });
 
-test("🍎 blankFileIfExists('TestFile?.txt')", async (t) => {
-    const filename = "TestFile?.txt";
+test('🍎 blankFileIfExists(\'TestFile?.txt\')', async (t) => {
+    const filename = 'TestFile?.txt';
     const result = blankFileIfExists(filename);
     t.false(result);
 });
 
-test("🍏 parseCSV", async (t) => {
-    const headerArr = "a,b,c,d,e,f";
-    const rowArr = "1,2,3,4,5,6";
+test('🍏 parseCSV', async (t) => {
+    const headerArr = 'a,b,c,d,e,f';
+    const rowArr = '1,2,3,4,5,6';
     const result = parseCSV(headerArr, rowArr);
     t.is(
         JSON.stringify(result),
-        JSON.stringify({ a: "1", b: "2", c: "3", d: "4", e: "5", f: "6" })
+        JSON.stringify({ a: '1', b: '2', c: '3', d: '4', e: '5', f: '6' })
     );
 });
-test("🍎 parseCSV(undefined header, undefined row)", async (t) => {
+test('🍎 parseCSV(undefined header, undefined row)', async (t) => {
     t.throws(
         () => {
             parseCSV(undefined, undefined);
         },
         {
             instanceOf: TypeError,
-            message: "Cannot read properties of undefined (reading 'split')",
+            message: 'Cannot read properties of undefined (reading \'split\')',
         }
     );
 });
-test("🍎 parseCSV(null header, null row)", async (t) => {
+test('🍎 parseCSV(null header, null row)', async (t) => {
     t.throws(
         () => {
             parseCSV(null, null);
         },
         {
             instanceOf: TypeError,
-            message: "Cannot read properties of null (reading 'split')",
+            message: 'Cannot read properties of null (reading \'split\')',
         }
     );
 });
-test("🍏 parseCSV('' header, '' row)", async (t) => {
-    const result = parseCSV("", "");
+test('🍏 parseCSV(\'\' header, \'\' row)', async (t) => {
+    const result = parseCSV('', '');
     t.is(JSON.stringify(result), JSON.stringify({}));
 });
-test("🍏 parseCSV('col1,col2,col3' header, '1,2' row)", async (t) => {
-    const result = parseCSV("col1,col2,col3", "1,2");
-    t.is(JSON.stringify(result), JSON.stringify({ col1: "1", col2: "2" }));
+test('🍏 parseCSV(\'col1,col2,col3\' header, \'1,2\' row)', async (t) => {
+    const result = parseCSV('col1,col2,col3', '1,2');
+    t.is(JSON.stringify(result), JSON.stringify({ col1: '1', col2: '2' }));
 });
-test("🍏 parseCSV('col1,col2' header, '1,2,3' row)", async (t) => {
-    const result = parseCSV("col1,col2", "1,2,3");
-    t.is(JSON.stringify(result), JSON.stringify({ col1: "1", col2: "2" }));
+test('🍏 parseCSV(\'col1,col2\' header, \'1,2,3\' row)', async (t) => {
+    const result = parseCSV('col1,col2', '1,2,3');
+    t.is(JSON.stringify(result), JSON.stringify({ col1: '1', col2: '2' }));
 });
-test("🍎 parseCSV('col1,col2' header, null row)", async (t) => {
+test('🍎 parseCSV(\'col1,col2\' header, null row)', async (t) => {
     t.throws(
         () => {
-            parseCSV("col1,col2", null);
+            parseCSV('col1,col2', null);
         },
         {
             instanceOf: TypeError,
-            message: "Cannot read properties of null (reading 'split')",
+            message: 'Cannot read properties of null (reading \'split\')',
         }
     );
 });
-test("🍎 parseCSV(null header, '1,2,3' row)", async (t) => {
+test('🍎 parseCSV(null header, \'1,2,3\' row)', async (t) => {
     t.throws(
         () => {
-            parseCSV(null, "1,2,3");
+            parseCSV(null, '1,2,3');
         },
         {
             instanceOf: TypeError,
-            message: "Cannot read properties of null (reading 'split')",
+            message: 'Cannot read properties of null (reading \'split\')',
         }
     );
 });
