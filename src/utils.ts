@@ -1,13 +1,4 @@
-/*
-given an object like this:
-{ cake: { name: "chocolate", price: 10 } }
-and a string like this:
-"cake.name"
-return the value of the property even if it is nested
-*/
 import fs from "fs";
-import cliProgress from "cli-progress";
-import colors from "ansi-colors";
 
 const getProp = (obj: any, path: string) => {
   return path.split(".").reduce((o, i) => o[i], obj);
@@ -68,19 +59,6 @@ const blankFileIfExists = (filename: string): boolean => {
   return false;
 };
 
-const customProgressBar = (doc: any) => {
-  return new cliProgress.SingleBar({
-    format:
-      doc.name +
-      " |" +
-      colors.cyan("{bar}") +
-      "| {percentage}% || {value}/{total} events",
-    barCompleteChar: "\u2588",
-    barIncompleteChar: "\u2591",
-    hideCursor: true,
-  });
-};
-
 function parseCSV(headers, row) {
   // Split the headers and row into arrays
   const headerArr = headers.split(",");
@@ -102,6 +80,5 @@ export {
   getProp,
   createFolderFromPath,
   blankFileIfExists,
-  customProgressBar,
   parseCSV,
 };

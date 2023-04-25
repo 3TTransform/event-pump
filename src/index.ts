@@ -6,7 +6,7 @@ const ddb = new dynamo();
 import { loadConfig } from "./yaml";
 import { mssqlHydrateOne } from "./destinations/mssql";
 import { ionHydrateOne } from "./destinations/ion";
-import { customProgressBar, parseCSV } from "./utils";
+import { parseCSV } from "./utils";
 import fs from "fs";
 
 // to parse csv files
@@ -30,14 +30,13 @@ const processPage = async (doc: any, events: any, isFirstEvent: boolean = false)
       }
 
       if (matched && pattern.action) {        
-        await dohandler(event, pattern, isFirstEvent);
+        await doHandler(event, pattern, isFirstEvent);
       }
     }
-
   }
 }
 
-async function dohandler(event, pattern, isFirstEvent) {
+async function doHandler(event, pattern, isFirstEvent) {
   //case swtich on the action target
   switch (pattern.action.target) {
     case "ion":
@@ -54,7 +53,6 @@ async function dohandler(event, pattern, isFirstEvent) {
         `Action target ${pattern.action.target} is not supported`
       );
   }
-
 }
 
 /**
@@ -70,7 +68,6 @@ export async function processEvents(params: CliParams) {
     console.error("YML file is invalid");
     throw e;
   }
-  const progressBar = customProgressBar(doc);
 
   let events = [];
   let isFirstEvent;
@@ -113,12 +110,4 @@ export async function processEvents(params: CliParams) {
     default:
       throw new Error(`Source ${doc.source.type} is not supported`);
   }
-
-
-
-  // create a progress bar
-  // progressBar.start(events.length, 0);
-
-  // progressBar.update(events.length);
-  // progressBar.stop();
 }
