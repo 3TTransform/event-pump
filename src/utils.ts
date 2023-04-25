@@ -12,6 +12,8 @@ import colors from "ansi-colors";
 const getProp = (obj: any, path: string) => {
   return path.split(".").reduce((o, i) => o[i], obj);
 };
+
+// Can be solved by using handlebars
 const populateEventData = (event: any, object: any) => {
   if (!object || !event) {
     return object;
@@ -27,7 +29,7 @@ const populateEventData = (event: any, object: any) => {
       return getProp(event, prop);
     }
 
-    const matches = value.match(/{{(.*?)}}/g);
+    const matches = value.match(/{{(.{0,64}?)}}/g);
     if (!matches) {
       return value;
     }
