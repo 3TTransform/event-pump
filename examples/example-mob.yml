@@ -1,0 +1,20 @@
+name: AWS DynamoDB to MSSQL
+source:
+  type: dynamodb
+  table: competency-service-uat-store
+patterns:
+  - name: allThings
+    action:
+      target: mssql
+      params:
+        sql: >          
+          INSERT INTO test1
+          ([CognitoID], [CourseID])
+          VALUES (@cognitoId, @courseId)
+        input:
+          - name: "cognitoId"
+            type: "NVARCHAR(MAX)"
+            value: "{{cognitoId}}"
+          - name: "courseId"
+            type: "NVARCHAR(MAX)"
+            value: "{{courseId}}"
