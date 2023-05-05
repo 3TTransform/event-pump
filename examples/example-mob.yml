@@ -9,8 +9,8 @@ patterns:
       params:
         sql: >          
           INSERT INTO test1
-          ([CognitoID], [CourseID], [FirstName], [LastName])
-          VALUES (@cognitoId, @courseId, @firstName, @lastName)
+          ([CognitoID], [CourseID], [FirstName], [LastName], [Name], [Source])
+          VALUES (@cognitoId, @courseId, @firstName, @lastName, @name, @source)
         input:
           - name: "cognitoId"
             type: "NVARCHAR(MAX)"
@@ -24,3 +24,9 @@ patterns:
           - name: "lastName"
             type: "NVARCHAR(100)"
             value: "{{lastName}}"
+          - name: "name"
+            type: "NVARCHAR(MAX)"
+            value: "{{name}}"
+          - name: "source"
+            type: "NVARCHAR(50)"
+            value: "{{source}}"
