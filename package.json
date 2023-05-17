@@ -56,6 +56,7 @@
     "nanoid": "^4.0.1",
     "pg": "^8.11.0",
     "sqlite3": "^5.1.4",
-    "yup": "^0.32.11"
+    "yup": "^0.32.11",
+    "@opensearch-project/opensearch": "^2.0.0"
   }
 }
