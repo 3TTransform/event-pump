@@ -9,7 +9,7 @@ const {
 } = process.env;
 const protocol = 'https';
 
-const handler = async (pattern: any, event: any) => {
+const handler = async (pattern: unknown, event: unknown) => {
     const client = new Client({
         node: protocol + '://' + osUser + ':' + osPassword + '@' + osURL,
         // use_ssl: true,
@@ -56,7 +56,7 @@ const handler = async (pattern: any, event: any) => {
             refresh: true,
         });
 
-        console.log('Adding document:');
+        console.log('Creating item:');
         console.log(response.body);
 
         return response;
@@ -81,7 +81,7 @@ const handler = async (pattern: any, event: any) => {
     
         console.log('Search results:');
         console.log(response.body.hits.hits[0]._source);
-            
+
         return response;
     }
 
@@ -102,7 +102,7 @@ const handler = async (pattern: any, event: any) => {
     }
 
     // Delete the index.
-    if (pattern == 'delete_item') {
+    if (pattern == 'delete_index') {
 
         const response = await client.indices.delete({
             index: index_name,
