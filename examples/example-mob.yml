@@ -7,10 +7,17 @@ patterns:
     action:
       target: mssql
       params:
-        sql: >          
+        sql: >
           INSERT INTO test1
-          ([CognitoID], [CourseID], [FirstName], [LastName], [Name], [Source])
-          VALUES (@cognitoId, @courseId, @firstName, @lastName, @name, @source)
+          ([CognitoID], [CourseID], [FirstName], [LastName], [Name], [Source], [DateOfBirth], [ExpiryDate])
+          VALUES (@cognitoId, @courseId, @firstName, @lastName, @name, @source,
+          CASE WHEN @dateOfBirth = 99999999999999 THEN NULL
+          ELSE DATEADD(S, @dateOfBirth / 1000, '1970-01-01 00:00:00')
+          END,
+          CASE WHEN @expiryDate = 99999999999999 THEN NULL
+          ELSE DATEADD(S, @expiryDate / 1000, '1970-01-01 00:00:00')
+          END
+          )
         input:
           - name: "cognitoId"
             type: "NVARCHAR(MAX)"
@@ -30,3 +37,9 @@ patterns:
           - name: "source"
             type: "NVARCHAR(50)"
             value: "{{source}}"
+          - name: "dateOfBirth"
+            type: "BIGINT"
+            value: "{{dateOfBirth}}"
+          - name: "expiryDate"
+            type: "BIGINT"
+            value: "{{expiryDate}}"
