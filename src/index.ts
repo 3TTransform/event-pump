@@ -6,6 +6,7 @@ const ddb = new Dynamo();
 import { loadConfig } from "./yaml";
 import { mssqlHydrateOne } from "./destinations/mssql";
 import { ionHydrateOne } from "./destinations/ion";
+import { postgresSqlHydrateOne } from "./destinations/postgresSQL";
 import { parseCSV } from "./utils";
 import fs from "fs";
 
@@ -50,6 +51,9 @@ async function doHandler(event, pattern, isFirstEvent) {
       break;
     case "mssql":
       await mssqlHydrateOne(pattern, event, isFirstEvent);
+      break;
+    case "postgresSQL":
+      await postgresSqlHydrateOne(pattern, event, isFirstEvent);
       break;
     default:
       throw new Error(

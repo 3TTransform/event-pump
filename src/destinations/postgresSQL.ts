@@ -1,4 +1,6 @@
-import { Pool, Client } from "pg";
+import { Client } from "pg";
+import { populateEventData } from '../utils';
+import { replaceValues } from '../template';
 require("dotenv").config();
 
 // Create a new PostgreSQL client
@@ -10,6 +12,16 @@ const client = new Client({
   port: process.env.PG_PORT, // Default PostgreSQL port
 });
 
+const executeQuery = async(query: string, params?: any[]): Promise<any> => {
+  const connection = await client.connect();
+
+  try {
+    const result = await connection.query(query, params);
+    return result.rows;
+  } finally {
+    connection.release();
+  }
+}
 // Connect to the PostgreSQL server
 client.connect((err) => {
   if (err) {
@@ -37,7 +49,7 @@ client.connect((err) => {
       const result = await connection.query(query, params);
       return result.rows;
     } finally {
-      connection.release();
+      connection.end();
     }
   }
 
@@ -48,3 +60,21 @@ client.connect((err) => {
     return users;
   }
 });
+
+export const postgresSqlHydrateOne = async (
+  pattern: any,
+  event: any,
+  isFirstEvent: boolean
+) => {
+
+  const populatedParameters = populateEventData(event, pattern.action.params.input);
+
+  let replacedSQL = replaceValues(event, pattern.action.params.sql);
+  replacedSQL = replacedSQL.replace(/,\s*WHERE/g, ' WHERE');
+
+  try {
+      await executeQuery(replacedSQL, populatedParameters);
+  } catch (err) {
+      console.log(`${event.id} failed ${err.message}`);
+  }
+};
