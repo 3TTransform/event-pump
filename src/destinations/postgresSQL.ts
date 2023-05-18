@@ -43,7 +43,7 @@ client.connect((err) => {
 
   // Example usage
   async function getUsers(): Promise<any[]> {
-    const query = "SELECT * FROM users";
+    const query = "SELECT * FROM table_name";
     const users = await executeQuery(query);
     return users;
   }
