@@ -1,4 +1,5 @@
 import test from 'ava';
+test('foo', t => { t.pass();});
 
 import { openSearchHydrateOne } from '../destinations/os';
 

@@ -25,3 +25,6 @@
 //     const testTitle = `Testing ${file}`;
 //     ava(testTitle, (t) => runYamlTest(t, path.join(testDir, file)));
 //   });
+
+import test from 'ava';
+test('foo', t => { t.pass();});

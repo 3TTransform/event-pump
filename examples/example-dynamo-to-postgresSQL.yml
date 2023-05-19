@@ -1,0 +1,20 @@
+name: AWS DynamoDB to MSSQL
+source:
+  type: dynamodb
+  table: competency-service-uat-store
+patterns:
+  - name: allThings
+    action:
+      target: postgresSQL
+      params:
+        sql: >
+          INSERT INTO test1
+          ([FirstName], [LastName])
+          VALUES (@firstName, @lastName)
+        input:
+          - name: "firstName"
+            type: "NVARCHAR(100)"
+            value: "{{firstName}}"
+          - name: "lastName"
+            type: "NVARCHAR(100)"
+            value: "{{lastName}}"

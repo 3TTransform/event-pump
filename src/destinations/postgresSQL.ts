@@ -1,4 +1,7 @@
-import { Pool, Client } from "pg";
+import { Client } from "pg";
+import { populateEventData } from "../utils";
+import { replaceValues } from "../template";
+import { error } from "console";
 require("dotenv").config();
 
 // Create a new PostgreSQL client
@@ -10,41 +13,57 @@ const client = new Client({
   port: process.env.PG_PORT, // Default PostgreSQL port
 });
 
-// Connect to the PostgreSQL server
-client.connect((err) => {
-  if (err) {
-    console.error("Error connecting to PostgreSQL:", err);
-    return;
+const executeQuery = async (query: string, params?: any[]): Promise<any> => {
+  console.log("😍");
+  const connection = await client.connect();
+  console.log("😄");
+  console.log();
+  try {
+    const result = await connection.query(query, params);
+    return result.rows;
+  } catch (error) {
+    console.log("😡");
+    console.log(error);
+  } finally {
+    connection.release();
   }
-  console.log("Connected to PostgreSQL!");
+};
 
+  // Connect to the PostgreSQL server
+  // client.connect((err) => {
+  //   if (err) {
+  //     console.error("Error connecting to PostgreSQL:", err);
+  //     return;
+  //   }
+  //   console.log("Connected to PostgreSQL!");
+
+  // // Disconnect from the PostgreSQL server
+  // client.end((endErr) => {
+  //   if (endErr) {
+  //     console.error("Error disconnecting from PostgreSQL:", endErr);
+  //     return;
+  //   }
+  //   console.log("Disconnected from PostgreSQL.");
+  // });
   // Execute queries or perform operations on the database here
+// });
 
-  // Disconnect from the PostgreSQL server
-  client.end((endErr) => {
-    if (endErr) {
-      console.error("Error disconnecting from PostgreSQL:", endErr);
-      return;
-    }
-    console.log("Disconnected from PostgreSQL.");
-  });
+export const postgresSqlHydrateOne = async (
+  pattern: any,
+  event: any,
+  isFirstEvent: boolean
+) => {
+  const populatedParameters = populateEventData(
+    event,
+    pattern.action.params.input
+  );
 
-  // Function to execute the PostgreSQL query
-  async function executeQuery(query: string, params?: any[]): Promise<any> {
-    const connection = await client.connect();
-
-    try {
-      const result = await connection.query(query, params);
-      return result.rows;
-    } finally {
-      connection.release();
-    }
+  let replacedSQL = replaceValues(event, pattern.action.params.sql);
+  replacedSQL = replacedSQL.replace(/,\s*WHERE/g, " WHERE");
+  console.log("🙏");
+  try {
+    await executeQuery(replacedSQL, populatedParameters);
+  } catch (err) {
+    console.log(`${event.id} failed ${err.message}`);
   }
-
-  // Example usage
-  async function getUsers(): Promise<any[]> {
-    const query = "SELECT * FROM users";
-    const users = await executeQuery(query);
-    return users;
-  }
-});
+};
