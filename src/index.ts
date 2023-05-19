@@ -66,6 +66,7 @@ async function doHandler(event, pattern, isFirstEvent) {
  * @param { object } params - The command line parameters
  */
 export async function processEvents(params: CliParams) {
+  console.time('took in seconds');
   let doc;
 
   try {
@@ -117,4 +118,5 @@ export async function processEvents(params: CliParams) {
     default:
       throw new Error(`Source ${doc.source.type} is not supported`);
   }
+  console.timeEnd('took in seconds');
 }
