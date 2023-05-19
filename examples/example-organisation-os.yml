@@ -1,0 +1,34 @@
+name: Event pump to OpenSearch
+source: 
+  type: json
+  file: ./examples/events/organisations.seed.json
+patterns:
+  - name: organisationCreate
+    rule:
+      verb: create
+    action:
+      target: os
+      params:
+        TableName: Example
+        Item:
+          id: "{{id}}"
+          organisationName: "{{organisationName}}"
+  - name: organisationUpdate
+    rule:
+      verb: update
+    action:
+      target: os           
+      params:
+        TableName: Example
+        Item:
+          id: "{{id}}"
+          organisationName: "{{organisationName}}" 
+  - name: organisationDelete
+    rule:
+      verb: delete
+    action:
+      target: os
+      params:
+        TableName: Example
+        Item:
+          id: "{{id}}"
