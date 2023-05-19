@@ -126,6 +126,6 @@ export async function processEvents(params: CliParams) {
         break;
     default:
       throw new Error(`Source ${doc.source.type} is not supported`);
-      console.time('Took in seconds');
   }
+  console.timeEnd('Took in seconds');
 }
