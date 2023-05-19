@@ -1,0 +1,25 @@
+name: AWS DynamoDB to MSSQL
+source:
+  type: dynamodb
+  table: competency-service-uat-store
+patterns:
+  - name: allThings
+    action:
+      target: mssql
+      params:
+        sql: >
+          IF EXISTS (SELECT * FROM AttestationCount WHERE Attestation = @name)
+              BEGIN
+                UPDATE AttestationCount
+                SET Count = Count + 1
+                WHERE Attestation = @name
+              END
+          ELSE
+              BEGIN
+                INSERT INTO AttestationCount (Attestation, Count)
+                VALUES (@name, 1)
+              END
+        input:
+          - name: "name"
+            type: "NVARCHAR(MAX)"
+            value: "{{name}}"
