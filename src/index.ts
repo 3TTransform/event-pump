@@ -70,7 +70,7 @@ async function doHandler(event, pattern, isFirstEvent) {
  * @param { object } params - The command line parameters
  */
 export async function processEvents(params: CliParams) {
-    let doc;
+  let doc;
 
     try {
         // load and validate the config file
@@ -124,6 +124,6 @@ export async function processEvents(params: CliParams) {
 
         break;
     default:
-        throw new Error(`Source ${doc.source.type} is not supported`);
-    }
+      throw new Error(`Source ${doc.source.type} is not supported`);
+  }
 }
