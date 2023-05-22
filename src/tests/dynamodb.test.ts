@@ -1,123 +1,127 @@
 import test from 'ava';
-test('foo', t => { t.pass(); });
+import sinon from 'sinon';
+import Dynamo from '../destinations/dynamodb'
+import AWS from 'aws-sdk';
 
-import dotenv from 'dotenv';
-dotenv.config();
+const dynamoStub = {
+  scan: sinon.stub().returns({promise: ()=>{}}),
+  listTables: sinon.stub(),
+  putItem: sinon.stub().returns({promise: ()=>{}}),
+  getItem: sinon.stub().returns({promise: ()=>{}}),
+  updateItem: sinon.stub().returns({promise: ()=>{}}),
+  deleteItem: sinon.stub().returns({promise: ()=>{}}),
+};
 
-import dynamo from '../destinations/dynamodb';
-const ddb = new dynamo();
-//export AWS_DEFAULT_REGION=eu-west-2
+let dynamo;
+test.beforeEach(t => {
+  dynamo = new Dynamo();
+  sinon.stub(dynamo, 'dyn').value(dynamoStub);
+});
 
-/* 	scanTable
-/		dynamodbTableExists
-/		dynamodbWrite
-/  	dynamodbUpdate
-/		dynamodbDelete
-/		dynamodbHydrateOne
-*/
+test.afterEach(t => {
+  sinon.restore();
+  dynamo = null;
+});
 
-// scanTable
-// test('🍏 scanTable', async (t) => {
-//     const table = 'Example';
-//     const result = await ddb.scanTable(table);
-//     t.truthy(result);
-// });
+test('🍏 generateUpdateQuery should generate the correct update expression', (t) => {
+  const fields = {
+    name: 'John',
+    age: 25,
+    address: null,
+    email: undefined,
+  };
+  const expectedExpression = {
+    UpdateExpression: 'SET #name = :name, #age = :age, #address = :address',
+    ExpressionAttributeNames: {
+      '#address': 'address',
+      '#age': 'age',
+      '#name': 'name',
+    },
+    ExpressionAttributeValues: {
+      ':address': null,
+      ':name': 'John',
+      ':age': 25,
+    },
+  };
+  const result = dynamo.generateUpdateQuery(fields);
+  t.deepEqual(result, expectedExpression);
+});
+test('🍎 generateUpdateQuery should return undefined if fields are either null or undefined', (t) => {
+  const nullResult = dynamo.generateUpdateQuery(null);
+  const undefinedResult = dynamo.generateUpdateQuery(undefined);
 
-// test('🍎 scanTable (not exists)', async (t) => {
-//     await t.throwsAsync(
-//         async () => {
-//             await ddb.scanTable('Example2');
-//         },
-//         { message: 'Cannot do operations on a non-existent table' }
-//     );
-// });
+  t.is(nullResult, undefined);
+  t.is(undefinedResult, undefined);
+});
+test('🍎 generateUpdateQuery should handle an empty fields object', (t) => {
+  const fields = {};
 
-// // dynamodbTableExists
-// test('🍏 dynamodbTableExists (exists)', async (t) => {
-//     const table = 'Example';
-//     const result = await ddb.dynamodbTableExists(table);
-//     t.true(result);
-// });
+  const expectedExpression = {
+    UpdateExpression: '',
+    ExpressionAttributeNames: {},
+    ExpressionAttributeValues: {},
+  };
 
-// test('🍏 dynamodbTableExists (Does not exist)', async (t) => {
-//     const table = 'Example2';
-//     const result = await ddb.dynamodbTableExists(table);
-//     t.false(result);
-// });
+  const result = dynamo.generateUpdateQuery(fields);
 
-// // dynamodb CRUD
-// test('🍏 dynamodbCRUD', async (t) => {
-//     // dynamodbWrite
-//     const params = {
-//         TableName: 'Example',
-//         Item: {
-//             pk: { S: 'organisation#1234' },
-//             sk: { S: 'organisation' },
-//             id: { S: '1234' },
-//             organisationName: { S: 'Test Organisation' },
-//         },
-//     };
-//     const result = await ddb.dynamodbWrite(params);
-//     t.assert(Object.entries(result).length === 0);
+  t.deepEqual(result, expectedExpression);
+});
 
-//     // dynamodbGet
-//     const params2 = {
-//         TableName: 'Example',
-//         Key: {
-//             pk: { S: 'organisation#1234' },
-//             sk: { S: 'organisation' },
-//         },
-//     };
-//     const result2 = await ddb.dynamodbGet(params2);
-//     t.assert(result2.Item.organisationName.S, 'Test Organisation');
+test('🍏 scanTable should call the scan method with correct parameters', async (t) => {
+  const tableName = 'myTable';
+  const lastEvaluatedKey = { id: 'lastKey' };
 
-//     // dynamodbUpdate
-//     const params3 = {
-//         TableName: 'Example',
-//         Key: {
-//             pk: { S: 'organisation#1234' },
-//             sk: { S: 'organisation' },
-//         },
-//         UpdateExpression: 'SET id=:id, organisationName=:organisationName',
-//         ExpressionAttributeValues: {
-//             ':id': { S: '1234' },
-//             ':organisationName': { S: 'Test Organisation 3' },
-//         },
-//     };
-//     const result3 = await ddb.dynamodbUpdate(params3);
-//     t.assert(Object.entries(result3).length === 0);
+  await dynamo.scanTable(tableName, lastEvaluatedKey);
+  t.true(dynamoStub.scan.calledOnce);
+  t.deepEqual(dynamoStub.scan.firstCall.args[0], {
+    TableName: tableName,
+    Limit: 10,
+    ExclusiveStartKey: lastEvaluatedKey,
+  });
+});
 
-//     // dynamodbGet
-//     const params4 = {
-//         TableName: 'Example',
-//         Key: {
-//             pk: { S: 'organisation#1234' },
-//             sk: { S: 'organisation' },
-//         },
-//     };
-//     const result4 = await ddb.dynamodbGet(params4);
-//     t.assert(result4.Item.organisationName.S, 'Test Organisation 3');
+test('🍏 dynamodbTableExists should return true when the table exists', async (t) => {
+  const tableName = 'myTable';
+  const tableNames = ['table1', 'table2', tableName];
+  dynamoStub.listTables = sinon.stub().returns( {promise: () => ({ TableNames: tableNames })});
 
-//     //dynamodbDelete
-//     const params5 = {
-//         TableName: 'Example',
-//         Key: {
-//             pk: { S: 'organisation#1234' },
-//             sk: { S: 'organisation' },
-//         },
-//     };
-//     const result5 = await ddb.dynamodbDelete(params5);
-//     t.assert(Object.entries(result5).length === 0);
+  const result = await dynamo.dynamodbTableExists(tableName);
 
-//     // dynamodbGet
-//     const params6 = {
-//         TableName: 'Example',
-//         Key: {
-//             pk: { S: 'organisation#1234' },
-//             sk: { S: 'organisation' },
-//         },
-//     };
-//     const result6 = await ddb.dynamodbGet(params6);
-//     t.assert(Object.entries(result6).length === 0);
-// });
-// dynamodbHydrateOne ?????
+  t.true(result);
+  t.true(dynamoStub.listTables.calledOnce);
+});
+
+test('🍎 dynamodbTableExists should return false when the table does not exist', async (t) => {
+  const tableName = 'myTable';
+  const tableNames = ['table1', 'table2'];
+  dynamoStub.listTables = sinon.stub().returns( {promise: () => ({ TableNames: tableNames })});
+  const result = await dynamo.dynamodbTableExists(tableName);
+  t.false(result);
+  t.true(dynamoStub.listTables.calledOnce);
+});
+
+
+test.serial.only('🍏 dynamodbWrite should call putItem method with the provided parameters', async (t) => {
+  const params = { TableName: 'myTable', Item: { id: '123', name: 'John Doe' } };
+  await dynamo.dynamodbWrite(params);
+  t.true(dynamoStub.putItem.calledOnce);
+  t.deepEqual(dynamoStub.putItem.firstCall.args[0], params);
+});
+test.serial.only('🍏 dynamodbGet should call putItem method with the provided parameters', async (t) => {
+  const params = { TableName: 'myTable', Item: { id: '123', name: 'John Doe' } };
+  await dynamo.dynamodbGet(params);
+  t.true(dynamoStub.getItem.calledOnce);
+  t.deepEqual(dynamoStub.getItem.firstCall.args[0], params);
+});
+test.serial.only('🍏 dynamodbUpdate should call putItem method with the provided parameters', async (t) => {
+  const params = { TableName: 'myTable', Item: { id: '123', name: 'John Doe' } };
+  await dynamo.dynamodbUpdate(params);
+  t.true(dynamoStub.updateItem.calledOnce);
+  t.deepEqual(dynamoStub.updateItem.firstCall.args[0], params);
+});
+test.serial.only('🍏 dynamodbDelete should call putItem method with the provided parameters', async (t) => {
+  const params = { TableName: 'myTable', Item: { id: '123', name: 'John Doe' } };
+  await dynamo.dynamodbDelete(params);
+  t.true(dynamoStub.deleteItem.calledOnce);
+  t.deepEqual(dynamoStub.deleteItem.firstCall.args[0], params);
+});
