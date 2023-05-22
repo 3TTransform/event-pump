@@ -24,7 +24,7 @@ class Dynamo {
 
     this.dyn = new AWS.DynamoDB(serviceConfigOptions);
   }
-  generateUpdateQuery = (fields: any) => {
+  generateUpdateQuery = (fields: any): any => {
     // take in an object and delete verything that is null
     if (fields) {
       Object.keys(fields).forEach((key) => {
@@ -32,27 +32,20 @@ class Dynamo {
           delete fields[key];
         }
       });
-      // 'fields' is now an object with all null things removed
-      const exp: any = {
-        UpdateExpression: "",
+
+      if (Object.keys(fields).length > 0) {
+        return {
+          UpdateExpression: 'SET ' + Object.entries(fields).map(x => `#${x[0]} = :${x[0]}`).join(', '),
+          ExpressionAttributeNames: Object.fromEntries(Object.entries(fields).map(x => [`#${x[0]}`, x[0]])),
+          ExpressionAttributeValues: Object.fromEntries(Object.entries(fields).map(x => [`:${x[0]}`, x[1]])),
+        };
+      }
+
+      return {
+        UpdateExpression: '',
         ExpressionAttributeNames: {},
         ExpressionAttributeValues: {},
       };
-
-      exp.UpdateExpression += "SET ";
-
-      // loop through the fields we have left and build our expression
-      Object.entries(fields).forEach(([key, item]) => {
-        exp.UpdateExpression += ` #${key} = :${key},`;
-        exp.ExpressionAttributeNames[`#${key}`] = key;
-        exp.ExpressionAttributeValues[`:${key}`] = item;
-      });
-
-      // remove the last comma on the text field
-      exp.UpdateExpression = exp.UpdateExpression.slice(0, -1);
-
-      //return our shiny new expression
-      return exp;
     }
   };
   marshal = (item) => {
