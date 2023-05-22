@@ -100,25 +100,25 @@ test('🍎 dynamodbTableExists should return false when the table does not exist
 });
 
 
-test.serial.only('🍏 dynamodbWrite should call putItem method with the provided parameters', async (t) => {
+test('🍏 dynamodbWrite should call putItem method with the provided parameters', async (t) => {
   const params = { TableName: 'myTable', Item: { id: '123', name: 'John Doe' } };
   await dynamo.dynamodbWrite(params);
   t.true(dynamoStub.putItem.calledOnce);
   t.deepEqual(dynamoStub.putItem.firstCall.args[0], params);
 });
-test.serial.only('🍏 dynamodbGet should call putItem method with the provided parameters', async (t) => {
+test('🍏 dynamodbGet should call putItem method with the provided parameters', async (t) => {
   const params = { TableName: 'myTable', Item: { id: '123', name: 'John Doe' } };
   await dynamo.dynamodbGet(params);
   t.true(dynamoStub.getItem.calledOnce);
   t.deepEqual(dynamoStub.getItem.firstCall.args[0], params);
 });
-test.serial.only('🍏 dynamodbUpdate should call putItem method with the provided parameters', async (t) => {
+test('🍏 dynamodbUpdate should call putItem method with the provided parameters', async (t) => {
   const params = { TableName: 'myTable', Item: { id: '123', name: 'John Doe' } };
   await dynamo.dynamodbUpdate(params);
   t.true(dynamoStub.updateItem.calledOnce);
   t.deepEqual(dynamoStub.updateItem.firstCall.args[0], params);
 });
-test.serial.only('🍏 dynamodbDelete should call putItem method with the provided parameters', async (t) => {
+test('🍏 dynamodbDelete should call putItem method with the provided parameters', async (t) => {
   const params = { TableName: 'myTable', Item: { id: '123', name: 'John Doe' } };
   await dynamo.dynamodbDelete(params);
   t.true(dynamoStub.deleteItem.calledOnce);
