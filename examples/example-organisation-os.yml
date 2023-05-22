@@ -1,7 +1,7 @@
 name: Event pump to OpenSearch
 source: 
   type: json
-  file: ./examples/events/organisations.seed.json
+  file: ./examples/events/organisations.seed.to.os.json
 patterns:
   - name: organisationCreate
     rule:
@@ -32,3 +32,15 @@ patterns:
         TableName: Example
         Item:
           id: "{{id}}"
+  - name: organisationSearch
+    rule:
+      verb: search
+    action:
+      target: os
+      params:
+        TableName: Example
+        Size: "{{size}}"
+        KeyWord: "{{keyword}}"
+        Order: "{{order}}"
+        Key: "{{key}}"
+        Value: "{{value}}"   
