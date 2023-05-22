@@ -48,10 +48,10 @@ class Dynamo {
       };
     }
   };
-  marshal = (item) => {
+  marshall = (item) => {
     return AWS.DynamoDB.Converter.marshall(item);
   };
-  unmarshal = (item) => {
+  unmarshall = (item) => {
     return AWS.DynamoDB.Converter.unmarshall(item);
   };
   scanTable = async (tableName: string, lastEvaluatedKey: any = null) => {
@@ -101,7 +101,7 @@ class Dynamo {
 
     if (thisActionType === "put") {
       const singleItem = populateEventData(event, pattern.action.params.Item);
-      const newItem = this.marshal(singleItem);
+      const newItem = this.marshall(singleItem);
       const params = { ...pattern.action.params };
       params.Item = newItem;
 
@@ -111,15 +111,15 @@ class Dynamo {
       const singleItem = populateEventData(event, pattern.action);
       const updateQuery = this.generateUpdateQuery(singleItem.values);
       updateQuery.TableName = pattern.action.params.TableName;
-      updateQuery.Key = this.marshal(singleItem.params.Key);
-      updateQuery.ExpressionAttributeValues = this.marshal(
+      updateQuery.Key = this.marshall(singleItem.params.Key);
+      updateQuery.ExpressionAttributeValues = this.marshall(
         updateQuery.ExpressionAttributeValues
       );
       await this.dynamodbUpdate(updateQuery);
     }
     if (thisActionType === "delete") {
       const singleItem = populateEventData(event, pattern.action.params.Item);
-      const newItem = this.marshal(singleItem);
+      const newItem = this.marshall(singleItem);
       const params = { ...pattern.action.params };
       params.Item = newItem;
 
@@ -128,6 +128,7 @@ class Dynamo {
       await this.dynamodbDelete(params);
     }
   };
+
 }
 
 export default Dynamo;
