@@ -1,7 +1,6 @@
 import test from 'ava';
 import sinon from 'sinon';
 import Dynamo from '../destinations/dynamodb'
-import AWS from 'aws-sdk';
 
 const dynamoStub = {
   scan: sinon.stub().returns({promise: ()=>{}}),
