@@ -28,6 +28,8 @@ test.afterEach(t => {
   dynamo = null;
 });
 
+let params = { TableName: 'myTable', Item: { id: '123', name: 'John Doe' } };
+
 test.serial('🍏 generateUpdateQuery should generate the correct update expression', (t) => {
   const fields = {
     name: 'John',
@@ -106,25 +108,21 @@ test.serial('🍎 dynamodbTableExists should return false when the table does no
 });
 
 test.serial('🍏 dynamodbWrite should call putItem method with the provided parameters', async (t) => {
-  const params = { TableName: 'myTable', Item: { id: '123', name: 'John Doe' } };
   await dynamo.dynamodbWrite(params);
   t.true(dynamoStub.putItem.calledOnce);
   t.deepEqual(dynamoStub.putItem.firstCall.args[0], params);
 });
 test.serial('🍏 dynamodbGet should call getItem method with the provided parameters', async (t) => {
-  const params = { TableName: 'myTable', Item: { id: '123', name: 'John Doe' } };
   await dynamo.dynamodbGet(params);
   t.true(dynamoStub.getItem.calledOnce);
   t.deepEqual(dynamoStub.getItem.firstCall.args[0], params);
 });
 test.serial('🍏 dynamodbUpdate should call updateItem method with the provided parameters', async (t) => {
-  const params = { TableName: 'myTable', Item: { id: '123', name: 'John Doe' } };
   await dynamo.dynamodbUpdate(params);
   t.true(dynamoStub.updateItem.calledOnce);
   t.deepEqual(dynamoStub.updateItem.firstCall.args[0], params);
 });
 test.serial('🍏 dynamodbDelete should call deleteItem method with the provided parameters', async (t) => {
-  const params = { TableName: 'myTable', Item: { id: '123', name: 'John Doe' } };
   await dynamo.dynamodbDelete(params);
   t.true(dynamoStub.deleteItem.calledOnce);
   t.deepEqual(dynamoStub.deleteItem.firstCall.args[0], params);
@@ -152,10 +150,7 @@ test.serial('🍏 dynamodbHydrateOne should call dynamodbWrite method for "put" 
   dynamoStub.listTables = sinon.stub().returns( {promise: () => ({ TableNames: ['myTable'] })});
   const pattern = {
     action: {
-      params: {
-        TableName: 'myTable',
-        Item: { id: '123', name: 'John Doe' },
-      },
+      params: params,
       type: 'put',
     },
   };
@@ -226,10 +221,7 @@ test.serial('🍏 dynamodbHydrateOne should call dynamodbDelete method for "dele
   dynamoStub.listTables = sinon.stub().returns( {promise: () => ({ TableNames: ['myTable'] })});
   const pattern = {
     action: {
-      params: {
-        TableName: 'myTable',
-        Item: { id: '123', name: 'John Doe' },
-      },
+      params: params,
       type: 'delete',
     },
   };
