@@ -6,7 +6,7 @@ const ddb = new Dynamo();
 import { loadConfig } from './yaml';
 import { mssqlHydrateOne } from './destinations/mssql';
 import { ionHydrateOne } from './destinations/ion';
-import { postgresSqlHydrateOne } from "./destinations/postgresSQL";
+import { postgresSqlHydrateOne } from './destinations/postgresSQL';
 import { openSearchHydrateOne } from './destinations/os';
 import { parseCSV } from './utils';
 import fs from 'fs';
@@ -54,9 +54,9 @@ async function doHandler(event, pattern, isFirstEvent) {
         await mssqlHydrateOne(pattern, event, isFirstEvent);
         break;
     case 'os':
-        await openSearchHydrateOne(pattern, event, isFirstEvent);
+        await openSearchHydrateOne(pattern, event);
         break;
-    case "postgresSQL":
+    case 'postgresSQL':
         await postgresSqlHydrateOne(pattern, event, isFirstEvent);
         break;
     default:

@@ -15,10 +15,10 @@ const client = new Client({
     // use_ssl: true,
 });
 
-const openSearchHydrateOne = async (pattern: any, event: any, isFirstEvent: boolean) => {
+const openSearchHydrateOne = async (pattern: any, event: any) => {
 
     const singleItem = populateEventData(event, pattern.action.params.Item);
-    const index_name = pattern.action.params.TableName?.toLowerCase();
+    const index_name = pattern.action.params.TableName?.toLowerCase();    
 
     if (!index_name) {
         console.log('OS: table name missing');
@@ -30,28 +30,29 @@ const openSearchHydrateOne = async (pattern: any, event: any, isFirstEvent: bool
         // create index
         await osCreateIndex(index_name);
     }
+
+    let response: any;
     
     switch (pattern.rule.verb) {
     case 'create':
-        await osCreate(singleItem, index_name);
+        response = await osCreate(singleItem, index_name);
         break;
     case 'delete':
-        await osDelete(singleItem, index_name);
+        response = await osDelete(singleItem, index_name);
         break;
     case 'update':
-        await osUpdate(singleItem, index_name);
+        response = await osUpdate(singleItem, index_name);
         break;
     case 'search':
-        await osSearch(index_name);
+        response = await osSearch(index_name, pattern.action.params);        
         break;
     default:
         throw new Error(
             `Action target ${pattern.action.target} is not supported`
         );
     }
-       
 
-
+    if (response) return response;
     return null;    
 };
 
@@ -131,38 +132,44 @@ async function osUpdate(singleItem: any, index_name: string) {
     });
 }
 
-async function osSearch(index_name: string) {
-    // Search for the document.
-    // const query = {
-    //     query: {
-    //         match: {
-    //             name: {
-    //                 query: 'The Outsider',
-    //             },
-    //         },
-    //     },
-    // };
+async function osSearch(index_name: string, params: any) {
 
-    const query = {
-        size: 100, //default 10
-        query: {
-            match_all: {}
-        },
-        // sort: [
-        //     {
-        //         organisationName: {
-        //             order: 'desc'
-        //         }
-        //     }
-        // ]
-    };    
+    let query = {};
+
+    if (params.Value) {
+        // Search for the document.
+        query = {
+            query: {
+                match: {
+                    [params.Key]: {
+                        query: params.Value,
+                    },
+                },
+            },
+        };
+    }
+    else {
+        query = {
+            'size': params.Size, //default 10
+            'query': {
+                'match_all': {}
+            },
+            'sort': [
+                {
+                    [params.Keyword + '.keyword']: {
+                        'order': params.Order
+                    }
+                }
+            ]
+        }; 
+    }
 
     const response = await client.search({
         index: index_name,
         body: query,
     });
     //console.log(response.body.hits.hits[0]._source);
-    console.log(response.body.hits.hits);
+    //console.log(response.body.hits.hits);
     return response;
 }
 
