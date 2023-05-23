@@ -40,12 +40,10 @@ const populateEventData = (event: unknown, object: unknown) => {
 };
 
 const createFolderFromPath = (filename: string) => {
-    // get the folder from pattern.action.file
-    const folder = filename.substring(0, filename.lastIndexOf('/'));
-    // check if the folder exists, if not create it
 
-    const folderExists = fs.existsSync(folder);
-    if (!folderExists) {
+    const folder = filename.substring(0, filename.lastIndexOf('/'));
+
+    if (folder && !fs.existsSync(folder)) {
         fs.mkdirSync(folder, { recursive: true });
     }
 };
