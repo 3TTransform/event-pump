@@ -1,4 +1,6 @@
 name: Event pump to DynamoDB
+source:
+  type: deprecated
 patterns:
   - name: copyTable
     rule:
@@ -10,4 +12,3 @@ patterns:
         region: eu-west-2
         sourceTableName: Example
         targetTableName: Example2
-  
