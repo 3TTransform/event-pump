@@ -1,4 +1,3 @@
-import ava from 'ava';
 import test from 'ava';
 import yaml from 'js-yaml';
 import fs from 'fs';
