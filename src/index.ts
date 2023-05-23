@@ -56,7 +56,7 @@ async function doHandler(event, pattern, isFirstEvent) {
     case 'os':
         await openSearchHydrateOne(pattern, event);
         break;
-    case 'postgresSQL':
+    case 'postgres':
         await postgresSqlHydrateOne(pattern, event, isFirstEvent);
         break;
     default:

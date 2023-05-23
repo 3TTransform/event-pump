@@ -38,7 +38,6 @@ export const mssqlHydrateOne = async (
 
     let replacedSQL = replaceValues(event, pattern.action.params.sql);
     replacedSQL = replacedSQL.replace(/,\s*WHERE/g, ' WHERE');
-
     try {
         await runSQL(replacedSQL, populatedParameters);
     } catch (err) {
