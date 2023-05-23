@@ -44,7 +44,7 @@ const openSearchHydrateOne = async (pattern: any, event: any) => {
         response = await osUpdate(singleItem, index_name);
         break;
     case 'search':
-        response = await osSearch(index_name, pattern.action.params);        
+        response = await osSearch(index_name, populateEventData(event, pattern.action.params));        
         break;
     default:
         throw new Error(
@@ -123,13 +123,16 @@ async function osUpdate(singleItem: any, index_name: string) {
         }
     }
     
-    return await client.update({
+    const response = await client.update({
         id: singleItem.id,
         index: index_name,
         body: {
             doc: document
         }
     });
+
+    //console.log('🐸' + JSON.stringify(response));
+    return response;
 }
 
 async function osSearch(index_name: string, params: any) {
@@ -156,7 +159,7 @@ async function osSearch(index_name: string, params: any) {
             },
             'sort': [
                 {
-                    [params.Keyword + '.keyword']: {
+                    [params.KeyWord + '.keyword']: {
                         'order': params.Order
                     }
                 }
@@ -169,7 +172,7 @@ async function osSearch(index_name: string, params: any) {
         body: query,
     });
     //console.log(response.body.hits.hits[0]._source);
-    //console.log(response.body.hits.hits);
+    console.log(response.body.hits.hits);
     return response;
 }
 

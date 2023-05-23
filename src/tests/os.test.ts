@@ -42,7 +42,7 @@ test('🍏 basic search', async (t) => {
     const pattern = {
         name: 'organisationCreate',
         rule: { verb: 'search' },
-        action: { target: 'os', params: { TableName: 'Example', Size: 100, Keyword: 'organisationName', Order: 'desc'}}
+        action: { target: 'os', params: { TableName: 'Example', Size: 100, KeyWord: 'organisationName', Order: 'desc'}}
     };
     const result = await openSearchHydrateOne(pattern, 'event');
     t.assert(result.body.hits.hits.length > 0);
