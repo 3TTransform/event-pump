@@ -40,6 +40,10 @@ const populateEventData = (event: unknown, object: unknown) => {
 };
 
 const createFolderFromPath = (filename: string) => {
+    if (!filename)
+    {
+        return;
+    }
 
     const folder = filename.substring(0, filename.lastIndexOf('/'));
 
