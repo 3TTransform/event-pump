@@ -21,8 +21,7 @@ function runYamlTest(t: any, file: string): void {
 fs.readdirSync(EXAMPLES_LOCATION)
   .filter((file) => path.extname(file) === '.yml')
   .forEach((file) => {
-    const testTitle = `Testing ${file}`;
-    test(testTitle, (t) => runYamlTest(t, path.join(EXAMPLES_LOCATION, file)));
+    test(`🍏 ${file} matches schema`, (t) => runYamlTest(t, path.join(EXAMPLES_LOCATION, file)));
 });
 
 
