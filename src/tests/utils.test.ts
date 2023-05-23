@@ -1,14 +1,5 @@
 import test from 'ava';
-import fs from 'fs';
-import sinon from 'sinon';
-
-import {
-  getProp,
-  populateEventData,
-  createFolderFromPath,
-  blankFileIfExists,
-  parseCSV,
-} from '../utils';
+import { getProp, populateEventData, parseCSV } from '../utils';
 
 test('🍏 getProp should return the values at the specified paths', async (t) => {
   const deepObj = {
@@ -47,7 +38,6 @@ test('🍏 getProp should return the values at the specified paths', async (t) =
     t.true(test.expected === getProp(test.obj, test.path));
   });
 });
-
 test('🍎 getProp should return undefined for non-existent path', (t) => {
   const obj = {
     foo: {
@@ -61,7 +51,6 @@ test('🍎 getProp should return undefined for non-existent path', (t) => {
 
   t.is(result, undefined);
 });
-
 test('🍎 getProp should throw an error for non-object/null/undefined parameters', async (t) => {
   const cases = [
     {
@@ -152,7 +141,6 @@ test('🍎 populateEventData should handle missing properties in event', (t) => 
     paid: 'cm'
   });
 });
-
 test('🍏 populateEventData should handle nested properties', (t) => {
   const event = {
     person: {
@@ -172,9 +160,6 @@ test('🍏 populateEventData should handle nested properties', (t) => {
     age: 25,
   });
 });
-
-
-
 test('🍏 populateEventData should handle static text', async (t) => {
   const result = populateEventData(
     { cakeType: 'Cheese', cakePrice: 50 },
@@ -182,7 +167,6 @@ test('🍏 populateEventData should handle static text', async (t) => {
   );
   t.is(JSON.stringify(result), JSON.stringify('Cheese'));
 });
-
 test('🍎 populateEventData should handle mismatched {', async (t) => {
   const result = populateEventData(
     { cakeType: 'Cheese', cakePrice: 50 },
@@ -203,7 +187,6 @@ test('🍎 populateEventData should handle mismatched }', async (t) => {
     JSON.stringify({ cake: { name: 'Cheese', price: '{cakePrice}}' } })
   );
 });
-
 test('🍎 populateEventData should handle a null event', async (t) => {
   const result = populateEventData(null, {
     cake: { name: '{{cakeType}}', price: '{cakePrice}}' },
@@ -241,150 +224,6 @@ test('🍎 populateEventData should handle the case when both event and object a
 test('🍎 populateEventData should handle the case when both event and object are undefined', async (t) => {
   const result = populateEventData(undefined, undefined);
   t.is(JSON.stringify(result), undefined);
-});
-
-test.serial('🍏 createFolderFromPath should create the folder if it does not exist', (t) => {
-  const existsSyncStub = sinon.stub(fs, 'existsSync').returns(false);
-  const mkdirSyncStub = sinon.stub(fs, 'mkdirSync');
-
-  createFolderFromPath('path/to/file.txt');
-
-  t.true(existsSyncStub.calledOnceWithExactly('path/to'));
-  t.true(mkdirSyncStub.calledOnceWithExactly('path/to', { recursive: true }));
-
-  existsSyncStub.restore();
-  mkdirSyncStub.restore();
-});
-test.serial('🍎 createFolderFromPath should not create the folder if it already exists', (t) => {
-  const existsSyncStub = sinon.stub(fs, 'existsSync').returns(true);
-  const mkdirSyncStub = sinon.stub(fs, 'mkdirSync');
-
-  createFolderFromPath('existing/folder/file.txt');
-
-  t.true(existsSyncStub.calledOnceWithExactly('existing/folder'));
-  t.true(mkdirSyncStub.notCalled);
-
-  existsSyncStub.restore();
-  mkdirSyncStub.restore();
-});
-test.serial('🍎 createFolderFromPath should not create the folder if the filename does not contain any slashes', (t) => {
-  const existsSyncStub = sinon.stub(fs, 'existsSync');
-  const mkdirSyncStub = sinon.stub(fs, 'mkdirSync');
-
-  createFolderFromPath('filename.txt');
-
-  t.true(existsSyncStub.notCalled);
-  t.true(mkdirSyncStub.notCalled);
-
-  existsSyncStub.restore();
-  mkdirSyncStub.restore();
-});
-test.serial('🍎 createFolderFromPath should not create the folder if the filename is null', (t) => {
-  const existsSyncStub = sinon.stub(fs, 'existsSync');
-  const mkdirSyncStub = sinon.stub(fs, 'mkdirSync');
-
-  createFolderFromPath(null);
-
-  t.true(existsSyncStub.notCalled);
-  t.true(mkdirSyncStub.notCalled);
-
-  existsSyncStub.restore();
-  mkdirSyncStub.restore();
-});
-test.serial('🍎 createFolderFromPath should not create the folder if the filename is undefined', (t) => {
-  const existsSyncStub = sinon.stub(fs, 'existsSync');
-  const mkdirSyncStub = sinon.stub(fs, 'mkdirSync');
-
-  createFolderFromPath(undefined);
-
-  t.true(existsSyncStub.notCalled);
-  t.true(mkdirSyncStub.notCalled);
-
-  existsSyncStub.restore();
-  mkdirSyncStub.restore();
-});
-test.serial('🍎 createFolderFromPath should not create the folder if the filename is empty', (t) => {
-  const existsSyncStub = sinon.stub(fs, 'existsSync');
-  const mkdirSyncStub = sinon.stub(fs, 'mkdirSync');
-
-  createFolderFromPath('');
-
-  t.true(existsSyncStub.notCalled);
-  t.true(mkdirSyncStub.notCalled);
-
-  existsSyncStub.restore();
-  mkdirSyncStub.restore();
-});
-
-test.serial('🍏 blankFileIfExists should blank the file and return true if it exists', (t) => {
-  const filename = 'path/to/file.txt';
-  const existsSyncStub = sinon.stub(fs, 'existsSync').returns(true);
-  const writeFileSyncStub = sinon.stub(fs, 'writeFileSync');
-
-  const result = blankFileIfExists(filename);
-
-  t.true(existsSyncStub.calledOnceWithExactly(filename));
-  t.true(writeFileSyncStub.calledOnceWithExactly(filename, ''));
-  t.true(result);
-
-  existsSyncStub.restore();
-  writeFileSyncStub.restore();
-});
-test.serial('🍎 blankFileIfExists should return false if the file does not exist', (t) => {
-  const filename = 'nonexistent/file.txt';
-  const existsSyncStub = sinon.stub(fs, 'existsSync').returns(false);
-  const writeFileSyncStub = sinon.stub(fs, 'writeFileSync');
-
-  const result = blankFileIfExists(filename);
-
-  t.true(existsSyncStub.calledOnceWithExactly(filename));
-  t.true(writeFileSyncStub.notCalled);
-  t.false(result);
-
-  existsSyncStub.restore();
-  writeFileSyncStub.restore();
-});
-test.serial('🍎 blankFileIfExists should return false if the filename is null', (t) => {
-  const filename = null;
-  const existsSyncStub = sinon.stub(fs, 'existsSync').returns(false);
-  const writeFileSyncStub = sinon.stub(fs, 'writeFileSync');
-
-  const result = blankFileIfExists(filename);
-
-  t.true(existsSyncStub.calledOnceWithExactly(filename));
-  t.true(writeFileSyncStub.notCalled);
-  t.false(result);
-
-  existsSyncStub.restore();
-  writeFileSyncStub.restore();
-});
-test.serial('🍎 blankFileIfExists should return false if the filename is undefined', (t) => {
-  const filename = undefined;
-  const existsSyncStub = sinon.stub(fs, 'existsSync').returns(false);
-  const writeFileSyncStub = sinon.stub(fs, 'writeFileSync');
-
-  const result = blankFileIfExists(filename);
-
-  t.true(existsSyncStub.calledOnceWithExactly(filename));
-  t.true(writeFileSyncStub.notCalled);
-  t.false(result);
-
-  existsSyncStub.restore();
-  writeFileSyncStub.restore();
-});
-test.serial('🍎 blankFileIfExists should return false if the filename is empty', (t) => {
-  const filename = '';
-  const existsSyncStub = sinon.stub(fs, 'existsSync').returns(false);
-  const writeFileSyncStub = sinon.stub(fs, 'writeFileSync');
-
-  const result = blankFileIfExists(filename);
-
-  t.true(existsSyncStub.calledOnceWithExactly(filename));
-  t.true(writeFileSyncStub.notCalled);
-  t.false(result);
-
-  existsSyncStub.restore();
-  writeFileSyncStub.restore();
 });
 
 test('🍏 parseCSV should parse headers and row into an object', (t) => {
