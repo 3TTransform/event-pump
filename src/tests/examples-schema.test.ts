@@ -16,14 +16,7 @@ function runYamlTest(t: any, file: string): void {
   const jsonData = yaml.load(yamlFile.toString());
   const ajv = new Ajv();
   const valid = ajv.validate(schema, jsonData);
-  if (!valid)
-  {
-
-    console.log(file);
-    console.log(ajv.errors);
-    console.log('-----------------------------');
-  }
-  t.true(valid, `Failed: ${file}`);
+  t.true(valid, `Failed: ${file}\n${JSON.stringify(ajv.errors, null, 2)}`);
 }
 
 fs.readdirSync(EXAMPLES_LOCATION)
