@@ -102,14 +102,42 @@
     },
     {
         "verb": "search",
+        "method": "term",
+        "field": "isPassed",
+        "value": 0
+    },
+    {
+        "verb": "search",
+        "method": "range",
+        "field": "isPassed",
+        "gte": 1,
+        "lte": 5
+    },
+    {
+        "verb": "search",
+        "method": "fuzzy",
+        "field": "courseName",
+        "value": "Raising",
+        "fizzines": 3
+    },
+    {
+        "verb": "search",
         "method": "match",
         "field": "courseName",
         "query": "Raising and Rearing Hedgehog"
     },
     {
         "verb": "search",
-        "method": "term",
+        "method": "slop",
         "field": "courseName",
-        "value": "Raising and Rearing Hedgehog"
+        "query": "Raising and Rearing",
+        "slop": 10
+    },
+    {
+        "verb": "search",
+        "method": "query",
+        "field": "courseName",
+        "query": "Raising and Rearing",
+        "size": 100
     }
 ]
