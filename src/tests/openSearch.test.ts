@@ -1,7 +1,7 @@
 import test from 'ava';
 test('🍏 JSON to OpenSearch', t => { t.pass();});
 
-import { openSearchHydrateOne } from '../destinations/os';
+import { openSearchHydrateOne } from '../destinations/openSearch';
 
 /*
 test('🍏 create_index', async (t) => {

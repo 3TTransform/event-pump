@@ -7,7 +7,7 @@ import { loadConfig } from './yaml';
 import { mssqlHydrateOne } from './destinations/mssql';
 import { ionHydrateOne } from './destinations/ion';
 import { postgresSqlHydrateOne } from './destinations/postgresSQL';
-import { openSearchHydrateOne } from './destinations/os';
+import { openSearchHydrateOne } from './destinations/openSearch';
 import { parseCSV } from './utils';
 import fs from 'fs';
 
