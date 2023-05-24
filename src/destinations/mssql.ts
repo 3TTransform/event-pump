@@ -41,6 +41,6 @@ export const mssqlHydrateOne = async (
     try {
         await runSQL(replacedSQL, populatedParameters);
     } catch (err) {
-        console.log(`${event.id} failed ${err.message}`);
+        console.info(`${event.id} failed ${err.message}`);
     }
 };

@@ -4,6 +4,9 @@ source:
   table: competency-service-uat-store
 patterns:
   - name: allThings
+    rule:
+      noun: user
+      verb: create
     action:
       target: postgres
       params:

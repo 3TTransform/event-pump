@@ -1,11 +1,41 @@
 import fs from 'fs';
+import { replaceValues } from './template';
 
 const getProp = (obj: unknown, path: string) => {
     return path.split('.').reduce((o, i) => o[i], obj);
 };
 
-// Can be solved by using handlebars
 const populateEventData = (event: unknown, object: unknown) => {
+    if (!object || !event) {
+        return object;
+    }
+
+    return JSON.parse(JSON.stringify(object), (key, value) => {
+        if (typeof value !== 'string') {
+            return value;
+        }
+
+        // if the entire entry is a token {{?}} then replace
+        // the whole thing preserving type from data
+        const fullMatch = value.match(/^{{([^{}]*?)}}$/g);
+        if (fullMatch && fullMatch.length === 1) {
+            const prop = fullMatch[0].replace(/{{|}}/g, '');;
+            return getProp(event, prop);
+        }
+
+        try{
+            // otherwise just make a string using Handlebars
+            return replaceValues(event, value);
+        }
+        catch (error)
+        {
+            // or don't change anything if there is an error
+            return value;
+        }
+
+    });
+};
+const populateEventData2 = (event: unknown, object: unknown) => {
     if (!object || !event) {
         return object;
     }
@@ -40,12 +70,14 @@ const populateEventData = (event: unknown, object: unknown) => {
 };
 
 const createFolderFromPath = (filename: string) => {
-    // get the folder from pattern.action.file
-    const folder = filename.substring(0, filename.lastIndexOf('/'));
-    // check if the folder exists, if not create it
+    if (!filename)
+    {
+        return;
+    }
 
-    const folderExists = fs.existsSync(folder);
-    if (!folderExists) {
+    const folder = filename.substring(0, filename.lastIndexOf('/'));
+
+    if (folder && !fs.existsSync(folder)) {
         fs.mkdirSync(folder, { recursive: true });
     }
 };

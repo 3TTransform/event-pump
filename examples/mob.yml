@@ -4,6 +4,9 @@ source:
   table: competency-service-uat-store
 patterns:
   - name: allThings
+    rule:
+      noun: test1
+      verb: create
     action:
       target: mssql
       params:

@@ -115,7 +115,7 @@ export async function processEvents(params: CliParams) {
             );
             if (unmarshaledEvents && unmarshaledEvents.Items) {
                 events = unmarshaledEvents.Items.map((item) =>
-                    ddb.unmarshal(item)
+                    ddb.unmarshall(item)
                 );
             }
             await processPage(doc, events, isFirstEvent);

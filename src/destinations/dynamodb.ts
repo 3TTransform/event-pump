@@ -24,7 +24,7 @@ class Dynamo {
 
     this.dyn = new AWS.DynamoDB(serviceConfigOptions);
   }
-  generateUpdateQuery = (fields: any) => {
+  generateUpdateQuery = (fields: any): any => {
     // take in an object and delete verything that is null
     if (fields) {
       Object.keys(fields).forEach((key) => {
@@ -32,33 +32,26 @@ class Dynamo {
           delete fields[key];
         }
       });
-      // 'fields' is now an object with all null things removed
-      const exp: any = {
-        UpdateExpression: "",
+
+      if (Object.keys(fields).length > 0) {
+        return {
+          UpdateExpression: 'SET ' + Object.entries(fields).map(x => `#${x[0]} = :${x[0]}`).join(', '),
+          ExpressionAttributeNames: Object.fromEntries(Object.entries(fields).map(x => [`#${x[0]}`, x[0]])),
+          ExpressionAttributeValues: Object.fromEntries(Object.entries(fields).map(x => [`:${x[0]}`, x[1]])),
+        };
+      }
+
+      return {
+        UpdateExpression: '',
         ExpressionAttributeNames: {},
         ExpressionAttributeValues: {},
       };
-
-      exp.UpdateExpression += "SET ";
-
-      // loop through the fields we have left and build our expression
-      Object.entries(fields).forEach(([key, item]) => {
-        exp.UpdateExpression += ` #${key} = :${key},`;
-        exp.ExpressionAttributeNames[`#${key}`] = key;
-        exp.ExpressionAttributeValues[`:${key}`] = item;
-      });
-
-      // remove the last comma on the text field
-      exp.UpdateExpression = exp.UpdateExpression.slice(0, -1);
-
-      //return our shiny new expression
-      return exp;
     }
   };
-  marshal = (item) => {
+  marshall = (item) => {
     return AWS.DynamoDB.Converter.marshall(item);
   };
-  unmarshal = (item) => {
+  unmarshall = (item) => {
     return AWS.DynamoDB.Converter.unmarshall(item);
   };
   scanTable = async (tableName: string, lastEvaluatedKey: any = null) => {
@@ -108,7 +101,7 @@ class Dynamo {
 
     if (thisActionType === "put") {
       const singleItem = populateEventData(event, pattern.action.params.Item);
-      const newItem = this.marshal(singleItem);
+      const newItem = this.marshall(singleItem);
       const params = { ...pattern.action.params };
       params.Item = newItem;
 
@@ -118,15 +111,15 @@ class Dynamo {
       const singleItem = populateEventData(event, pattern.action);
       const updateQuery = this.generateUpdateQuery(singleItem.values);
       updateQuery.TableName = pattern.action.params.TableName;
-      updateQuery.Key = this.marshal(singleItem.params.Key);
-      updateQuery.ExpressionAttributeValues = this.marshal(
+      updateQuery.Key = this.marshall(singleItem.params.Key);
+      updateQuery.ExpressionAttributeValues = this.marshall(
         updateQuery.ExpressionAttributeValues
       );
       await this.dynamodbUpdate(updateQuery);
     }
     if (thisActionType === "delete") {
       const singleItem = populateEventData(event, pattern.action.params.Item);
-      const newItem = this.marshal(singleItem);
+      const newItem = this.marshall(singleItem);
       const params = { ...pattern.action.params };
       params.Item = newItem;
 
@@ -135,6 +128,7 @@ class Dynamo {
       await this.dynamodbDelete(params);
     }
   };
+
 }
 
 export default Dynamo;
