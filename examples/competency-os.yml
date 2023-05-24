@@ -1,0 +1,56 @@
+name: Event pump, Competency to OpenSearch
+source: 
+  type: json
+  file: ./examples/events/competency.seed.to.os.json
+patterns:
+  - name: competencyCreate
+    rule:
+      verb: create
+    action:
+      target: os
+      params:
+        TableName: attestation
+        Item:
+          id: "{{id}}"
+          userID: "{{userID}}"
+          courseName: "{{courseName}}"
+          isPassed: "{{isPassed}}"
+  - name: competencyUpdate
+    rule:
+      verb: update
+    action:
+      target: os           
+      params:
+        TableName: attestation
+        Item:
+          id: "{{id}}"
+          userID: "{{userID}}"
+          courseName: "{{courseName}}"
+          isPassed: "{{isPassed}}"
+  - name: competencyDelete
+    rule:
+      verb: delete
+    action:
+      target: os
+      params:
+        TableName: attestation
+        Item:
+          id: "{{id}}"
+  - name: competencySearch
+    rule:
+      verb: search
+    action:
+      target: os
+      params:
+        TableName: attestation
+        method: "{{method}}"
+        size: "{{size}}"
+        keyword: "{{keyword}}"
+        order: "{{order}}"
+        field: "{{field}}"
+        value: "{{value}}"
+        gte: "{{gte}}"
+        lte: "{{lte}}"
+        fuzziness: "{{fuzziness}}"
+        query: "{{query}}"
+        slop: "{{slop}}"

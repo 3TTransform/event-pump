@@ -432,13 +432,42 @@
   },
   {
     "verb": "search",
-    "size": 100,
-    "keyword": "organisationName",
-    "order": "asc"
+    "method": "term",
+    "field": "organisationName",
+    "value": "Assistia"
   },
   {
     "verb": "search",
-    "key": "organisationName",
-    "value": "Assistia"
+    "method": "range",
+    "field": "organisationName",
+    "gte": 0,
+    "lte": 10
+  },
+  {
+    "verb": "search",
+    "method": "fuzzy",
+    "field": "organisationName",
+    "value": "Assistia",
+    "fizzines": 2
+  },
+  {
+    "verb": "search",
+    "method": "match",
+    "field": "organisationName",
+    "query": "Assistia"
+  },
+  {
+    "verb": "search",
+    "method": "slop",
+    "field": "organisationName",
+    "query": "Assistia",
+    "slop": 10
+  },
+  {
+    "verb": "search",
+    "method": "query",
+    "field": "organisationName",
+    "query": "Assistia",
+    "size": 100
   }
 ]

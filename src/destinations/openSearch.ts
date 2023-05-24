@@ -2,6 +2,7 @@
 require('dotenv').config();
 import { Client } from '@opensearch-project/opensearch';
 import { populateEventData } from '../utils';
+import { term, range, fuzzy, match, slop, qUery } from '../os-search';
 
 const { 
     OS_URL: osURL, 
@@ -131,12 +132,38 @@ async function osUpdate(singleItem: any, index_name: string) {
         }
     });
 
-    //console.log('🐸' + JSON.stringify(response));
     return response;
 }
 
 async function osSearch(index_name: string, params: any) {
 
+    //console.log(params);
+
+    switch (params.method) {
+    case 'term':
+        term(client, index_name, params.field, params.value);
+        break;
+    case 'range':
+        range(client, index_name, params.field, params.gte, params.lte);
+        break;
+    case 'fuzzy':
+        fuzzy(client, index_name, params.field, params.value, params.fuzziness);
+        break;
+    case 'match':
+        match(client, index_name, params.field, params.query);
+        break;
+    case 'slop':
+        slop(client, index_name, params.field, params.query, params.slop);
+        break;
+    case 'query':
+        qUery(client, index_name, params.field, params.query, params.size);
+        break;            
+    default:
+        throw new Error(
+            `Action target ${params.action.target} is not supported`
+        );
+    }
+/*
     let query = {};
 
     if (params.Value) {
@@ -173,7 +200,7 @@ async function osSearch(index_name: string, params: any) {
     });
     //console.log(response.body.hits.hits[0]._source);
     console.log(response.body.hits.hits);
-    return response;
+    return response;*/
 }
 
 export { openSearchHydrateOne, osSearch };
