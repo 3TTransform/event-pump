@@ -229,9 +229,7 @@ test('🍎 populateEventData should handle the case when both event and object a
 test('🍏 parseCSV should parse headers and row into an object', (t) => {
   const headers = 'name, age, city';
   const row = 'John Doe, 25, New York';
-
   const result = parseCSV(headers, row);
-
   t.deepEqual(result, {
     name: 'John Doe',
     age: '25',
@@ -241,32 +239,36 @@ test('🍏 parseCSV should parse headers and row into an object', (t) => {
 test('🍏 parseCSV should handle missing values in the row', (t) => {
   const headers = 'name, age, city';
   const row = 'John Doe, , New York';
-
   const result = parseCSV(headers, row);
-
   t.deepEqual(result, {
     name: 'John Doe',
     age: '',
     city: 'New York',
   });
 });
+test('🍏 parseCSV should handle missing values at then end of the row', (t) => {
+  const headers = 'name, age, city';
+  const row = 'John Doe, 25';
+  const result = parseCSV(headers, row);
+  t.deepEqual(result, {
+    name: 'John Doe',
+    age: '25'
+  });
+});
 test('🍏 parseCSV should ignore extra values in the row', (t) => {
   const headers = 'name, age';
   const row = 'John Doe, 25, New York';
-
   const result = parseCSV(headers, row);
-
   t.deepEqual(result, {
     name: 'John Doe',
     age: '25',
   });
 });
+
 test('🍏 parseCSV should handle empty headers and row', (t) => {
   const headers = '';
   const row = '';
-
   const result = parseCSV(headers, row);
-
   t.deepEqual(result, {});
 });
 test('🍎 parseCSV throws an error if header and row are both undefined', async (t) => {
