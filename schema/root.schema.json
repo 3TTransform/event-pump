@@ -40,7 +40,7 @@
       "items": {
         "title": "A Schema",
         "type": "object",
-        "required": ["rule", "action"],
+        "required": ["action"],
         "properties": {
           "name": {
             "title": "The name Schema",
