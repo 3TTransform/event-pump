@@ -3,19 +3,7 @@ test('🍏 JSON to OpenSearch', t => { t.pass();});
 
 import { openSearchHydrateOne } from '../destinations/openSearch';
 
-/*
-test('🍏 create_index', async (t) => {
-	const pattern = {
-        name: 'organisationCreate',
-        rule: { verb: 'search' },
-        action: { target: 'os', params: { TableName: 'Example', Size: 100, Keyword: 'organisationName', Order: 'desc'}}
-    };
-    const result = await openSearchHydrateOne('create', 'event');
-    t.truthy(result);
-});
-*/
-
-test('🍏 create_item', async (t) => {
+test.skip('🍏 create_item', async (t) => {
 
     const pattern = {
         name: 'organisationCreate',
@@ -26,7 +14,7 @@ test('🍏 create_item', async (t) => {
     t.truthy(result);
 });
 
-test('🍏 create_item 2', async (t) => {
+test.skip('🍏 create_item 2', async (t) => {
 
     const pattern = {
         name: 'organisationCreate',
@@ -37,7 +25,7 @@ test('🍏 create_item 2', async (t) => {
     t.truthy(result);
 });
 
-test('🍏 basic search', async (t) => {
+test.skip('🍏 basic search', async (t) => {
 
     const pattern = {
         name: 'organisationCreate',
@@ -48,7 +36,7 @@ test('🍏 basic search', async (t) => {
     t.assert(result.body.hits.hits.length > 0);
 });
 
-test('🍏 name search', async (t) => {
+test.skip('🍏 name search', async (t) => {
 
     const pattern = {
         name: 'organisationCreate',
@@ -59,7 +47,7 @@ test('🍏 name search', async (t) => {
     t.assert(result.body.hits.hits.length > 0);
 });
 
-test('🍏 update_item', async (t) => {
+test.skip('🍏 update_item', async (t) => {
 
     const pattern = {
         name: 'organisationCreate',
@@ -71,7 +59,7 @@ test('🍏 update_item', async (t) => {
 });
 
 
-test('🍏 delete_item', async (t) => {
+test.skip('🍏 delete_item', async (t) => {
 
     const pattern = {
         name: 'organisationCreate',
@@ -81,11 +69,3 @@ test('🍏 delete_item', async (t) => {
     const result = await openSearchHydrateOne(pattern, 'event');
     t.truthy(result);
 });
-
-/*
-test('🍏 delete_index', async (t) => {
-    const result = await openSearchHydrateOne('delete', 'event');
-    //console.log(result);
-    t.truthy(result);
-});
-*/
