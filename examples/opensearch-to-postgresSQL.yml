@@ -2,6 +2,7 @@ name: AWS OpenSearch to PostgresSQL
 source:
   type: opensearch
   table: attestation
+  size: 1000
 patterns:
   - name: allThings
     action:
