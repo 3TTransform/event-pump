@@ -163,44 +163,6 @@ async function osSearch(index_name: string, params: any) {
             `Action target ${params.action.target} is not supported`
         );
     }
-/*
-    let query = {};
-
-    if (params.Value) {
-        // Search for the document.
-        query = {
-            query: {
-                match: {
-                    [params.Key]: {
-                        query: params.Value,
-                    },
-                },
-            },
-        };
-    }
-    else {
-        query = {
-            'size': params.Size, //default 10
-            'query': {
-                'match_all': {}
-            },
-            'sort': [
-                {
-                    [params.KeyWord + '.keyword']: {
-                        'order': params.Order
-                    }
-                }
-            ]
-        }; 
-    }
-
-    const response = await client.search({
-        index: index_name,
-        body: query,
-    });
-    //console.log(response.body.hits.hits[0]._source);
-    console.log(response.body.hits.hits);
-    return response;*/
 }
 
 export { openSearchHydrateOne, osSearch };
