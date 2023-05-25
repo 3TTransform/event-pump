@@ -129,8 +129,6 @@ export async function processEvents(params: CliParams) {
         items.forEach(function (item) {
             events.push(item._source);
         });
-
-        console.log(events);
         await processPage(doc, events, isFirstEvent);
 
         break;    
