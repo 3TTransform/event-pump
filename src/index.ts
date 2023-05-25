@@ -70,8 +70,8 @@ async function doHandler(event, pattern, isFirstEvent) {
  * @param { object } params - The command line parameters
  */
 export async function processEvents(params: CliParams) {
-  console.time('Took in seconds');
-  let doc;
+    console.time('Took in seconds');
+    let doc;
 
     try {
         // load and validate the config file
@@ -105,12 +105,11 @@ export async function processEvents(params: CliParams) {
         });
         break;
     case 'dynamodb':
-        const table = doc.source.table;
         let lastEvaluatedKey;
         isFirstEvent = true;
         do {
             const unmarshaledEvents = await ddb.scanTable(
-                table,
+                doc.source.table,
                 lastEvaluatedKey
             );
             if (unmarshaledEvents && unmarshaledEvents.Items) {
@@ -124,8 +123,19 @@ export async function processEvents(params: CliParams) {
         } while (lastEvaluatedKey);
 
         break;
+    case 'opensearch':
+        const response = await openSearchHydrateOne(doc, null, true);
+        const items = response.body.hits.hits;
+        items.forEach(function (item) {
+            events.push(item._source);
+        });
+
+        console.log(events);
+        await processPage(doc, events, isFirstEvent);
+
+        break;    
     default:
-      throw new Error(`Source ${doc.source.type} is not supported`);
-  }
-  console.timeEnd('Took in seconds');
+        throw new Error(`Source ${doc.source.type} is not supported`);
+    }
+    console.timeEnd('Took in seconds');
 }

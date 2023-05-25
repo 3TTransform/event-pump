@@ -1,0 +1,13 @@
+name: AWS OpenSearch to PostgresSQL
+source:
+  type: opensearch
+  table: attestation
+patterns:
+  - name: allThings
+    action:
+      target: postgres
+      params:
+        sql: >
+          INSERT INTO attestation
+          (userid, coursename, ispassed)
+          VALUES ('{{userID}}', '{{courseName}}', {{isPassed}})

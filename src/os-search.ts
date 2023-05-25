@@ -8,7 +8,7 @@ function logTitles(error, result) {
     }
 }
 
-const term = (client, index_name, field, value) => {
+const term = async (client, index_name, field, value) => {
     console.log(`Searching for values in the field ${field} equal to ${value}`);
     const body = {
         query: {
@@ -17,17 +17,18 @@ const term = (client, index_name, field, value) => {
             },
         },
     };
-    client.search(
+    const response =  await client.search(
         {
             index: index_name,
             body,
         },
-        logTitles
+        //logTitles
     );
+    return response;
 };
 
 
-const range = (client, index_name, field, gte, lte) => {
+const range = async (client, index_name, field, gte, lte) => {
     console.log(
         `Searching for values in the ${field} ranging from ${gte} to ${lte}`
     );
@@ -41,16 +42,17 @@ const range = (client, index_name, field, gte, lte) => {
             },
         },
     };
-    client.search(
+    const response =  await client.search(
         {
             index: index_name,
             body,
         },
-        logTitles
+        //logTitles
     );
+    return response;
 };
 
-const fuzzy = (client, index_name, field, value, fuzziness) => {
+const fuzzy = async (client, index_name, field, value, fuzziness) => {
     console.log(
         `Search for ${value} in the ${field} with fuzziness set to ${fuzziness}`
     );
@@ -64,16 +66,17 @@ const fuzzy = (client, index_name, field, value, fuzziness) => {
             },
         },
     };
-    client.search(
+    const response =  await client.search(
         {
             index: index_name,
             body: query,
         },
-        logTitles
+        //logTitles
     );
+    return response;
 };
 
-const match = (client, index_name, field, query) => {
+const match = async (client, index_name, field, query) => {
     console.log(`Searching for ${query} in the field ${field}`);
     const body = {
         query: {
@@ -84,16 +87,17 @@ const match = (client, index_name, field, query) => {
             },
         },
     };
-    client.search(
+    const response =  await client.search(
         {
             index: index_name,
             body,
         },
-        logTitles
+        //logTitles
     );
+    return response;
 };
 
-const  slop = (client, index_name, field, query, slop) => {
+const  slop = async (client, index_name, field, query, slop) => {
     console.log(
         `Searching for ${query} with slop value ${slop} in the field ${field}`
     );
@@ -107,16 +111,18 @@ const  slop = (client, index_name, field, query, slop) => {
             },
         },
     };
-    client.search(
+    const response =  await client.search(
         {
             index: index_name,
             body,
         },
-        logTitles
+        //logTitles
     );
+    return response;    
+
 };
 
-const qUery = (client, index_name, field, query, size) => {
+const qUery = async (client, index_name, field, query, size) => {
     console.log(
         `Searching for ${query} in the field ${field} and returning maximum ${size} results`
     );
@@ -128,15 +134,36 @@ const qUery = (client, index_name, field, query, size) => {
             },
         },
     };
-    client.search(
+    const response =  await client.search(
         {
             index: index_name,
             body,
             size,
         },
-        logTitles
+        //logTitles
     );
-};  
+    return response;
+};
+
+const all = async (client, index_name, size) => {
+    console.log(
+        `Searching in ${index_name} returning all results`
+    );
+    const body = {
+        query: {
+            match_all: {},
+        },
+    };
+    const response =  await client.search(
+        {
+            index: index_name,
+            body,
+            size,
+        },
+        //logTitles
+    );
+    return response;
+};
 
 export {
     term,
@@ -145,4 +172,5 @@ export {
     match,
     slop,
     qUery,
+    all,
 };

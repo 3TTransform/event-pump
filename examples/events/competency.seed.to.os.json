@@ -139,5 +139,10 @@
         "field": "courseName",
         "query": "Raising and Rearing",
         "size": 100
+    },
+    {
+        "verb": "search",
+        "method": "all",
+        "size": 1000
     }
 ]
