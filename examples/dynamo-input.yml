@@ -1,7 +1,7 @@
 name: Event pump to DynamoDB
-source: 
+source:
   type: dynamodb
-  table: dataevent-service-pr-617-eventstore
+  table: dataevent-service-eventstore
 patterns:
   - name: fileReceived
     rule:
