@@ -1,6 +1,6 @@
 import fs from 'fs';
 import readline from 'readline';
-import {EPEventSource} from '../EPEventSource';
+import { EPEventSource } from '../EPEventSource';
 
 class CSV implements EPEventSource {
   constructor(private doc: any) { }
