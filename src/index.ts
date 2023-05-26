@@ -114,7 +114,7 @@ export async function processEvents(params: CliParams) {
                 doc.source.table,
                 lastEvaluatedKey
             );
-            if (unmarshaledEvents && unmarshaledEvents.Items) {
+            if (unmarshaledEvents?.Items) {
                 events = unmarshaledEvents.Items.map((item) =>
                     ddb.unmarshall(item)
                 );
