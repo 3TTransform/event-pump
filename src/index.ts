@@ -103,6 +103,7 @@ export async function processEvents(params: CliParams) {
             const parsedData = parseCSV(headers, row);
             events.push(parsedData);
         });
+        await processPage(doc, events);
         break;
     case 'dynamodb':
         const table = doc.source.table;
