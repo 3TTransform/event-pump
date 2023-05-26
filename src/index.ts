@@ -18,26 +18,27 @@ export interface CliParams {
     yml: string;
 }
 
-const processPage = async (doc: any, events: any, isFirstEvent = false) => {
-    // iterate the events in this set
-    for (const event of events) {
-        // iterate the events in this file
-        for (const pattern of doc.patterns) {
-            // for each key and value in the pattern check for matching pattern in the event
-            let matched = true;
-
-            if (pattern?.rule) {
-                for (const [key, value] of Object.entries(pattern.rule)) {
-                    if (event[key] !== value) {
-                        matched = false;
-                    }
+const processEvent = async (doc: any, event: any, isFirstEvent = false) => {
+    let firstEvent = isFirstEvent;
+    for (const pattern of doc.patterns) {
+        // for each key and value in the pattern check for matching pattern in the event
+        let matched = true;
+        if (pattern?.rule) {
+            for (const [key, value] of Object.entries(pattern.rule)) {
+                if (event[key] !== value) {
+                    matched = false;
                 }
             }
-
-            if (matched && pattern.action) {
-                await doHandler(event, pattern, isFirstEvent);
-            }
         }
+        if (matched && pattern.action) {
+            await doHandler(event, pattern, firstEvent);
+            firstEvent = false;
+        }
+    }
+}
+const processPage = async (doc: any, events: any[], isFirstEvent = false) => {
+    for (const event of events) {
+        await processEvent(doc, event, isFirstEvent);
     }
 };
 
