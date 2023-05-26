@@ -8,7 +8,6 @@ import { mssqlHydrateOne } from './destinations/mssql';
 import { ionHydrateOne } from './destinations/ion';
 import { postgresSqlHydrateOne } from './destinations/postgresSQL';
 import { openSearchHydrateOne } from './destinations/openSearch';
-import { parseCSV } from './utils';
 import fs from 'fs';
 import CSV from './destinations/csv';
 import { EPEventSource } from './EPEventSource';
