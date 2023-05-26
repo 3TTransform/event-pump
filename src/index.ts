@@ -10,6 +10,8 @@ import { postgresSqlHydrateOne } from './destinations/postgresSQL';
 import { openSearchHydrateOne } from './destinations/openSearch';
 import { parseCSV } from './utils';
 import fs from 'fs';
+import CSV from './destinations/csv';
+import { EPEventSource } from './EPEventSource';
 
 // to parse csv files
 //import { parse } from '@fast-csv/parse';
@@ -94,17 +96,11 @@ export async function processEvents(params: CliParams) {
         await processPage(doc, events);
         break;
     case 'csv':
-        const csvData = fs.readFileSync(doc.source.file, 'utf8');
-        const rows = csvData.split('\n');
-        const headers = rows[0];
-        rows.forEach((row, index) => {
-            if (index === 0) {
-                return;
-            }
-            const parsedData = parseCSV(headers, row);
-            events.push(parsedData);
-        });
-        await processPage(doc, events);
+        const source:EPEventSource = new CSV(doc);
+        for await (const event of source.readEvents()) {
+            await processEvent(doc, await event, isFirstEvent);
+            isFirstEvent = false;
+        }
         break;
     case 'dynamodb':
         let lastEvaluatedKey;
