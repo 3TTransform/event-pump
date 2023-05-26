@@ -1,7 +1,8 @@
 import fs from 'fs';
 import readline from 'readline';
+import {EPEventSource} from '../EPEventSource';
 
-class CSV {
+class CSV implements EPEventSource {
   constructor(private doc: any) { }
 
   readEvents = async function* () {
