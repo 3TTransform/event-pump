@@ -4,16 +4,17 @@ import { Client } from '@opensearch-project/opensearch';
 import { populateEventData } from '../utils';
 import { term, range, fuzzy, match, slop, qUery, all } from '../os-search';
 
-const { 
-    OS_URL: osURL, 
-    OS_USER: osUser, 
-    OS_PASS: osPassword 
+const {
+    OS_URL: osURL,
+    OS_USER: osUser,
+    OS_PASS: osPassword,
+    OS_CERTIFICATE: osCertificate
 } = process.env;
 const protocol = 'https';
 
 const client = new Client({
     node: protocol + '://' + osUser + ':' + osPassword + '@' + osURL,
-    // use_ssl: true,
+    ssl: osCertificate ? { ca: osCertificate } : undefined
 });
 
 const openSearchHydrateOne = async (pattern: any, event: any, getAll = false) => {
@@ -23,19 +24,19 @@ const openSearchHydrateOne = async (pattern: any, event: any, getAll = false) =>
     if (!getAll) {
 
         const singleItem = populateEventData(event, pattern.action?.params.Item);
-        const index_name = pattern.action.params.TableName?.toLowerCase();    
+        const index_name = pattern.action.params.TableName?.toLowerCase();
 
         if (!index_name) {
             console.log('OS: table name missing');
             return;
         }
-    
+
         if (!(await client.indices.exists({index: index_name })).body)
         {
         // create index
             await osCreateIndex(index_name);
-        }       
-    
+        }
+
         switch (pattern.rule.verb) {
         case 'create':
             response = await osCreate(singleItem, index_name);
@@ -60,15 +61,15 @@ const openSearchHydrateOne = async (pattern: any, event: any, getAll = false) =>
         const size = pattern.source.size;
         const params= {
             method: 'all',
-            size               
+            size
         };
         response = await osSearch(index, params);
     }
     if (response) return response;
-    return null;    
+    return null;
 };
 
-async function osCreate(singleItem: any, index_name: string) {    
+async function osCreate(singleItem: any, index_name: string) {
 
     const document = {};
 
@@ -96,7 +97,7 @@ async function osCreateIndex(index_name: string) {
             },
         },
     };
-      
+
     return await client.indices.create({
         index: index_name,
         body: settings,
@@ -118,7 +119,7 @@ async function osDeleteIndex(singleItem: any, index_name: string) {
     const response = await client.indices.delete({
         index: index_name,
     });
-    
+
     console.log('Deleting index:');
     console.log(response.body);
 
@@ -134,7 +135,7 @@ async function osUpdate(singleItem: any, index_name: string) {
             document[key] = value;
         }
     }
-    
+
     const response = await client.update({
         id: singleItem.id,
         index: index_name,
@@ -172,7 +173,7 @@ async function osSearch(index_name: string, params: any) {
         break;
     case 'all':
         response = await all(client, index_name, params.size);
-        break;            
+        break;
     default:
         throw new Error(
             `Action method ${params.method} is not supported`

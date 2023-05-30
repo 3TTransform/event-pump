@@ -25,6 +25,8 @@ patterns:
     action:
       target: dynamodb
       type: update
+      values:
+        name: "{{name}}"
       params:
         TableName: Example
         Key:
@@ -66,6 +68,8 @@ patterns:
     action:
       target: dynamodb
       type: update
+      values:
+        name: "{{name}}"
       params:
         TableName: Example
         Key:
@@ -84,4 +88,4 @@ patterns:
         TableName: Example
         Item:
           pk: "users#{{id}}"
-          sk: "users"          
+          sk: "users"

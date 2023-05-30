@@ -1,7 +1,7 @@
 name: DynamoDB to Ion
 source:
   type: dynamodb
-  table: example
+  table: Example
 patterns:
   - name: fileReceivedIon
     rule:
