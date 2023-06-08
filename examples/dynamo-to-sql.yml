@@ -15,8 +15,10 @@ patterns:
           VALUES (@action, @context)
         input:
           - name: "action"
-            type: "NVARCHAR(MAX)"
+            type: "NVARCHAR"
+            length: 100
             value: "{{organisationName}}"
           - name: "context"
-            type: "NVARCHAR(MAX)"
+            type: "NVARCHAR"
+            length: "MAX"
             value: "{{sk}}"
