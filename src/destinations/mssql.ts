@@ -3,6 +3,7 @@ import { populateEventData } from '../utils';
 import sql from 'mssql';
 import dotenv from 'dotenv';
 import moment from 'moment';
+import { DOMParser } from 'xmldom';
 dotenv.config();
 
 const {
@@ -50,16 +51,19 @@ export const mssqlHydrateOne = async (
     }
 };
 
-function getProperties(item: key) {
+export const getProperties = (item: key) => {
     try {
         switch (item.type.toLowerCase()) {
         case 'bit': {
+            const parsed = +item.value;
             const properties: item = {
                 name: item.name,
                 type: sql.Bit,
-                value: +item.value,
+                value: parsed,
             };
-            return properties;
+            if (!isNaN(parsed)) return properties;
+            else convertionFailed(item);
+            break;
         }
         case 'bigint': {
             const properties: item = {
@@ -78,29 +82,36 @@ function getProperties(item: key) {
             return properties;
         }
         case 'float': {
+            const parsed = parseFloat(item.value);
             const properties: item = {
                 name: item.name,
                 type: sql.Float,
-                value: parseFloat(item.value),
+                value: parsed,
             };
-            return properties;
+            if (!isNaN(parsed)) return properties;
+            else convertionFailed(item);
+            break;
         }
         case 'int': {
+            const parsed = parseInt(item.value);
             const properties: item = {
                 name: item.name,
                 type: sql.Int,
-                value: parseInt(item.value),
+                value: parsed,
             };
-            return properties;
+            if (!isNaN(parsed)) return properties;
+            else convertionFailed(item);
+            break;
         }
         case 'money': {
+            const currency = new Intl.NumberFormat(item.local, {
+                style: 'currency',
+                currency: item.currency,
+            });
             const properties: item = {
                 name: item.name,
                 type: sql.Money,
-                value: item.value.toLocaleString(item.local, {
-                    style: 'currency',
-                    currency: item.currency,
-                }),
+                value: currency.format(item.value.toFixed(2)),
             };
             return properties;
         }
@@ -113,45 +124,58 @@ function getProperties(item: key) {
             return properties;
         }
         case 'smallint': {
+            const parsed = parseInt(item.value);
             const properties: item = {
                 name: item.name,
                 type: sql.SmallInt,
-                value: parseInt(item.value),
+                value: parsed,
             };
-            return properties;
+            if (!isNaN(parsed) && parsed > -32769 && parsed < 32768) return properties;
+            else convertionFailed(item);
+            break;
         }
         case 'smallmoney': {
+            const currency = new Intl.NumberFormat(item.local, {
+                style: 'currency',
+                currency: item.currency,
+            });
+            const parsed = parseInt(item.value, 10);
             const properties: item = {
                 name: item.name,
                 type: sql.SmallMoney,
-                value: parseInt(item.value, 10).toLocaleString(item.local, {
-                    style: 'currency',
-                    currency: item.currency,
-                }),
+                value: currency.format(parsed),
             };
-            return properties;
+            if (!isNaN(parsed)) return properties;
+            else convertionFailed(item);
+            break;
         }
         case 'real': {
+            const parsed = parseFloat(item.value);
             const properties: item = {
                 name: item.name,
                 type: sql.Real,
-                value: parseFloat(item.value),
+                value: parsed,
             };
-            return properties;
+            if (!isNaN(parsed)) return properties;
+            else convertionFailed(item);
+            break;
         }
         case 'tinyint': {
+            const parsed = parseInt(item.value);
             const properties: item = {
                 name: item.name,
                 type: sql.TinyInt,
-                value: parseInt(item.value),
+                value: parsed,
             };
-            return properties;
+            if (!isNaN(parsed) && parsed > -1 && parsed < 256) return properties;
+            else convertionFailed(item);
+            break;
         }
         case 'char': {
             const properties: item = {
                 name: item.name,
                 type: sql.Char(item.length ?? 100),
-                value: String(item.value),
+                value: String(item.value.substring(0,item.length ?? 100)),
             };
             return properties;
         }
@@ -159,7 +183,7 @@ function getProperties(item: key) {
             const properties: item = {
                 name: item.name,
                 type: sql.NChar(item.length ?? 100),
-                value: String(item.value),
+                value: String(item.value.substring(0,item.length ?? 100)),
             };
             return properties;
         }
@@ -183,7 +207,7 @@ function getProperties(item: key) {
             const properties = {
                 name: item.name,
                 type: sql.VarChar(item.length ?? 100),
-                value: String(item.value),
+                value: String(item.value.substring(0,item.length ?? 100)),
             };
             return properties;
         }
@@ -191,20 +215,23 @@ function getProperties(item: key) {
             const properties: item = {
                 name: item.name,
                 type: sql.NVarChar(item.length ?? 100),
-                value: String(item.value),
+                value: String(item.value.substring(0,item.length ?? 100)),
             };
             return properties;
         }
         case 'xml': {
+            const parsed = new DOMParser().parseFromString(
+                item.value,
+                'text/xml'
+            );
             const properties: item = {
                 name: item.name,
                 type: sql.Xml,
-                value: new DOMParser().parseFromString(
-                    item.value,
-                    'text/xml'
-                ),
+                value: parsed,
             };
-            return properties;
+            if (parsed) return properties;
+            else convertionFailed(item);
+            break;
         }
         case 'time': {
             const properties: item = {
@@ -344,10 +371,9 @@ function getProperties(item: key) {
         }
     } catch (err) {
         convertionFailed(item);
+        return err;
     }
-
-    return null;
-}
+};
 
 function stringToBinary(string, maxBytes) {
     //for BINARY maxBytes = 255
@@ -365,6 +391,7 @@ function stringToBinary(string, maxBytes) {
 }
 
 function convertionFailed(key: key) {
+    //console.log(`Convertion of ${key.value} to ${key.type} failed`);
     throw new Error(`Convertion of ${key.value} to ${key.type} failed`);
 }
 
@@ -377,11 +404,11 @@ interface item {
 interface key {
     name: string;
     value: any;
-    type: string;
-    length: number;
-    precision: number;
-    scale: number;
-    local: string;
-    currency: string;
-    format: string;
+    type?: string;
+    length?: number;
+    precision?: number;
+    scale?: number;
+    local?: string;
+    currency?: string;
+    format?: string;
 }
