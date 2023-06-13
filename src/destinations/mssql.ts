@@ -234,64 +234,82 @@ export const getProperties = (item: key) => {
             break;
         }
         case 'time': {
+            const parsed = moment(new Date(item.value)).format(
+                item.format ?? 'HH:mm:ss'
+            );
             const properties: item = {
                 name: item.name,
                 type: sql.Time(item.scale ?? 2),
-                value: moment(new Date(item.value)).format(
-                    item.format ?? 'HH:mm:ss'
-                ),
+                value: parsed,
             };
-            return properties;
+            if (parsed != 'Invalid date') return properties;
+            else convertionFailed(item);
+            break;
         }
         case 'date': {
+            const parsed = moment(new Date(item.value)).format(
+                item.format ?? 'YYYY-MM-DD'
+            );
             const properties: item = {
                 name: item.name,
                 type: sql.Date,
-                value: moment(new Date(item.value)).format(
-                    item.format ?? 'YYYY-MM-DD'
-                ),
+                value: parsed,
             };
-            return properties;
+            if (parsed != 'Invalid date') return properties;
+            else convertionFailed(item);
+            break;
         }
         case 'datetime': {
+            const parsed = moment(new Date(item.value)).format(
+                item.format ?? 'YYYY-MM-DD HH:mm:ss'
+            );
             const properties: item = {
                 name: item.name,
                 type: sql.DateTime,
-                value: moment(new Date(item.value)).format(
-                    item.format ?? 'YYYY-MM-DD HH:mm:ss'
-                ),
+                value: parsed,
             };
-            return properties;
+            if (parsed != 'Invalid date') return properties;
+            else convertionFailed(item);
+            break;
         }
         case 'datetime2': {
+            const parsed = moment(new Date(item.value)).format(
+                item.format ?? 'YYYY-MM-DD HH:mm:ss.SSSSSS'
+            );
             const properties: item = {
                 name: item.name,
                 type: sql.DateTime2(item.scale ?? 2),
-                value: moment(new Date(item.value)).format(
-                    item.format ?? 'YYYY-MM-DD HH:mm:ss.SSSSSS'
-                ),
+                value: parsed,
             };
-            return properties;
+            if (parsed != 'Invalid date') return properties;
+            else convertionFailed(item);
+            break;
         }
         case 'datetimeoffset': {
+            const parsed = moment(new Date(item.value)).format(
+                item.format ?? 'YYYY-MM-DD[T]HH:mm:ss.SSSZ'
+            );
             const properties: item = {
                 name: item.name,
                 type: sql.DateTimeOffset(item.scale ?? 2),
-                value: moment(new Date(item.value)).format(
-                    item.format ?? 'YYYY-MM-DD[T]HH:mm:ss.SSSZ'
-                ),
+                value: parsed,
             };
-            return properties;
+            if (parsed != 'Invalid date') return properties;
+            else convertionFailed(item);
+            break;
         }
         case 'smalldatetime': {
+            const parsed = moment(new Date(item.value)).format(
+                item.format ?? 'YYYY-MM-DD HH:mm:ss'
+            );
             const properties: item = {
                 name: item.name,
                 type: sql.SmallDateTime,
-                value: moment(new Date(item.value)).format(
-                    item.format ?? 'YYYY-MM-DD HH:mm:ss'
-                ),
+                value: parsed,
             };
-            return properties;
+            if (parsed != 'Invalid date') return properties;
+            else convertionFailed(item);
+            break;
         }
         case 'uniqueidentifier': {
             const properties: item = {
@@ -401,7 +419,7 @@ interface item {
     type: any;
 }
 
-interface key {
+export interface key {
     name: string;
     value: any;
     type?: string;

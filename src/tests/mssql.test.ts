@@ -101,538 +101,114 @@ test.serial.skip('🍎 mssqlHydrateOne should throw an error if the SQL is not v
     t.true(consoleLogStub.called);
 });
 
-
-test.serial('🍏 getProperties should return formated input properties with type of "Bit"', async (t) => {
-    const input = {
-        name: 'context',
-        type: 'BIT',
-        value: '1'
-    };
-    const response = getProperties(input);
-    t.assert(response.type);
-    t.is(response.value, 1);
+[   {type: 'Bit', value: 1, title: '',},
+    {type: 'BigInt', value: 1234567891012345, title: '',},
+    {type: 'Decimal', value: 3.4125678, title: '', options: {precision: 10, scale: 4},},
+    {type: 'Float', value: 34125678, title: '',},
+    {type: 'Int', value: 34125678, title: '',},
+    {type: 'Money', value: 4567, title: '', options: {local: 'en-GB',currency: 'GBP'},},
+    {type: 'Numeric', value: 4567.578945, title: '', options: {precision: 8, scale: 4},},
+    {type: 'SmallInt', value: 4567, title: '',},
+    {type: 'SmallMoney', value: 4567, title: '', options: {local: 'en-GB',currency: 'GBP'},},
+    {type: 'Real', value: 4567.578945, title: '',},
+    {type: 'TinyInt', value: 128, title: '',},
+    {type: 'Char', value: 'ABC', title: '',},
+    {type: 'Char', value: 'ABCDEFGHIJK', title: ' and limited length', options: {length: 5,},},
+    {type: 'NChar', value: 'ABC', title: '',},
+    {type: 'NChar', value: 'ABCDEFGHIJK', title: ' and limited length', options: {length: 5,},},
+    {type: 'NChar', value: 'AÁBCDEÉFGHIJK', title:', limited length and spacial chars', options: {length: 8,},},
+    {type: 'Text', value: 'ABC', title: '',},
+    {type: 'Text', value: 'AÁBCDEÉFGHIJK', title: ' and spacial characters',},
+    {type: 'NText', value: 'ABC', title: '',},
+    {type: 'NText', value: 'AÁBCDEÉFGHIJK', title: ' and spacial characters',},
+    {type: 'VarChar', value: 'ABC', title: '',},
+    {type: 'VarChar', value: 'ABCDEFGHIJK', title: ' and limited length', options: {length: 5,},},
+    {type: 'VarChar', value: 'AÁBCDEÉFGHIJK', title:', limited length and spacial chars', options: {length: 8,},},
+    {type: 'NVarChar', value: 'ABC', title: '',},
+    {type: 'NVarChar', value: 'ABCDEFGHIJK', title: ' and limited length', options: {length: 5,},},
+    {type: 'NVarChar', value: 'AÁBCDEÉFGHIJK', title:', limited length and spacial chars', options: {length: 8,},},
+    {type: 'Xml', value: '<strong>Beware of the leopard</strong>', title: '',},
+    {type: 'Time', value: '2023-06-12 12:15:00', title: '', options: {scale: 4, format: 'HH-mm-ss',},},
+    {type: 'Date', value: '2023-06-12 12:15:00', title: '', options: {format: 'YYYY/MM/DD',},},
+    {type: 'DateTime', value: '2023-06-12 12:15:00', title: '', options: {format: 'YYYY/MM/DD HH-mm-ss',},},
+    {type: 'DateTime2', value: '2023-06-12 12:15:00', title: '', options: {scale: 4, format: 'YYYY/MM/DD HH-mm-ss:SSSSSS',},},
+    {type: 'DateTimeOffset', value: '2023-06-12 12:15:00', title: '', options: {scale: 4, format: 'YYYY/MM/DD[T]HH:mm:ss.SSSZ',},},
+    {type: 'SmallDateTime', value: '2023-06-12 12:15:00', title: '', options: {scale: 4, format: 'YYYY/MM/DD HH:mm:ss',},},
+].forEach((field) => {
+    test.serial(`🍏 getProperties should return formated input properties with type of "${field.type}${field.title}"`, async (t) => {
+        const input = {
+            name: 'context',
+            type: field.type,
+            value: field.value
+        };
+        if (field.options) {
+            for (const [key, value] of Object.entries(field.options)) {
+                input[key] = value;
+            }
+        }
+        const response = getProperties(input);
+        t.assert(response.type);
+        if (field.type == 'BigInt') t.is(BigInt(response.value), BigInt(1234567891012345));
+        else if (field.type == 'Decimal') t.is(response.value, '3.4126');
+        else if (field.type == 'Money' || field.type == 'SmallMoney' ) t.is(response.value, '£4,567.00');
+        else if (field.type == 'Numeric') t.is(response.value, '4567.5789');
+        else if (field.type == 'Char' && field.options?.length == 5) t.is(response.value, 'ABCDE');
+        else if (field.type == 'NChar' && field.options?.length == 5) t.is(response.value, 'ABCDE');
+        else if (field.type == 'NChar' && field.options?.length == 8) t.is(response.value, 'AÁBCDEÉF');
+        else if (field.type == 'VarChar' && field.options?.length == 5) t.is(response.value, 'ABCDE');
+        else if (field.type == 'VarChar' && field.options?.length == 8) t.is(response.value, 'AÁBCDEÉF');
+        else if (field.type == 'NVarChar' && field.options?.length == 5) t.is(response.value, 'ABCDE');
+        else if (field.type == 'NVarChar' && field.options?.length == 8) t.is(response.value, 'AÁBCDEÉF');
+        else if (field.type == 'Xml') t.is(response.value.documentElement.firstChild.data, 'Beware of the leopard');
+        else if (field.type == 'Time')  t.is(response.value, '12-15-00');
+        else if (field.type == 'Date')  t.is(response.value, '2023/06/12');
+        else if (field.type == 'DateTime')  t.is(response.value, '2023/06/12 12-15-00');
+        else if (field.type == 'DateTime2')  t.is(response.value, '2023/06/12 12-15-00:000000');
+        else if (field.type == 'DateTimeOffset')  t.is(response.value, '2023/06/12T12:15:00.000+01:00');
+        else if (field.type == 'SmallDateTime')  t.is(response.value, '2023/06/12 12:15:00');
+        else t.is(response.value, field.value);
+    });
 });
 
-test.serial('🍎 getProperties should throw an error when value is not convertible to "Bit"', async (t) => {
-    const input = {
-        name: 'context',
-        type: 'BIT',
-        value: 'ABC'
-    };
-    try {
-        getProperties(input);
-    } catch (e) {
-        t.is(e.message, 'Convertion of ABC to BIT failed');
-    }    
-});
-
-test.serial('🍏 getProperties should return formated input properties with type of "BigInt"', async (t) => {
-    const input = {
-        name: 'context',
-        type: 'BIGINT',
-        value: '1234567891012345'
-    };
-    const response = getProperties(input);
-    t.assert(response.type);
-    t.is(BigInt(response.value), BigInt(1234567891012345));
-});
-
-test.serial('🍎 getProperties should throw an error when value is not convertible to "BigInt"', async (t) => {
-    const input = {
-        name: 'context',
-        type: 'BIGINT',
-        value: 'ABC'
-    };
-    try {
-        getProperties(input);
-    } catch (e) {
-        t.is(e.message, 'Convertion of ABC to BIGINT failed');
-    }    
-});
-
-test.serial('🍏 getProperties should return formated input properties with type of "Decimal"', async (t) => {
-    const input = {
-        name: 'context',
-        type: 'DECIMAL',
-        precision: 10,
-        scale: 4,
-        value: 3.4125678
-    };
-    const response = getProperties(input);
-    t.assert(response.type);
-    t.is(response.value, '3.4126');
-});
-
-test.serial('🍎 getProperties should throw an error when value is not convertible to "Decimal"', async (t) => {
-    const input = {
-        name: 'context',
-        type: 'DECIMAL',
-        value: 'ABC'
-    };
-    try {
-        getProperties(input);
-    } catch (e) {
-        t.is(e.message, 'Convertion of ABC to DECIMAL failed');
-    }    
-});
-
-test.serial('🍏 getProperties should return formated input properties with type of "Float"', async (t) => {
-    const input = {
-        name: 'context',
-        type: 'FLOAT',
-        value: 34125678
-    };
-    const response = getProperties(input);
-    t.assert(response.type);
-    t.is(response.value, 34125678);
-});
-
-test.serial('🍎 getProperties should throw an error when value is not convertible to "Float"', async (t) => {
-    const input = {
-        name: 'context',
-        type: 'FLOAT',
-        value: 'ABC'
-    };
-    try {
-        getProperties(input);
-    } catch (e) {
-        t.is(e.message, 'Convertion of ABC to FLOAT failed');
-    }    
-});
-
-test.serial('🍏 getProperties should return formated input properties with type of "Int"', async (t) => {
-    const input = {
-        name: 'context',
-        type: 'INT',
-        value: 12345678
-    };
-    const response = getProperties(input);
-    t.assert(response.type);
-    t.is(response.value, 12345678);
-});
-
-test.serial('🍎 getProperties should throw an error when value is not convertible to "Int"', async (t) => {
-    const input = {
-        name: 'context',
-        type: 'INT',
-        value: 'ABC'
-    };
-    try {
-        getProperties(input);
-    } catch (e) {
-        t.is(e.message, 'Convertion of ABC to INT failed');
-    }    
-});
-
-test.serial('🍏 getProperties should return formated input properties with type of "Money"', async (t) => {
-    const input = {
-        name: 'context',
-        type: 'MONEY',
-        value: 4567,
-        local: 'en-GB',
-        currency: 'GBP'
-    };
-    const response = getProperties(input);
-    t.assert(response.type);
-    t.is(response.value, '£4,567.00');
-});
-
-test.serial('🍎 getProperties should throw an error when value is not convertible to "Money"', async (t) => {
-    const input = {
-        name: 'context',
-        type: 'MONEY',
-        value: 'ABC',
-        local: 'en-GB',
-        currency: 'GBP'
-    };
-    try {
-        getProperties(input);
-    } catch (e) {
-        t.is(e.message, 'Convertion of ABC to MONEY failed');
-   
-    }
-});
-
-test.serial('🍏 getProperties should return formated input properties with type of "Numeric"', async (t) => {
-    const input = {
-        name: 'context',
-        type: 'NUMERIC',
-        value: 4567.578945,
-        precision: 8,
-        scale: 4
-    };
-    const response = getProperties(input);
-    t.assert(response.type);
-    t.is(response.value, '4567.5789');
-});
-
-test.serial('🍎 getProperties should throw an error when value is not convertible to "Numeric"', async (t) => {
-    const input = {
-        name: 'context',
-        type: 'NUMERIC',
-        value: 'ABC',
-        precision: 8,
-        scale: 4
-    };
-    try {
-        getProperties(input);
-    } catch (e) {
-        t.is(e.message, 'Convertion of ABC to NUMERIC failed');
-   
-    }
-});
-
-test.serial('🍏 getProperties should return formated input properties with type of "SmallInt"', async (t) => {
-    const input = {
-        name: 'context',
-        type: 'SMALLINT',
-        value: 4567,
-    };
-    const response = getProperties(input);
-    t.assert(response.type);
-    t.is(response.value, 4567);
-});
-
-test.serial('🍎 getProperties should throw an error when value is not convertible to "SmallInt"', async (t) => {
-    const input = {
-        name: 'context',
-        type: 'SMALLINT',
-        value: 'ABC',
-    };
-    try {
-        getProperties(input);
-    } catch (e) {
-        t.is(e.message, 'Convertion of ABC to SMALLINT failed');
-   
-    }
-});
-
-test.serial('🍎 getProperties should throw an error when value is out of range (-) for "SmallInt"', async (t) => {
-    const input = {
-        name: 'context',
-        type: 'SMALLINT',
-        value: -32795,
-    };
-    try {
-        getProperties(input);
-    } catch (e) {
-        t.is(e.message, 'Convertion of -32795 to SMALLINT failed');
-   
-    }
-});
-
-test.serial('🍎 getProperties should throw an error when value is out of range (+) for "SmallInt"', async (t) => {
-    const input = {
-        name: 'context',
-        type: 'SMALLINT',
-        value: 32780,
-    };
-    try {
-        getProperties(input);
-    } catch (e) {
-        t.is(e.message, 'Convertion of 32780 to SMALLINT failed');
-   
-    }
-});
-
-test.serial('🍏 getProperties should return formated input properties with type of "SmallMoney"', async (t) => {
-    const input = {
-        name: 'context',
-        type: 'SMALLMONEY',
-        value: 4567,
-        local: 'en-GB',
-        currency: 'GBP'
-    };
-    const response = getProperties(input);
-    t.assert(response.type);
-    t.is(response.value, '£4,567.00');
-});
-
-test.serial('🍎 getProperties should throw an error when value is not convertible to "SmallMoney"', async (t) => {
-    const input = {
-        name: 'context',
-        type: 'SMALLMONEY',
-        value: 'ABC',
-        local: 'en-GB',
-        currency: 'GBP'
-    };
-    try {
-        getProperties(input);
-    } catch (e) {
-        t.is(e.message, 'Convertion of ABC to SMALLMONEY failed');
-   
-    }
-});
-
-test.serial('🍏 getProperties should return formated input properties with type of "Real"', async (t) => {
-    const input = {
-        name: 'context',
-        type: 'REAL',
-        value: 4567.578945,
-    };
-    const response = getProperties(input);
-    t.assert(response.type);
-    t.is(response.value, 4567.578945);
-});
-
-test.serial('🍎 getProperties should throw an error when value is not convertible to "Real"', async (t) => {
-    const input = {
-        name: 'context',
-        type: 'REAL',
-        value: 'ABC',
-    };
-    try {
-        getProperties(input);
-    } catch (e) {
-        t.is(e.message, 'Convertion of ABC to REAL failed');
-   
-    }
-});
-
-test.serial('🍏 getProperties should return formated input properties with type of "TinyInt"', async (t) => {
-    const input = {
-        name: 'context',
-        type: 'TINYINT',
-        value: 128,
-    };
-    const response = getProperties(input);
-    t.assert(response.type);
-    t.is(response.value, 128);
-});
-
-test.serial('🍎 getProperties should throw an error when value is not convertible to "TinyInt"', async (t) => {
-    const input = {
-        name: 'context',
-        type: 'TINYINT',
-        value: 'ABC',
-    };
-    try {
-        getProperties(input);
-    } catch (e) {
-        t.is(e.message, 'Convertion of ABC to TINYINT failed');
-   
-    }
-});
-
-test.serial('🍎 getProperties should throw an error when value is out of range (-) for "TinyInt"', async (t) => {
-    const input = {
-        name: 'context',
-        type: 'TINYINT',
-        value: -3,
-    };
-    try {
-        getProperties(input);
-    } catch (e) {
-        t.is(e.message, 'Convertion of -3 to TINYINT failed');
-   
-    }
-});
-
-test.serial('🍎 getProperties should throw an error when value is out of range (+) for "TinyInt"', async (t) => {
-    const input = {
-        name: 'context',
-        type: 'TINYINT',
-        value: 260,
-    };
-    try {
-        getProperties(input);
-    } catch (e) {
-        t.is(e.message, 'Convertion of 260 to TINYINT failed');
-   
-    }
-});
-
-test.serial('🍏 getProperties should return formated input properties with type of "Char"', async (t) => {
-    const input = {
-        name: 'context',
-        type: 'CHAR',
-        value: 'ABC',
-    };
-    const response = getProperties(input);
-    t.assert(response.type);
-    t.is(response.value, 'ABC');
-});
-
-test.serial('🍏 getProperties should return formated input properties with type of "Char" with limited length of text', async (t) => {
-    const input = {
-        name: 'context',
-        type: 'CHAR',
-        value: 'ABCDEFGHIJK',
-        length: 5
-    };
-    const response = getProperties(input);
-    t.assert(response.type);
-    t.is(response.value, 'ABCDE');
-});
-
-test.serial('🍏 getProperties should return formated input properties with type of "NChar"', async (t) => {
-    const input = {
-        name: 'context',
-        type: 'NCHAR',
-        value: 'ABC',
-    };
-    const response = getProperties(input);
-    t.assert(response.type);
-    t.is(response.value, 'ABC');
-});
-
-test.serial('🍏 getProperties should return formated input properties with type of "NChar" with limited length of text', async (t) => {
-    const input = {
-        name: 'context',
-        type: 'NCHAR',
-        value: 'ABCDEFGHIJK',
-        length: 5
-    };
-    const response = getProperties(input);
-    t.assert(response.type);
-    t.is(response.value, 'ABCDE');
-});
-
-test.serial('🍏 getProperties should return formated input properties with type of "NChar" with scpecial chars', async (t) => {
-    const input = {
-        name: 'context',
-        type: 'NCHAR',
-        value: 'AÁBCDEÉFGHIJK',
-        length: 8
-    };
-    const response = getProperties(input);
-    t.assert(response.type);
-    t.is(response.value, 'AÁBCDEÉF');
-});
-
-test.serial('🍏 getProperties should return formated input properties with type of "Text"', async (t) => {
-    const input = {
-        name: 'context',
-        type: 'TEXT',
-        value: 'ABC',
-    };
-    const response = getProperties(input);
-    t.assert(response.type);
-    t.is(response.value, 'ABC');
-});
-
-test.serial('🍏 getProperties should return formated input properties with type of "Text" with scpecial chars', async (t) => {
-    const input = {
-        name: 'context',
-        type: 'TEXT',
-        value: 'AÁBCDEÉFGHIJK',
-    };
-    const response = getProperties(input);
-    t.assert(response.type);
-    t.is(response.value, 'AÁBCDEÉFGHIJK');
-});
-
-test.serial('🍏 getProperties should return formated input properties with type of "NText"', async (t) => {
-    const input = {
-        name: 'context',
-        type: 'NTEXT',
-        value: 'ABC',
-    };
-    const response = getProperties(input);
-    t.assert(response.type);
-    t.is(response.value, 'ABC');
-});
-
-test.serial('🍏 getProperties should return formated input properties with type of "NText" with scpecial chars', async (t) => {
-    const input = {
-        name: 'context',
-        type: 'NTEXT',
-        value: 'AÁBCDEÉFGHIJK',
-    };
-    const response = getProperties(input);
-    t.assert(response.type);
-    t.is(response.value, 'AÁBCDEÉFGHIJK');
-});
-
-test.serial('🍏 getProperties should return formated input properties with type of "VarChar"', async (t) => {
-    const input = {
-        name: 'context',
-        type: 'VARCHAR',
-        value: 'ABC',
-    };
-    const response = getProperties(input);
-    t.assert(response.type);
-    t.is(response.value, 'ABC');
-});
-
-test.serial('🍏 getProperties should return formated input properties with type of "VarChar" with limited length of text', async (t) => {
-    const input = {
-        name: 'context',
-        type: 'VARCHAR',
-        value: 'ABCDEFGHIJK',
-        length: 5
-    };
-    const response = getProperties(input);
-    t.assert(response.type);
-    t.is(response.value, 'ABCDE');
-});
-
-test.serial('🍏 getProperties should return formated input properties with type of "VarChar" with scpecial chars', async (t) => {
-    const input = {
-        name: 'context',
-        type: 'VARCHAR',
-        value: 'AÁBCDEÉFGHIJK',
-    };
-    const response = getProperties(input);
-    t.assert(response.type);
-    t.is(response.value, 'AÁBCDEÉFGHIJK');
-});
-
-test.serial('🍏 getProperties should return formated input properties with type of "NVarChar"', async (t) => {
-    const input = {
-        name: 'context',
-        type: 'NVARCHAR',
-        value: 'ABC',
-    };
-    const response = getProperties(input);
-    t.assert(response.type);
-    t.is(response.value, 'ABC');
-});
-
-test.serial('🍏 getProperties should return formated input properties with type of "NVarChar" with limited length of text', async (t) => {
-    const input = {
-        name: 'context',
-        type: 'NVARCHAR',
-        value: 'ABCDEFGHIJK',
-        length: 5
-    };
-    const response = getProperties(input);
-    t.assert(response.type);
-    t.is(response.value, 'ABCDE');
-});
-
-test.serial('🍏 getProperties should return formated input properties with type of "NVarChar" with scpecial chars', async (t) => {
-    const input = {
-        name: 'context',
-        type: 'NVARCHAR',
-        value: 'AÁBCDEÉFGHIJK',
-    };
-    const response = getProperties(input);
-    t.assert(response.type);
-    t.is(response.value, 'AÁBCDEÉFGHIJK');
-});
-
-test.serial('🍏 getProperties should return formated input properties with type of "Xml"', async (t) => {
-    const input = {
-        name: 'context',
-        type: 'XML',
-        value: '<strong>Beware of the leopard</strong>',
-    };
-    const response = getProperties(input);
-    t.assert(response.type);
-    t.is(response.value.documentElement.firstChild.data, 'Beware of the leopard');
-});
-
-test.serial('🍎 getProperties should throw an error when value is not convertible to "Xml"', async (t) => {
-    const input = {
-        name: 'context',
-        type: 'XML',
-        value: {any: ''},
-    };
-    try {
-        getProperties(input);
-    } catch (e) {
-        t.is(e.message, 'Convertion of [object Object] to XML failed');
-   
-    }
+[   {type: 'Bit', value: 'ABC', title: '',},
+    {type: 'BigInt', value: 'ABC', title: '',},
+    {type: 'Decimal', value: 'ABC', title: '', options: {precision: 10, scale: 4}},
+    {type: 'Float', value: 'ABC', title: '',},
+    {type: 'Int', value: 'ABC', title: '',},
+    {type: 'Money', value: 'ABC', title: '', options: {local: 'en-GB',currency: 'GBP'},},
+    {type: 'Numeric', value: 'ABC', title: '', options: {precision: 8, scale: 4},},
+    {type: 'SmallInt', value: 'ABC', title: '',},
+    {type: 'SmallInt', value: -32795, title: ', out of range (-)',},
+    {type: 'SmallInt', value: 32780, title: ', out of range (+)',},
+    {type: 'SmallMoney', value: 'ABC', title: '',options: {local: 'en-GB',currency: 'GBP'},},
+    {type: 'Real', value: 'ABC', title: '',},
+    {type: 'TinyInt', value: 'ABC', title: '',},
+    {type: 'TinyInt', value: -3, title: ', out of range (-)',},
+    {type: 'TinyInt', value: 260, title: ', out of range (+)',},
+    {type: 'Xml', value: {any: ''}, title: '',},
+    {type: 'Time', value: 'ABC', title: '', options: {scale: 4, format: 'HH-mm-ss',},},
+    {type: 'Date', value: 'ABC', title: '', options: {format: 'YYYY/MM/DD',},},
+    {type: 'DateTime', value: 'ABC', title: '', options: {format: 'YYYY/MM/DD HH-mm-ss',},},
+    {type: 'DateTime2', value: 'ABC', title: '', options: {scale: 4, format: 'YYYY/MM/DD HH-mm-ss:SSSSSS',},},
+    {type: 'DateTimeOffset', value: 'ABC', title: '', options: {scale: 4, format: 'YYYY/MM/DD[T]HH:mm:ss.SSSZ',},},
+    {type: 'SmallDateTime', value: 'ABC', title: '', options: {scale: 4, format: 'YYYY/MM/DD HH:mm:ss',},},
+].forEach((field) => {
+    test.serial(`🍎 getProperties should throw an error when value is not convertible to "${field.type}${field.title}"`, async (t) => {
+        const input = {
+            name: 'context',
+            type: field.type,
+            value: field.value
+        };
+        if (field.options) {
+            for (const [key, value] of Object.entries(field.options)) {
+                input[key] = value;
+            }
+        }
+        try {
+            getProperties(input);
+        } catch (e) {
+            if (field.type == 'Xml') t.is(e.message, `Convertion of [object Object] to ${field.type} failed`);
+            else t.is(e.message, `Convertion of ${field.value} to ${field.type} failed`);
+        }  
+    });
 });
