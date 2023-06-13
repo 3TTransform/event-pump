@@ -134,6 +134,14 @@ test.serial.skip('🍎 mssqlHydrateOne should throw an error if the SQL is not v
     {type: 'DateTime2', value: '2023-06-12 12:15:00', title: '', options: {scale: 4, format: 'YYYY/MM/DD HH-mm-ss:SSSSSS',},},
     {type: 'DateTimeOffset', value: '2023-06-12 12:15:00', title: '', options: {scale: 4, format: 'YYYY/MM/DD[T]HH:mm:ss.SSSZ',},},
     {type: 'SmallDateTime', value: '2023-06-12 12:15:00', title: '', options: {scale: 4, format: 'YYYY/MM/DD HH:mm:ss',},},
+    {type: 'UniqueIdentifier', value: '00000000-0000-0000-0000-000000000000', title: '',},
+    // {type: 'Variant', value: '', title: '',},
+    {type: 'Binary', value: 'ABC', title: '',},
+    {type: 'VarBinary', value: 'ABC', title: '',},
+    // {type: 'Image', value: '', title: '',},
+    // {type: 'UDT', value: '', title: '',},
+    // {type: 'Geography', value: '', title: '',},
+    // {type: 'Geometry', value: '', title: '',},
 ].forEach((field) => {
     test.serial(`🍏 getProperties should return formated input properties with type of "${field.type}${field.title}"`, async (t) => {
         const input = {
@@ -166,6 +174,7 @@ test.serial.skip('🍎 mssqlHydrateOne should throw an error if the SQL is not v
         else if (field.type == 'DateTime2')  t.is(response.value, '2023/06/12 12-15-00:000000');
         else if (field.type == 'DateTimeOffset')  t.is(response.value, '2023/06/12T12:15:00.000+01:00');
         else if (field.type == 'SmallDateTime')  t.is(response.value, '2023/06/12 12:15:00');
+        else if (field.type == 'Binary' || field.type == 'VarBinary')  t.is(response.value, '1000001 1000010 1000011 ');
         else t.is(response.value, field.value);
     });
 });
@@ -192,6 +201,14 @@ test.serial.skip('🍎 mssqlHydrateOne should throw an error if the SQL is not v
     {type: 'DateTime2', value: 'ABC', title: '', options: {scale: 4, format: 'YYYY/MM/DD HH-mm-ss:SSSSSS',},},
     {type: 'DateTimeOffset', value: 'ABC', title: '', options: {scale: 4, format: 'YYYY/MM/DD[T]HH:mm:ss.SSSZ',},},
     {type: 'SmallDateTime', value: 'ABC', title: '', options: {scale: 4, format: 'YYYY/MM/DD HH:mm:ss',},},
+    {type: 'UniqueIdentifier', value: '00000000-0000-0000-000000000000', title: '',},
+    // {type: 'Variant', value: 'ABC', title: '',},
+    {type: 'Binary', value: {any: ''}, title: '',},
+    {type: 'VarBinary', value: {any: ''}, title: '',},
+    // {type: 'Image', value: '', title: '',},
+    // {type: 'UDT', value: '', title: '',},
+    // {type: 'Geography', value: '', title: '',},
+    // {type: 'Geometry', value: '', title: '',},
 ].forEach((field) => {
     test.serial(`🍎 getProperties should throw an error when value is not convertible to "${field.type}${field.title}"`, async (t) => {
         const input = {

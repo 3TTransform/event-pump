@@ -312,15 +312,21 @@ export const getProperties = (item: key) => {
             break;
         }
         case 'uniqueidentifier': {
-            const properties: item = {
-                name: item.name,
-                type: sql.UniqueIdentifier,
-                value: item.value.replace(
-                    /([0-z]{8})([0-z]{4})([0-z]{4})([0-z]{4})([0-z]{12})/,
-                    '$1-$2-$3-$4-$5'
-                ),
-            };
-            return properties;
+            if (item.value) {
+                if ((/^(\{){0,1}[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}(\}){0,1}$/).test(item.value)) {
+                    const properties: item = {
+                        name: item.name,
+                        type: sql.UniqueIdentifier,
+                        value: item.value.replace(
+                            /([0-z]{8})([0-z]{4})([0-z]{4})([0-z]{4})([0-z]{12})/,
+                            '$1-$2-$3-$4-$5'
+                        ),
+                    };
+                    return properties;
+                }
+            }
+            convertionFailed(item);
+            break;
         }
         case 'variant': {
             const properties: item = {
