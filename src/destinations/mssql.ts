@@ -22,7 +22,7 @@ const runSQL = async (sqlCommand, input) => {
     const request = await poolConnection.request();
 
     for (const key of input) {
-        const properties: item = getProperties(key);
+        const properties: Item = getProperties(key);
         if (properties.type) request.input(properties.name, properties.type, properties.value);
         else request.input(properties.name, properties.value);
     }
@@ -51,22 +51,23 @@ export const mssqlHydrateOne = async (
     }
 };
 
-export const getProperties = (item: key) => {
+export const getProperties = (item: Key) => {
     try {
         switch (item.type.toLowerCase()) {
         case 'bit': {
             const parsed = +item.value;
-            const properties: item = {
+            if (isNaN(parsed))
+            {
+                throw new Error(`Convertion of ${item.value} to ${item.type} failed`);
+            }
+            return {
                 name: item.name,
                 type: sql.Bit,
                 value: parsed,
             };
-            if (!isNaN(parsed)) return properties;
-            else convertionFailed(item);
-            break;
         }
         case 'bigint': {
-            const properties: item = {
+            const properties: Item = {
                 name: item.name,
                 type: sql.BigInt,
                 value: BigInt(item.value),
@@ -74,7 +75,7 @@ export const getProperties = (item: key) => {
             return properties;
         }
         case 'decimal': {
-            const properties: item = {
+            const properties: Item = {
                 name: item.name,
                 type: sql.Decimal(item.precision ?? 10, item.scale ?? 2),
                 value: item.value.toFixed(item.scale ?? 2),
@@ -83,7 +84,7 @@ export const getProperties = (item: key) => {
         }
         case 'float': {
             const parsed = parseFloat(item.value);
-            const properties: item = {
+            const properties: Item = {
                 name: item.name,
                 type: sql.Float,
                 value: parsed,
@@ -94,7 +95,7 @@ export const getProperties = (item: key) => {
         }
         case 'int': {
             const parsed = parseInt(item.value);
-            const properties: item = {
+            const properties: Item = {
                 name: item.name,
                 type: sql.Int,
                 value: parsed,
@@ -108,7 +109,7 @@ export const getProperties = (item: key) => {
                 style: 'currency',
                 currency: item.currency,
             });
-            const properties: item = {
+            const properties: Item = {
                 name: item.name,
                 type: sql.Money,
                 value: currency.format(item.value.toFixed(2)),
@@ -116,7 +117,7 @@ export const getProperties = (item: key) => {
             return properties;
         }
         case 'numeric': {
-            const properties: item = {
+            const properties: Item = {
                 name: item.name,
                 type: sql.Numeric(item.precision ?? 10, item.scale ?? 2),
                 value: item.value.toFixed(item.scale ?? 2),
@@ -125,7 +126,7 @@ export const getProperties = (item: key) => {
         }
         case 'smallint': {
             const parsed = parseInt(item.value);
-            const properties: item = {
+            const properties: Item = {
                 name: item.name,
                 type: sql.SmallInt,
                 value: parsed,
@@ -140,7 +141,7 @@ export const getProperties = (item: key) => {
                 currency: item.currency,
             });
             const parsed = parseInt(item.value, 10);
-            const properties: item = {
+            const properties: Item = {
                 name: item.name,
                 type: sql.SmallMoney,
                 value: currency.format(parsed),
@@ -151,7 +152,7 @@ export const getProperties = (item: key) => {
         }
         case 'real': {
             const parsed = parseFloat(item.value);
-            const properties: item = {
+            const properties: Item = {
                 name: item.name,
                 type: sql.Real,
                 value: parsed,
@@ -162,7 +163,7 @@ export const getProperties = (item: key) => {
         }
         case 'tinyint': {
             const parsed = parseInt(item.value);
-            const properties: item = {
+            const properties: Item = {
                 name: item.name,
                 type: sql.TinyInt,
                 value: parsed,
@@ -172,7 +173,7 @@ export const getProperties = (item: key) => {
             break;
         }
         case 'char': {
-            const properties: item = {
+            const properties: Item = {
                 name: item.name,
                 type: sql.Char(item.length ?? 100),
                 value: String(item.value.substring(0,item.length ?? 100)),
@@ -180,7 +181,7 @@ export const getProperties = (item: key) => {
             return properties;
         }
         case 'nchar': {
-            const properties: item = {
+            const properties: Item = {
                 name: item.name,
                 type: sql.NChar(item.length ?? 100),
                 value: String(item.value.substring(0,item.length ?? 100)),
@@ -188,7 +189,7 @@ export const getProperties = (item: key) => {
             return properties;
         }
         case 'text': {
-            const properties: item = {
+            const properties: Item = {
                 name: item.name,
                 type: sql.Text,
                 value: String(item.value),
@@ -196,7 +197,7 @@ export const getProperties = (item: key) => {
             return properties;
         }
         case 'ntext': {
-            const properties: item = {
+            const properties: Item = {
                 name: item.name,
                 type: sql.NText,
                 value: String(item.value),
@@ -209,10 +210,11 @@ export const getProperties = (item: key) => {
                 type: sql.VarChar(item.length ?? 100),
                 value: String(item.value.substring(0,item.length ?? 100)),
             };
+
             return properties;
         }
         case 'nvarchar': {
-            const properties: item = {
+            const properties: Item = {
                 name: item.name,
                 type: sql.NVarChar(item.length ?? 100),
                 value: String(item.value.substring(0,item.length ?? 100)),
@@ -224,7 +226,7 @@ export const getProperties = (item: key) => {
                 item.value,
                 'text/xml'
             );
-            const properties: item = {
+            const properties: Item = {
                 name: item.name,
                 type: sql.Xml,
                 value: parsed,
@@ -237,7 +239,7 @@ export const getProperties = (item: key) => {
             const parsed = moment(new Date(item.value)).format(
                 item.format ?? 'HH:mm:ss'
             );
-            const properties: item = {
+            const properties: Item = {
                 name: item.name,
                 type: sql.Time(item.scale ?? 2),
                 value: parsed,
@@ -250,7 +252,7 @@ export const getProperties = (item: key) => {
             const parsed = moment(new Date(item.value)).format(
                 item.format ?? 'YYYY-MM-DD'
             );
-            const properties: item = {
+            const properties: Item = {
                 name: item.name,
                 type: sql.Date,
                 value: parsed,
@@ -263,7 +265,7 @@ export const getProperties = (item: key) => {
             const parsed = moment(new Date(item.value)).format(
                 item.format ?? 'YYYY-MM-DD HH:mm:ss'
             );
-            const properties: item = {
+            const properties: Item = {
                 name: item.name,
                 type: sql.DateTime,
                 value: parsed,
@@ -276,7 +278,7 @@ export const getProperties = (item: key) => {
             const parsed = moment(new Date(item.value)).format(
                 item.format ?? 'YYYY-MM-DD HH:mm:ss.SSSSSS'
             );
-            const properties: item = {
+            const properties: Item = {
                 name: item.name,
                 type: sql.DateTime2(item.scale ?? 2),
                 value: parsed,
@@ -289,7 +291,7 @@ export const getProperties = (item: key) => {
             const parsed = moment(new Date(item.value)).format(
                 item.format ?? 'YYYY-MM-DD[T]HH:mm:ss.SSSZ'
             );
-            const properties: item = {
+            const properties: Item = {
                 name: item.name,
                 type: sql.DateTimeOffset(item.scale ?? 2),
                 value: parsed,
@@ -302,7 +304,7 @@ export const getProperties = (item: key) => {
             const parsed = moment(new Date(item.value)).format(
                 item.format ?? 'YYYY-MM-DD HH:mm:ss'
             );
-            const properties: item = {
+            const properties: Item = {
                 name: item.name,
                 type: sql.SmallDateTime,
                 value: parsed,
@@ -313,14 +315,11 @@ export const getProperties = (item: key) => {
         }
         case 'uniqueidentifier': {
             if (item.value) {
-                if ((/^(\{){0,1}[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}(\}){0,1}$/).test(item.value)) {
-                    const properties: item = {
+                if ((/^(\{)?[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}(\})?$/).test(item.value)) {
+                    const properties: Item = {
                         name: item.name,
                         type: sql.UniqueIdentifier,
-                        value: item.value.replace(
-                            /([0-z]{8})([0-z]{4})([0-z]{4})([0-z]{4})([0-z]{12})/,
-                            '$1-$2-$3-$4-$5'
-                        ),
+                        value: item.value,
                     };
                     return properties;
                 }
@@ -328,16 +327,16 @@ export const getProperties = (item: key) => {
             convertionFailed(item);
             break;
         }
-        case 'variant': {
-            const properties: item = {
+        case 'variant': { // We don't convert this type
+            const properties: Item = {
                 name: item.name,
                 type: sql.Variant,
-                value: item.value, // Have to check!!!
+                value: item.value,
             };
             return properties;
         }
         case 'binary': {
-            const properties: item = {
+            const properties: Item = {
                 name: item.name,
                 type: sql.Binary,
                 value: stringToBinary(item.value, 255),
@@ -345,47 +344,47 @@ export const getProperties = (item: key) => {
             return properties;
         }
         case 'varbinary': {
-            const properties: item = {
+            const properties: Item = {
                 name: item.name,
                 type: sql.VarBinary(item.length ?? 65535),
                 value: stringToBinary(item.value, item.length ?? 65535),
             };
             return properties;
         }
-        case 'image': {
-            const properties: item = {
+        case 'image': { // We don't convert this type
+            const properties: Item = {
                 name: item.name,
                 type: sql.Image,
-                value: item.value, // Have to check!!!
+                value: item.value, 
             };
             return properties;
         }
-        case 'udt': {
-            const properties: item = {
+        case 'udt': { // We don't convert this type
+            const properties: Item = {
                 name: item.name,
                 type: sql.UDT,
-                value: item.value, // Have to check!!!
+                value: item.value, 
             };
             return properties;
         }
-        case 'geography': {
-            const properties: item = {
+        case 'geography': { // We don't convert this type
+            const properties: Item = {
                 name: item.name,
                 type: sql.Geography,
-                value: item.value, // Have to check!!!
+                value: item.value, 
             };
             return properties;
         }
-        case 'geometry': {
-            const properties: item = {
+        case 'geometry': { // We don't convert this type
+            const properties: Item = {
                 name: item.name,
                 type: sql.Geometry,
-                value: item.value, // Have to check!!!
+                value: item.value, 
             };
             return properties;
         }
         default: {
-            const properties: item = {
+            const properties: Item = {
                 name: item.name,
                 type: null,
                 value: item.value,
@@ -414,18 +413,17 @@ function stringToBinary(string, maxBytes) {
     return binaryOutput;
 }
 
-function convertionFailed(key: key) {
-    //console.log(`Convertion of ${key.value} to ${key.type} failed`);
+function convertionFailed(key: Key) {
     throw new Error(`Convertion of ${key.value} to ${key.type} failed`);
 }
 
-interface item {
+interface Item {
     name: string;
     value: any;
     type: any;
 }
 
-export interface key {
+export interface Key {
     name: string;
     value: any;
     type?: string;
