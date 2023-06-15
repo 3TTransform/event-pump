@@ -57,13 +57,18 @@ const openSearchHydrateOne = async (pattern: any, event: any, getAll = false) =>
         }
     }
     else {
-        const index = pattern.source.table;
         const size = pattern.source.size;
-        const params= {
-            method: 'all',
-            size
+        const qparams = {
+            index: pattern.source.table,
+            body: {
+                query: pattern.source.get.query
+            },
+            size,
+            from: 0
         };
-        response = await osSearch(index, params);
+        console.log(qparams);
+
+        response = await client.search(qparams);
     }
     if (response) return response;
     return null;
