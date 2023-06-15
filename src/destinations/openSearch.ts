@@ -150,7 +150,6 @@ async function osUpdate(singleItem: any, index_name: string) {
 
 async function osSearch(index_name: string, params: any) {
 
-    //console.log(params);
     let response: any;
 
     switch (params.method) {

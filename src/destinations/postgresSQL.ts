@@ -1,5 +1,4 @@
-import { Pool, Client } from "pg";
-import { populateEventData } from "../utils";
+import { Pool } from "pg";
 import { replaceValues } from "../template";
 require("dotenv").config();
 
