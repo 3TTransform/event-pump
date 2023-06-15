@@ -29,7 +29,7 @@ export const postgresSqlHydrateOne = async (
     isFirstEvent: boolean
 ) => {
     try {
-        let replacedSQL = replaceValues(event, pattern.action.params.sql);
+        const replacedSQL = replaceValues(event, pattern.action.params.sql);
         await getPool().query(replacedSQL);
     } catch (err) {
         console.log(`${event.id} failed ${err.message}`);
