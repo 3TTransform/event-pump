@@ -1,0 +1,38 @@
+name: AWS OpenSearch to PostgresSQL
+source:
+  type: opensearch
+  table: events
+  get:
+    query:
+      match_phrase:
+        detail-type.keyword: Put Attestation
+patterns:
+  - name: attestations
+
+    action:
+      target: postgres
+      params:
+        sql: >
+          INSERT INTO public.attestationdetails
+          (cognitoid, organisationid, firstname, lastname,attestationid,attestationname,tenant,
+          awarddate,
+          expirydate,
+          source,certificatenumber,
+          dateofbirth,
+          sourceid,old_id)
+          VALUES (
+          '{{cognitoId}}',
+          '{{organisationid}}',
+          '{{raw.firstname}}',
+          '{{raw.lastname}}',
+          '{{attestationid}}',
+          '{{name}}',
+          '{{source}}',
+          '{{raw.award_date}}',
+          '{{raw.expiry_date}}',
+          '{{source}}',
+          '{{certificatenumber}}',
+          '{{raw.dateOfBirth}}',
+          '{{sourceid}}',
+          '{{old_id}}')
+
