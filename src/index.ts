@@ -7,7 +7,7 @@ import { loadConfig } from './yaml';
 import { mssqlHydrateOne } from './destinations/mssql';
 import { ionHydrateOne } from './destinations/ion';
 import { postgresSqlHydrateOne } from './destinations/postgresSQL';
-import { openSearchHydrateOne } from './destinations/openSearch';
+import { openSearchHydrateOne, openSearchReadPages } from './destinations/openSearch';
 import fs from 'fs';
 import CSV from './destinations/csv';
 import { EPEventSource } from './EPEventSource';
@@ -121,13 +121,13 @@ export async function processEvents(params: CliParams) {
 
       break;
     case 'opensearch':
-      const response = await openSearchHydrateOne(doc, null, true);
-      const items = response.body.hits.hits;
-      items.forEach(function (item) {
-        events.push(item._source.detail);
-      });
-      await processPage(doc, events, isFirstEvent);
-
+      let count = 0;
+      for await (const item of openSearchReadPages(doc)) {
+        await processEvent(doc, item._source.detail, isFirstEvent);
+        isFirstEvent = false;
+        count++;
+      }
+      console.info(`${count} records processed`)
       break;
     default:
       throw new Error(`Source ${doc.source.type} is not supported`);

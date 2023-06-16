@@ -17,27 +17,55 @@ const client = new Client({
     ssl: osCertificate ? { ca: osCertificate } : undefined
 });
 
-const openSearchHydrateOne = async (pattern: any, event: any, getAll = false) => {
+const openSearchReadPages = async function* (pattern: any) {
+    const size = pattern.source.size ?? 10000;
+    const scroll = '10m';
+    let response = await client.search({
+        index: pattern.source.table,
+        scroll: scroll,
+        body: {
+            query: pattern.source.get.query
+        },
+        size: size
+    });
+    let scroll_id = response.body._scroll_id
+
+    try {
+        while (response.body.hits.hits.length > 0) {
+            yield* response.body.hits.hits;
+
+            response = await client.scroll({
+                scroll: scroll,
+                scroll_id: scroll_id
+            });
+            scroll_id = response.body._scroll_id;
+        }
+    }
+    finally {
+        await client.clearScroll({
+            scroll_id: scroll_id
+        });
+    }
+};
+
+const openSearchHydrateOne = async (pattern: any, event: any) => {
 
     let response: any;
 
-    if (!getAll) {
+    const singleItem = populateEventData(event, pattern.action?.params.Item);
+    const index_name = pattern.action.params.TableName?.toLowerCase();
 
-        const singleItem = populateEventData(event, pattern.action?.params.Item);
-        const index_name = pattern.action.params.TableName?.toLowerCase();
+    if (!index_name) {
+        console.log('OS: table name missing');
+        return;
+    }
 
-        if (!index_name) {
-            console.log('OS: table name missing');
-            return;
-        }
-
-        if (!(await client.indices.exists({index: index_name })).body)
-        {
+    if (!(await client.indices.exists({ index: index_name })).body) {
         // create index
-            await osCreateIndex(index_name);
-        }
+        await osCreateIndex(index_name);
+    }
 
-        switch (pattern.rule.verb) {
+    switch (pattern.rule.verb) {
         case 'create':
             response = await osCreate(singleItem, index_name);
             break;
@@ -54,18 +82,8 @@ const openSearchHydrateOne = async (pattern: any, event: any, getAll = false) =>
             throw new Error(
                 `Action target ${pattern.action.target} is not supported`
             );
-        }
     }
-    else {
-        response = await client.search({
-            index: pattern.source.table,
-            body: {
-                query: pattern.source.get.query
-            },
-            size: pattern.source.size,
-            from: 0
-        });
-    }
+
     if (response) return response;
     return null;
 };
@@ -153,34 +171,34 @@ async function osSearch(index_name: string, params: any) {
     let response: any;
 
     switch (params.method) {
-    case 'term':
-        response = await term(client, index_name, params.field, params.value);
-        break;
-    case 'range':
-        response = await range(client, index_name, params.field, params.gte, params.lte);
-        break;
-    case 'fuzzy':
-        response = await fuzzy(client, index_name, params.field, params.value, params.fuzziness);
-        break;
-    case 'match':
-        response = await match(client, index_name, params.field, params.query);
-        break;
-    case 'slop':
-        response = await slop(client, index_name, params.field, params.query, params.slop);
-        break;
-    case 'query':
-        response = await qUery(client, index_name, params.field, params.query, params.size);
-        break;
-    case 'all':
-        response = await all(client, index_name, params.size);
-        break;
-    default:
-        throw new Error(
-            `Action method ${params.method} is not supported`
-        );
+        case 'term':
+            response = await term(client, index_name, params.field, params.value);
+            break;
+        case 'range':
+            response = await range(client, index_name, params.field, params.gte, params.lte);
+            break;
+        case 'fuzzy':
+            response = await fuzzy(client, index_name, params.field, params.value, params.fuzziness);
+            break;
+        case 'match':
+            response = await match(client, index_name, params.field, params.query);
+            break;
+        case 'slop':
+            response = await slop(client, index_name, params.field, params.query, params.slop);
+            break;
+        case 'query':
+            response = await qUery(client, index_name, params.field, params.query, params.size);
+            break;
+        case 'all':
+            response = await all(client, index_name, params.size);
+            break;
+        default:
+            throw new Error(
+                `Action method ${params.method} is not supported`
+            );
     }
 
     return response;
 }
 
-export { openSearchHydrateOne, osSearch };
+export { openSearchReadPages, openSearchHydrateOne, osSearch };
