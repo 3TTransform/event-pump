@@ -3,8 +3,6 @@ function logTitles(error, result) {
         console.error(error);
     } else {
         console.log(result.body.hits.hits);
-        //console.log(`Number of returned results is ${hits.length}`);
-        //console.log(hits.map(hit => hit._source.title));
     }
 }
 
@@ -118,7 +116,7 @@ const  slop = async (client, index_name, field, query, slop) => {
         },
         //logTitles
     );
-    return response;    
+    return response;
 
 };
 

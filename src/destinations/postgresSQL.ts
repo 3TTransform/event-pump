@@ -1,5 +1,4 @@
-import { Pool, Client } from "pg";
-import { populateEventData } from "../utils";
+import { Pool } from "pg";
 import { replaceValues } from "../template";
 require("dotenv").config();
 
@@ -29,7 +28,7 @@ export const postgresSqlHydrateOne = async (
     isFirstEvent: boolean
 ) => {
     try {
-        let replacedSQL = replaceValues(event, pattern.action.params.sql);
+        const replacedSQL = replaceValues(event, pattern.action.params.sql);
         await getPool().query(replacedSQL);
     } catch (err) {
         console.log(`${event.id} failed ${err.message}`);

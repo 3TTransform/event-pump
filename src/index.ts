@@ -124,7 +124,7 @@ export async function processEvents(params: CliParams) {
       const response = await openSearchHydrateOne(doc, null, true);
       const items = response.body.hits.hits;
       items.forEach(function (item) {
-        events.push(item._source);
+        events.push(item._source.detail);
       });
       await processPage(doc, events, isFirstEvent);
 
