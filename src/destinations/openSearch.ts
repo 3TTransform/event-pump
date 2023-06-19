@@ -2,7 +2,6 @@
 require('dotenv').config();
 import { Client } from '@opensearch-project/opensearch';
 import { populateEventData } from '../utils';
-import { term, range, fuzzy, match, slop, qUery, all } from '../os-search';
 
 const {
     OS_URL: osURL,
@@ -19,24 +18,24 @@ const client = new Client({
 
 const openSearchReadPages = async function* (pattern: any) {
     const size = pattern.source.size ?? 10000;
-    const scroll = '10m';
+    const scroll = '1m';
     let response = await client.search({
         index: pattern.source.table,
-        scroll: scroll,
+        scroll,
         body: {
             query: pattern.source.get.query
         },
-        size: size
+        size,
     });
-    let scroll_id = response.body._scroll_id
+    let scroll_id = response.body._scroll_id;
 
     try {
         while (response.body.hits.hits.length > 0) {
             yield* response.body.hits.hits;
 
             response = await client.scroll({
-                scroll: scroll,
-                scroll_id: scroll_id
+                scroll,
+                scroll_id
             });
             scroll_id = response.body._scroll_id;
         }
@@ -66,22 +65,19 @@ const openSearchHydrateOne = async (pattern: any, event: any) => {
     }
 
     switch (pattern.rule.verb) {
-        case 'create':
-            response = await osCreate(singleItem, index_name);
-            break;
-        case 'delete':
-            response = await osDelete(singleItem, index_name);
-            break;
-        case 'update':
-            response = await osUpdate(singleItem, index_name);
-            break;
-        case 'search':
-            response = await osSearch(index_name, populateEventData(event, pattern.action.params));
-            break;
-        default:
-            throw new Error(
-                `Action target ${pattern.action.target} is not supported`
-            );
+    case 'create':
+        response = await osCreate(singleItem, index_name);
+        break;
+    case 'delete':
+        response = await osDelete(singleItem, index_name);
+        break;
+    case 'update':
+        response = await osUpdate(singleItem, index_name);
+        break;
+    default:
+        throw new Error(
+            `Action target ${pattern.action.target} is not supported`
+        );
     }
 
     if (response) return response;
@@ -89,7 +85,6 @@ const openSearchHydrateOne = async (pattern: any, event: any) => {
 };
 
 async function osCreate(singleItem: any, index_name: string) {
-
     const document = {};
 
     for (const [key, value] of Object.entries(singleItem)) {
@@ -146,7 +141,6 @@ async function osDeleteIndex(singleItem: any, index_name: string) {
 }
 
 async function osUpdate(singleItem: any, index_name: string) {
-
     const document = {};
 
     for (const [key, value] of Object.entries(singleItem)) {
@@ -166,39 +160,4 @@ async function osUpdate(singleItem: any, index_name: string) {
     return response;
 }
 
-async function osSearch(index_name: string, params: any) {
-
-    let response: any;
-
-    switch (params.method) {
-        case 'term':
-            response = await term(client, index_name, params.field, params.value);
-            break;
-        case 'range':
-            response = await range(client, index_name, params.field, params.gte, params.lte);
-            break;
-        case 'fuzzy':
-            response = await fuzzy(client, index_name, params.field, params.value, params.fuzziness);
-            break;
-        case 'match':
-            response = await match(client, index_name, params.field, params.query);
-            break;
-        case 'slop':
-            response = await slop(client, index_name, params.field, params.query, params.slop);
-            break;
-        case 'query':
-            response = await qUery(client, index_name, params.field, params.query, params.size);
-            break;
-        case 'all':
-            response = await all(client, index_name, params.size);
-            break;
-        default:
-            throw new Error(
-                `Action method ${params.method} is not supported`
-            );
-    }
-
-    return response;
-}
-
-export { openSearchReadPages, openSearchHydrateOne, osSearch };
+export { openSearchReadPages, openSearchHydrateOne};

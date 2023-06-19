@@ -1,0 +1,13 @@
+name: Search in OpenSearch - Range
+source:
+  type: opensearch
+  table: attestation
+  path: _source
+  get:
+    query:
+      range:
+        isPassed: 
+          gte: 0
+          lte: 0
+
+
