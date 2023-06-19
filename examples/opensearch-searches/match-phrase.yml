@@ -1,4 +1,4 @@
-name: Search in OpenSearch - Match
+name: Search in OpenSearch - Match Phrase
 source:
   type: opensearch
   table: attestation

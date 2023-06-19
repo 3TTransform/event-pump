@@ -1,4 +1,4 @@
-name: AWS OpenSearch to PostgresSQL
+name: AWS OpenSearch to ION
 source:
   type: opensearch
   table: attestation
