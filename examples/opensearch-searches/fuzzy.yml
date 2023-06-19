@@ -1,0 +1,13 @@
+name: Search in OpenSearch - Fuzzy
+source:
+  type: opensearch
+  table: attestation
+  path: _source
+  get:
+    query:
+      fuzzy:
+        courseName: 
+          value: Raising
+          fuzziness: 1
+
+

@@ -1,0 +1,13 @@
+name: Search in OpenSearch - Slop
+source:
+  type: opensearch
+  table: attestation
+  path: _source
+  get:
+    query:
+      match_phrase: 
+        courseName: 
+           query: Raising
+           slop: 3
+
+

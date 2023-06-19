@@ -1,0 +1,19 @@
+name: AWS OpenSearch to ION
+source:
+  type: opensearch
+  table: attestation
+  path: _source
+  get:
+    query:
+      match_all: {}  
+  size: 1000
+patterns:
+  - name: fileReceivedIon
+    action:
+      target: ion
+      file: ./output/attestation.ion
+      shape:
+        userID: "{{userID}}"
+        courseName: "{{courseName}}"
+        isPassed: "{{isPassed}}"
+

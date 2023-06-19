@@ -1,0 +1,12 @@
+name: Search in OpenSearch - Query
+source:
+  type: opensearch
+  table: attestation
+  path: _source
+  get:
+    query:
+      query_string:
+        query: Raising AND (Hamsters OR Hedgehog)
+           
+
+

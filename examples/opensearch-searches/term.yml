@@ -1,0 +1,11 @@
+name: Search in OpenSearch - Term
+source:
+  type: opensearch
+  table: attestation
+  path: _source
+  get:
+    query:
+      term:
+        courseName.keyword: Raising and Rearing Hedgehog
+
+

@@ -2,6 +2,7 @@ name: AWS OpenSearch to PostgresSQL
 source:
   type: opensearch
   table: events
+  path: _source.detail
   get:
     query:
       match_phrase:

@@ -2,6 +2,10 @@ name: AWS OpenSearch to PostgresSQL
 source:
   type: opensearch
   table: attestation
+  get:
+    query:
+      match_phrase:
+        detail-type.keyword: Put Attestation
   size: 1000
 patterns:
   - name: allThings

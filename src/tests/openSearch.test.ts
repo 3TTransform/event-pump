@@ -25,28 +25,6 @@ test.skip('🍏 create_item 2', async (t) => {
     t.truthy(result);
 });
 
-test.skip('🍏 basic search', async (t) => {
-
-    const pattern = {
-        name: 'organisationCreate',
-        rule: { verb: 'search' },
-        action: { target: 'os', params: { TableName: 'Example', Size: 100, KeyWord: 'organisationName', Order: 'desc'}}
-    };
-    const result = await openSearchHydrateOne(pattern, 'event');
-    t.assert(result.body.hits.hits.length > 0);
-});
-
-test.skip('🍏 name search', async (t) => {
-
-    const pattern = {
-        name: 'organisationCreate',
-        rule: { verb: 'search' },
-        action: { target: 'os', params: { TableName: 'Example', Key: 'organisationName', Value: 'Cytrex'}}
-    };
-    const result = await openSearchHydrateOne(pattern, 'event');
-    t.assert(result.body.hits.hits.length > 0);
-});
-
 test.skip('🍏 update_item', async (t) => {
 
     const pattern = {
@@ -57,7 +35,6 @@ test.skip('🍏 update_item', async (t) => {
     const result = await openSearchHydrateOne(pattern, 'event');
     t.truthy(result);
 });
-
 
 test.skip('🍏 delete_item', async (t) => {
 

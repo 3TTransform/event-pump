@@ -1,0 +1,12 @@
+name: Search in OpenSearch - Match Phrase
+source:
+  type: opensearch
+  table: attestation
+  path: _source
+  get:
+    query:
+      match_phrase: 
+        courseName: Raising and Rearing Hamsters
+  
+
+
