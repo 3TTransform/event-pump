@@ -21,26 +21,26 @@ export interface CliParams {
 
 const processEvent = async (doc: any, event: any, isFirstEvent = false) => {
     let firstEvent = isFirstEvent;
-    if (doc.patterns) {
-        for (const pattern of doc.patterns) {
-            // for each key and value in the pattern check for matching pattern in the event
-            let matched = true;
-            if (pattern?.rule) {
-                for (const [key, value] of Object.entries(pattern.rule)) {
-                    if (event[key] !== value) {
-                        matched = false;
-                    }
+    if (!doc.patterns) { // if patterns missing, just log results
+        console.log(event);
+        return;
+    }
+
+    for (const pattern of doc.patterns) {
+        // for each key and value in the pattern check for matching pattern in the event
+        let matched = true;
+        if (pattern?.rule) {
+            for (const [key, value] of Object.entries(pattern.rule)) {
+                if (event[key] !== value) {
+                    matched = false;
                 }
             }
-            if (matched && pattern.action) {
-                await doHandler(event, pattern, firstEvent);
-                firstEvent = false;
-            }
         }
-    }
-    else { // if patterns missing, just log results
-        console.log(event);
-    }    
+        if (matched && pattern.action) {
+            await doHandler(event, pattern, firstEvent);
+            firstEvent = false;
+        }
+    }   
 };
 
 const processPage = async (doc: any, events: any[], isFirstEvent = false) => {
