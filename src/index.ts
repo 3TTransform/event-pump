@@ -1,13 +1,13 @@
 require('dotenv').config();
 
-import Dynamo from './destinations/dynamodb';
+import { Dynamo, dynamodbTableCreate } from './destinations/dynamodb';
 const ddb = new Dynamo();
 
 import { loadConfig } from './yaml';
-import { mssqlHydrateOne } from './destinations/mssql';
+import { mssqlHydrateOne, mssqlTableCreate } from './destinations/mssql';
 import { ionHydrateOne } from './destinations/ion';
-import { postgresSqlHydrateOne } from './destinations/postgresSQL';
-import { openSearchHydrateOne, openSearchReadPages } from './destinations/openSearch';
+import { postgresSqlHydrateOne, postgresSqlTableCreate } from './destinations/postgresSQL';
+import { openSearchHydrateOne, openSearchReadPages, openSearchIndexCreate } from './destinations/openSearch';
 import fs from 'fs';
 import CSV from './destinations/csv';
 import { EPEventSource } from './EPEventSource';
@@ -93,8 +93,14 @@ export async function processEvents(params: CliParams) {
     let isFirstEvent;
 
     if (!doc.source) {
+        if (doc.patterns[0].rule.verb == 'table-create') {
+            await createTable(doc.patterns[0].action);
+            console.timeEnd('Took in seconds');
+            return;
+        }
         throw new Error('No source defined');
     }
+
     switch (doc.source.type) {
     case 'json':
         events = JSON.parse(fs.readFileSync(doc.source.file, 'utf8'));
@@ -140,3 +146,27 @@ export async function processEvents(params: CliParams) {
     }
     console.timeEnd('Took in seconds');
 }
+
+async function createTable(action: any) {
+    switch (action.target) {
+    case 'mssql':
+        await mssqlTableCreate(action.params);
+        break;
+    case 'dynamodb':
+        await dynamodbTableCreate(action.params);
+        break;
+    case 'opensearch':
+        await openSearchIndexCreate(
+            action.params.table_name,
+            action.params.number_of_shards,
+            action.params.number_of_replicas
+        );
+        break;    
+    case 'postgres':
+        await postgresSqlTableCreate(action.params);
+        break;
+    default:
+        throw new Error(`Database ${action.target} is not supported`);
+    }
+}
+

@@ -1,0 +1,24 @@
+name: Event pump, Create DynamoDB Table
+patterns:
+    - rule:
+        verb: table-create
+      action:
+        target: dynamodb
+        params:
+          TableName : Music
+          KeySchema: 
+            - AttributeName: Artist
+              KeyType: HASH #Partition key
+            - AttributeName: SongTitle
+              KeyType: RANGE #Sort key
+          AttributeDefinitions: 
+            - AttributeName: Artist
+              AttributeType: S
+            - AttributeName: SongTitle
+              AttributeType: S
+          ProvisionedThroughput: #Only specified if using provisioned mode
+            ReadCapacityUnits: 1
+            WriteCapacityUnits: 1
+          StreamSpecification: 
+            StreamEnabled: false
+  

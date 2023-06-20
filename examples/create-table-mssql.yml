@@ -1,0 +1,43 @@
+name: Event pump, Create MSSQL Table
+patterns:
+    - rule:
+        verb: table-create
+      action:
+        target: mssql
+        params:
+          schema: dbo
+          table: tbl_roles2
+          fields:
+            - name: ID
+              type: INT
+              nullable: false
+              unique: true
+              identity: true
+            - name: RoleName
+              type: NVARCHAR(50)
+              nullable: false
+            - name: RoleType
+              type: NVARCHAR(50)
+              nullable: false  
+            - name: Allow
+              type: NVARCHAR(MAX)
+              nullable: true
+            - name: OrganisationID
+              type: UNIQUEIDENTIFIER
+              nullable: false
+          primarykey: ID    
+          constraint:
+            - name: allow_default 
+              value: DEFAULT 'Write and Read' FOR Allow  
+            - name: rolename_default 
+              value: DEFAULT 'Admin' FOR RoleName  
+          foreignkey: 
+            - name: events_id
+              value: (OrganisationID) REFERENCES tbl_events(ID)
+          index: 
+            - name: uniqueindex
+              value: (RoleName)
+              unique: true
+              #clustered: true  # if don't have other clustered field
+            - name: compositeindex
+              value: (RoleType, OrganisationID)  

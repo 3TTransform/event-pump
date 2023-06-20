@@ -34,3 +34,30 @@ export const postgresSqlHydrateOne = async (
         console.log(`${event.id} failed ${err.message}`);
     }
 };
+
+export const postgresSqlTableCreate = async (
+    action: any,
+) => {
+    let sql = `CREATE TABLE ${action.table} (`;
+    action.fields.forEach( (element) => {
+        sql += ` ${element.name} ${element.type} `;
+        sql += element.nullable ? 'NULL ' : 'NOT NULL ';
+        sql += element.unique ? 'UNIQUE ' : '';
+        sql += ',';
+    });
+    sql = sql.slice(0, -1) + ');';
+
+    if (action.primarykey) 
+        sql += ` ALTER TABLE ${action.table} ADD CONSTRAINT PK_${action.primarykey} PRIMARY KEY (${action.primarykey});`;
+
+    action.constraint?.forEach( (element) => {
+        sql += ` ALTER TABLE ${action.table} ADD CONSTRAINT ${element.name} ${element.value};`;
+    });
+    action.foreignkey?.forEach( (element) => {
+        sql += ` ALTER TABLE ${action.table} ADD CONSTRAINT FK_${element.name} FOREIGN KEY ${element.value};`;
+    });
+
+    console.log(sql);
+    await getPool().query(sql);
+};
+
