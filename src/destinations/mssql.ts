@@ -402,8 +402,10 @@ export const getProperties = (item: Key) => {
 
 export const mssqlTableCreate = async (
     action: any
-) => {      
-    let sql = `CREATE TABLE [${action.schema ?? 'dbo'}].[${action.table}] (`;
+) => { 
+    const tableName = `[${action.schema ?? 'dbo'}].[${action.table}]`;
+    
+    let sql = `CREATE TABLE ${tableName} (`;
     action.fields.forEach( (element) => {
         sql += ` ${element.name} ${element.type} `;
         sql += element.nullable ? 'NULL ' : 'NOT NULL ';
@@ -414,19 +416,19 @@ export const mssqlTableCreate = async (
     sql = sql.slice(0, -1) + ');';
 
     if (action.primarykey) 
-        sql += ` ALTER TABLE [${action.schema ?? 'dbo'}].[${action.table}] ADD CONSTRAINT PK_${action.primarykey} PRIMARY KEY (${action.primarykey});`;
+        sql += ` ALTER TABLE ${tableName} ADD CONSTRAINT PK_${action.primarykey} PRIMARY KEY (${action.primarykey});`;
 
     action.constraint?.forEach( (element) => {
-        sql += ` ALTER TABLE [${action.schema ?? 'dbo'}].[${action.table}] ADD CONSTRAINT ${element.name} ${element.value};`;
+        sql += ` ALTER TABLE ${tableName} ADD CONSTRAINT ${element.name} ${element.value};`;
     });
     action.foreignkey?.forEach( (element) => {
-        sql += ` ALTER TABLE [${action.schema ?? 'dbo'}].[${action.table}] ADD CONSTRAINT FK_${element.name} FOREIGN KEY ${element.value};`;
+        sql += ` ALTER TABLE ${tableName} ADD CONSTRAINT FK_${element.name} FOREIGN KEY ${element.value};`;
     });
     action.index?.forEach( (element) => {
         sql += ' CREATE ';
         sql += element.unique ? 'UNIQUE ' : '';
         sql += element.clustered ? 'CLUSTERED ' : '';
-        sql += `INDEX ${element.name} on [${action.schema ?? 'dbo'}].[${action.table}] ${element.value};`;
+        sql += `INDEX ${element.name} on ${tableName} ${element.value};`;
     });    
 
     console.log(sql);

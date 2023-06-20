@@ -1,4 +1,4 @@
-name: Event pump, Create SQL Table
+name: Event pump, Create MSSQL Table
 patterns:
     - rule:
         verb: table-create
