@@ -61,7 +61,7 @@ const openSearchHydrateOne = async (pattern: any, event: any) => {
 
     if (!(await client.indices.exists({ index: index_name })).body) {
         // create index
-        await osCreateIndex(index_name);
+        await openSearchIndexCreate(index_name);
     }
 
     switch (pattern.rule.verb) {
@@ -101,13 +101,16 @@ async function osCreate(singleItem: any, index_name: string) {
     });
 }
 
-async function osCreateIndex(index_name: string) {
+async function openSearchIndexCreate(
+    index_name: string,
+    number_of_shards = 1,
+    number_of_replicas = 0) {
     // Create an index with non-default settings
     const settings = {
         settings: {
             index: {
-                number_of_shards: 1,  //4
-                number_of_replicas: 0,  //3
+                number_of_shards,  //4
+                number_of_replicas,  //3
             },
         },
     };
@@ -160,4 +163,5 @@ async function osUpdate(singleItem: any, index_name: string) {
     return response;
 }
 
-export { openSearchReadPages, openSearchHydrateOne};
+
+export { openSearchReadPages, openSearchHydrateOne, openSearchIndexCreate};

@@ -17,15 +17,17 @@ const connectionString = `Data Source=${sqlServer};Initial Catalog=${sqlDatabase
 
 const poolPromise = new sql.ConnectionPool(connectionString);
 
-const runSQL = async (sqlCommand, input) => {
+const runSQL = async (sqlCommand, input?) => {
     const poolConnection = await poolPromise.connect();
     const request = await poolConnection.request();
 
-    for (const key of input) {
-        const properties: Item = getProperties(key);
-        if (properties.type) request.input(properties.name, properties.type, properties.value);
-        else request.input(properties.name, properties.value);
-    }
+    if (input) {
+        for (const key of input) {
+            const properties: Item = getProperties(key);
+            if (properties.type) request.input(properties.name, properties.type, properties.value);
+            else request.input(properties.name, properties.value);
+        }
+    }    
 
     const result = await request.query(sqlCommand);
     poolConnection.close();
@@ -396,6 +398,39 @@ export const getProperties = (item: Key) => {
         convertionFailed(item);
         return err;
     }
+};
+
+export const mssqlTableCreate = async (
+    action: any
+) => {      
+    let sql = `CREATE TABLE [${action.schema ?? 'dbo'}].[${action.table}] (`;
+    action.fields.forEach( (element) => {
+        sql += ` ${element.name} ${element.type} `;
+        sql += element.nullable ? 'NULL ' : 'NOT NULL ';
+        sql += element.unique ? 'UNIQUE ' : '';
+        sql += element.identity ? 'IDENTITY ' : '';
+        sql += ',';
+    });
+    sql = sql.slice(0, -1) + ');';
+
+    if (action.primarykey) 
+        sql += ` ALTER TABLE [${action.schema ?? 'dbo'}].[${action.table}] ADD CONSTRAINT PK_${action.primarykey} PRIMARY KEY (${action.primarykey});`;
+
+    action.constraint?.forEach( (element) => {
+        sql += ` ALTER TABLE [${action.schema ?? 'dbo'}].[${action.table}] ADD CONSTRAINT ${element.name} ${element.value};`;
+    });
+    action.foreignkey?.forEach( (element) => {
+        sql += ` ALTER TABLE [${action.schema ?? 'dbo'}].[${action.table}] ADD CONSTRAINT FK_${element.name} FOREIGN KEY ${element.value};`;
+    });
+    action.index?.forEach( (element) => {
+        sql += ' CREATE ';
+        sql += element.unique ? 'UNIQUE ' : '';
+        sql += element.clustered ? 'CLUSTERED ' : '';
+        sql += `INDEX ${element.name} on [${action.schema ?? 'dbo'}].[${action.table}] ${element.value};`;
+    });    
+
+    console.log(sql);
+    await runSQL(sql);
 };
 
 function stringToBinary(string, maxBytes) {
