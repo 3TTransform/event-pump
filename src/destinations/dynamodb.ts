@@ -9,7 +9,7 @@ import { populateEventData } from '../utils';
 const AWS = require('aws-sdk');
 AWS.config.update({ region: process.env.AWS_DEFAULT_REGION || 'us-east-2' });
 
-export class Dynamo {
+class Dynamo {
     dyn: any;
     constructor() {
     // allow local endpoints by specifying the ENDPOINT_OVERRIDE variable like this:
@@ -131,7 +131,7 @@ export class Dynamo {
 
 }
 
-export const dynamodbTableCreate = async (
+const dynamodbTableCreate = async (
     action: any,
 ) => {
     const ddb = new AWS.DynamoDB({apiVersion: '2012-08-10'});
@@ -142,4 +142,9 @@ export const dynamodbTableCreate = async (
             console.log('Table Created', data);
         }
     });
+};
+
+export {
+    Dynamo,
+    dynamodbTableCreate
 };
