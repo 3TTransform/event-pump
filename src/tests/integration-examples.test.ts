@@ -31,34 +31,31 @@ test.afterEach(() => {
     consoleTimeEndStub.restore();
 });
 
-if (process.env.GITHUB_ACTIONS)
-{
-    test.skip('🍏 Integration Tests for examples', t=>t.pass());
-}
-/*
-else
-{
+test('🍏 Integration Tests', (t) => {
+    t.pass();
+});
+
+if (process.env.GITHUB_ACTIONS) {
+    test.skip('🍏 Integration Tests for examples', (t) => t.pass());
+} else {
     fs.readdirSync(EXAMPLES_LOCATION)
         .filter((file) => path.extname(file) === '.yml')
         .forEach((file) => {
-
-
             test.serial.skip(`🍏 ${file} completes succesfully`, async (t) => {
                 t.timeout(60000);
 
                 try {
-                    await processEvents({ 'yml': path.join(EXAMPLES_LOCATION, file) });
+                    await processEvents({
+                        yml: path.join(EXAMPLES_LOCATION, file),
+                    });
                     t.pass();
-                }
-                catch (err) {
+                } catch (err) {
                     if (err.code === 'UnrecognizedClientException') {
                         t.fail('No credentials');
-                    }
-                    else {
+                    } else {
                         t.fail(err.message);
                     }
                 }
             });
         });
 }
-*/
