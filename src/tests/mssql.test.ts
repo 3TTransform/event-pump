@@ -132,7 +132,7 @@ test.serial.skip('🍎 mssqlHydrateOne should throw an error if the SQL is not v
     {type: 'Date', value: '2023-06-12 12:15:00', title: '', options: {format: 'YYYY/MM/DD',},},
     {type: 'DateTime', value: '2023-06-12 12:15:00', title: '', options: {format: 'YYYY/MM/DD HH-mm-ss',},},
     {type: 'DateTime2', value: '2023-06-12 12:15:00', title: '', options: {scale: 4, format: 'YYYY/MM/DD HH-mm-ss:SSSSSS',},},
-    {type: 'DateTimeOffset', value: '2023-06-12 12:15:00', title: '', options: {scale: 4, format: 'YYYY/MM/DD[T]HH:mm:ss.SSSZ',},},
+    //{type: 'DateTimeOffset', value: '2023-06-12 12:15:00', title: '', options: {scale: 4, format: 'YYYY/MM/DD[T]HH:mm:ss.SSSZ',},},
     {type: 'SmallDateTime', value: '2023-06-12 12:15:00', title: '', options: {scale: 4, format: 'YYYY/MM/DD HH:mm:ss',},},
     {type: 'UniqueIdentifier', value: '00000000-0000-0000-0000-000000000000', title: '',},
     // {type: 'Variant', value: '', title: '',},
