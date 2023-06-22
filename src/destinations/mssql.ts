@@ -289,19 +289,19 @@ export const getProperties = (item: Key) => {
             else convertionFailed(item);
             break;
         }
-        // case 'datetimeoffset': {
-        //     const parsed = moment(new Date(item.value)).format(
-        //         item.format ?? 'YYYY-MM-DD[T]HH:mm:ss.SSSZ'
-        //     );
-        //     const properties: Item = {
-        //         name: item.name,
-        //         type: sql.DateTimeOffset(item.scale ?? 2),
-        //         value: parsed,
-        //     };
-        //     if (parsed != 'Invalid date') return properties;
-        //     else convertionFailed(item);
-        //     break;
-        // }
+        case 'datetimeoffset': {
+            const parsed = moment(new Date(item.value)).format(
+                item.format ?? 'YYYY-MM-DD[T]HH:mm:ss.SSSZ'
+            );
+            const properties: Item = {
+                name: item.name,
+                type: sql.DateTimeOffset(item.scale ?? 2),
+                value: parsed,
+            };
+            if (parsed != 'Invalid date') return properties;
+            else convertionFailed(item);
+            break;
+        }
         case 'smalldatetime': {
             const parsed = moment(new Date(item.value)).format(
                 item.format ?? 'YYYY-MM-DD HH:mm:ss'
