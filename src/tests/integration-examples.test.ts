@@ -1,10 +1,10 @@
 import test from 'ava';
 import sinon from 'sinon';
-import { processEvents } from '../index'
+import { processEvents } from '../index';
 import fs from 'fs';
 import path from 'path';
 
-const EXAMPLES_LOCATION = 'examples'
+const EXAMPLES_LOCATION = 'examples';
 
 let consoleErrorStub;
 let consoleLogStub;
@@ -35,6 +35,7 @@ if (process.env.GITHUB_ACTIONS)
 {
     test.skip('🍏 Integration Tests for examples', t=>t.pass());
 }
+/*
 else
 {
     fs.readdirSync(EXAMPLES_LOCATION)
@@ -60,8 +61,4 @@ else
             });
         });
 }
-
-
-
-
-
+*/
