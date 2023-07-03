@@ -21,6 +21,7 @@ export interface CliParams {
 
 const processEvent = async (doc: any, event: any, isFirstEvent = false) => {
     let firstEvent = isFirstEvent;
+    //console.log(event);
     if (!doc.patterns) { // if patterns missing, just log results
         console.log(event);
         return;
@@ -134,8 +135,8 @@ export async function processEvents(params: CliParams) {
         break;
     case 'opensearch':
         let count = 0;
-        for await (const item of openSearchReadPages(doc)) {          
-            await processEvent(doc, item[doc.source.path] ?? item._source, isFirstEvent);
+        for await (const item of openSearchReadPages(doc)) { 
+            await processEvent(doc, item._source, isFirstEvent);
             isFirstEvent = false;
             count++;
         }
