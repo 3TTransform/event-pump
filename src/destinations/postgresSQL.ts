@@ -1,6 +1,6 @@
-import { Pool } from "pg";
-import { replaceValues } from "../template";
-require("dotenv").config();
+import { Pool } from 'pg';
+import { replaceValues } from '../template';
+require('dotenv').config();
 
 let connection;
 
@@ -28,8 +28,8 @@ export const postgresSqlHydrateOne = async (
     isFirstEvent: boolean
 ) => {
     try {
-        //console.log('🌈', pattern);
-        //console.log('🐸', event);
+    //console.log('🌈', pattern);
+    //console.log('🐸', event);
         const replacedSQL = replaceValues(event, pattern.action.params.sql);
         //console.log(replacedSQL);
         await getPool().query(replacedSQL);

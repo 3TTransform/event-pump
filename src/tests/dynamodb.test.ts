@@ -28,7 +28,7 @@ test.afterEach(t => {
     dynamo = null;
 });
 
-let params = { TableName: 'myTable', Item: { id: '123', name: 'John Doe' } };
+const params = { TableName: 'myTable', Item: { id: '123', name: 'John Doe' } };
 
 test.serial('🍏 generateUpdateQuery should generate the correct update expression', (t) => {
     const fields = {
@@ -163,7 +163,7 @@ test.serial('🍏 dynamodbHydrateOne should call dynamodbWrite method for "put" 
     const expectedResult = {
         TableName: 'myTable',
         Item: { id: { S: '123' }, name: { S: 'John Doe' } }
-    }
+    };
 
     await dynamo.dynamodbHydrateOne(pattern, event, true);
 

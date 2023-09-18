@@ -19,7 +19,7 @@ const populateEventData = (event: unknown, object: unknown) => {
         // the whole thing preserving type from data
         const fullMatch = value.match(/^{{([^{}]*?)}}$/g);
         if (fullMatch && fullMatch.length === 1) {
-            const prop = fullMatch[0].replace(/{{|}}/g, '');;
+            const prop = fullMatch[0].replace(/{{|}}/g, '');
             return getProp(event, prop);
         }
 

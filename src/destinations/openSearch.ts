@@ -61,24 +61,24 @@ const openSearchHydrateOne = async (pattern: any, event: any) => {
     }
 
     if (!(await client.indices.exists({ index: index_name })).body) {
-        // create index
+    // create index
         await openSearchIndexCreate(index_name);
     }
 
     switch (pattern.rule.verb) {
-    case 'create':
-        response = await osCreate(singleItem, index_name);
-        break;
-    case 'delete':
-        response = await osDelete(singleItem, index_name);
-        break;
-    case 'update':
-        response = await osUpdate(singleItem, index_name);
-        break;
-    default:
-        throw new Error(
-            `Action target ${pattern.action.target} is not supported`
-        );
+        case 'create':
+            response = await osCreate(singleItem, index_name);
+            break;
+        case 'delete':
+            response = await osDelete(singleItem, index_name);
+            break;
+        case 'update':
+            response = await osUpdate(singleItem, index_name);
+            break;
+        default:
+            throw new Error(
+                `Action target ${pattern.action.target} is not supported`
+            );
     }
 
     if (response) return response;
