@@ -12,7 +12,7 @@ const dynamoStub = {
 };
 
 let dynamo;
-test.beforeEach(t => {
+test.beforeEach(() => {
     dynamo = new Dynamo();
     sinon.stub(dynamo, 'dyn').value(dynamoStub);
     dynamoStub.scan.resetHistory();
@@ -22,7 +22,7 @@ test.beforeEach(t => {
     dynamoStub.updateItem.resetHistory();
     dynamoStub.deleteItem.resetHistory();
 });
-test.afterEach(t => {
+test.afterEach(() => {
     sinon.restore();
     dynamo = null;
 });

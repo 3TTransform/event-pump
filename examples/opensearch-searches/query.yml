@@ -7,6 +7,3 @@ source:
     query:
       query_string:
         query: Raising AND (Hamsters OR Hedgehog)
-           
-
-

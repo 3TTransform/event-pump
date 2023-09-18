@@ -5,7 +5,7 @@ source:
   path: _source
   get:
     query:
-      match_all: {}  
+      match_all: {}
   size: 1000
 patterns:
   - name: fileReceivedIon
@@ -16,4 +16,3 @@ patterns:
         userID: "{{userID}}"
         courseName: "{{courseName}}"
         isPassed: "{{isPassed}}"
-

@@ -1,5 +1,5 @@
 name: Event pump, Organisation to OpenSearch
-source: 
+source:
   type: json
   file: ./examples/events/organisations.seed.to.os.json
 patterns:
@@ -17,12 +17,12 @@ patterns:
     rule:
       verb: update
     action:
-      target: os           
+      target: os
       params:
         TableName: Example
         Item:
           id: "{{id}}"
-          organisationName: "{{organisationName}}" 
+          organisationName: "{{organisationName}}"
   - name: organisationDelete
     rule:
       verb: delete

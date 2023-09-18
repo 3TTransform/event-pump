@@ -1,5 +1,5 @@
 name: Event pump, Competency to OpenSearch
-source: 
+source:
   type: json
   file: ./examples/events/competency.seed.to.os.json
 patterns:
@@ -19,7 +19,7 @@ patterns:
     rule:
       verb: update
     action:
-      target: os           
+      target: os
       params:
         TableName: attestation
         Item:

@@ -6,8 +6,6 @@ source:
   get:
     query:
       fuzzy:
-        courseName: 
+        courseName:
           value: Raising
           fuzziness: 1
-
-

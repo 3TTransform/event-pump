@@ -1,11 +1,10 @@
 name: Event pump, Create OpenSearch Table
 patterns:
-    - rule:
-        verb: table-create
-      action:
-        target: opensearch
-        params:
-          table_name : music
-          number_of_shards: 4
-          number_of_replicas: 3
-  
+  - rule:
+      verb: table-create
+    action:
+      target: opensearch
+      params:
+        table_name: music
+        number_of_shards: 4
+        number_of_replicas: 3

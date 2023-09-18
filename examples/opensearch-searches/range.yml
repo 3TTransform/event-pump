@@ -6,8 +6,6 @@ source:
   get:
     query:
       range:
-        isPassed: 
+        isPassed:
           gte: 0
           lte: 0
-
-

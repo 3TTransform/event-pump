@@ -5,9 +5,6 @@ source:
   path: _source
   get:
     query:
-      match: 
-        courseName: 
-           query: Raising
-  
-
-
+      match:
+        courseName:
+          query: Raising

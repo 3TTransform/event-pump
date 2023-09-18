@@ -1,5 +1,5 @@
 name: Event pump to DynamoDB
-source: 
+source:
   type: json
   file: ./examples/events/licensing.seed.json
 patterns:

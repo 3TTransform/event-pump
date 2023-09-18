@@ -1,5 +1,5 @@
 name: Event pump to DynamoDB
-source: 
+source:
   type: json
   file: ./examples/events/permissions.seed.json
 patterns:
@@ -31,7 +31,7 @@ patterns:
         TableName: Example
         Key:
           pk: "permission#{{id}}"
-          sk: "permission"          
+          sk: "permission"
   - name: permissionDelete
     rule:
       noun: permission

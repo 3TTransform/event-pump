@@ -1,5 +1,5 @@
 name: Event pump to SQL
-source: 
+source:
   type: json
   file: ./examples/events/roles.seed.json
 patterns:
@@ -35,19 +35,19 @@ patterns:
       target: mssql
       params:
         sql: >
-            UPDATE tbl_roles SET
-            {{#removeLastChar}}
-              {{#if roleName}}
-                [RoleName] = @RoleName,
-              {{/if}}
-              {{#if allow}}
-                [Allow] = @Allow,
-              {{/if}}
-              {{#if organisationId}}
-                [OrganisationID] = @OrganisationID,
-              {{/if}}
-            {{/removeLastChar}}
-            WHERE [ID] = @ID
+          UPDATE tbl_roles SET
+          {{#removeLastChar}}
+            {{#if roleName}}
+              [RoleName] = @RoleName,
+            {{/if}}
+            {{#if allow}}
+              [Allow] = @Allow,
+            {{/if}}
+            {{#if organisationId}}
+              [OrganisationID] = @OrganisationID,
+            {{/if}}
+          {{/removeLastChar}}
+          WHERE [ID] = @ID
         input:
           - name: "ID"
             type: "UNIQUEIDENTIFIER"
@@ -69,8 +69,8 @@ patterns:
       target: mssql
       params:
         sql: >
-            DELETE FROM tbl_roles
-            WHERE [ID] = @ID
+          DELETE FROM tbl_roles
+          WHERE [ID] = @ID
         input:
           - name: "ID"
             value: "{{id}}"

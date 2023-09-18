@@ -7,5 +7,3 @@ source:
     query:
       term:
         courseName.keyword: Raising and Rearing Hedgehog
-
-

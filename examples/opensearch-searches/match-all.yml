@@ -5,7 +5,5 @@ source:
   path: _source
   get:
     query:
-      match_all: {}  
+      match_all: {}
   size: 1000
-
-
