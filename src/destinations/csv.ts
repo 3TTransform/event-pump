@@ -3,11 +3,11 @@ import readline from 'readline';
 import { EPEventSource } from '../EPEventSource';
 
 class CSV implements EPEventSource {
-    constructor(private doc: any) { }
+    constructor(private doc: any) {}
 
     readEvents = async function* () {
         const readInterface = readline.createInterface({
-            input: fs.createReadStream(this.doc.source.file)
+            input: fs.createReadStream(this.doc.source.file),
         });
         let headers;
         for await (const line of readInterface) {
@@ -16,16 +16,17 @@ class CSV implements EPEventSource {
                 headers = row;
                 continue;
             }
-            yield Object.fromEntries(headers
-                .map((header, index) => {
-                    if (row[index]) {
-                        return [header.trim(), row[index].trim()];
-                    }
-                })
-                .filter(x => x));
+            yield Object.fromEntries(
+                headers
+                    .map((header, index) => {
+                        if (row[index]) {
+                            return [header.trim(), row[index].trim()];
+                        }
+                    })
+                    .filter(x => x),
+            );
         }
     };
-
 }
 
 export default CSV;

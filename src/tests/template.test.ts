@@ -2,15 +2,15 @@ import test from 'ava';
 import Handlebars from 'handlebars';
 import { replaceValues } from '../template';
 
-
-test('🍏 replaceValues should replace values correctly (1)', async (t) => {
-    const result = replaceValues({ cakeType: 1, cakeExists: false },
-        'cakeType: {{#removeLastChar}}{{cakeType}}, {{cakeExists}}, {{filling}} {{/removeLastChar}}');
+test('🍏 replaceValues should replace values correctly (1)', async t => {
+    const result = replaceValues(
+        { cakeType: 1, cakeExists: false },
+        'cakeType: {{#removeLastChar}}{{cakeType}}, {{cakeExists}}, {{filling}} {{/removeLastChar}}',
+    );
     t.assert(result, 'cakeType: 1, false');
 });
 
-
-test('🍏 replaceValues should replace values correctly (2)', (t) => {
+test('🍏 replaceValues should replace values correctly (2)', t => {
     const data = {
         name: 'John Doe',
         age: 25,
@@ -23,7 +23,7 @@ test('🍏 replaceValues should replace values correctly (2)', (t) => {
     t.is(result, expected);
 });
 
-test('🍎 replaceValues should handle missing values', (t) => {
+test('🍎 replaceValues should handle missing values', t => {
     const data = {
         name: 'John Doe',
     };
@@ -35,7 +35,7 @@ test('🍎 replaceValues should handle missing values', (t) => {
     t.is(result, expected);
 });
 
-test('🍎 replaceValues should handle multiple occurrences of the same value', (t) => {
+test('🍎 replaceValues should handle multiple occurrences of the same value', t => {
     const data = {
         name: 'John Doe',
         age: 25,
@@ -48,10 +48,10 @@ test('🍎 replaceValues should handle multiple occurrences of the same value', 
     t.is(result, expected);
 });
 
-test('🍏 Handlebars Helper: removeLastChar exists', async (t) => {
+test('🍏 Handlebars Helper: removeLastChar exists', async t => {
     t.truthy(Handlebars.helpers.removeLastChar);
 });
 
-test('🍏 Handlebars Helper: commadelimlist exists', async (t) => {
+test('🍏 Handlebars Helper: commadelimlist exists', async t => {
     t.truthy(Handlebars.helpers.commadelimlist);
 });

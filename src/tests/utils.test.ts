@@ -1,7 +1,7 @@
 import test from 'ava';
 import { getProp, populateEventData, parseCSV } from '../utils';
 
-test('🍏 getProp should return the values at the specified paths', async (t) => {
+test('🍏 getProp should return the values at the specified paths', async t => {
     const deepObj = {
         a: 1,
         b: {
@@ -34,11 +34,11 @@ test('🍏 getProp should return the values at the specified paths', async (t) =
         { obj: deepObj, path: 'b.d.f.g', expected: 4 },
     ];
 
-    cases.forEach((test) => {
+    cases.forEach(test => {
         t.true(test.expected === getProp(test.obj, test.path));
     });
 });
-test('🍎 getProp should return undefined for non-existent path', (t) => {
+test('🍎 getProp should return undefined for non-existent path', t => {
     const obj = {
         foo: {
             bar: {
@@ -51,55 +51,55 @@ test('🍎 getProp should return undefined for non-existent path', (t) => {
 
     t.is(result, undefined);
 });
-test('🍎 getProp should throw an error for non-object/null/undefined parameters', async (t) => {
+test('🍎 getProp should throw an error for non-object/null/undefined parameters', async t => {
     const cases = [
         {
             obj: 'Test text',
             path: 'b.d.f.g',
-            expected: 'Cannot read properties of undefined (reading \'d\')',
+            expected: "Cannot read properties of undefined (reading 'd')",
         },
         {
             obj: null,
             path: 'b.d.f.g',
-            expected: 'Cannot read properties of null (reading \'b\')',
+            expected: "Cannot read properties of null (reading 'b')",
         },
         {
             obj: { cake: { name: 'chocolate', price: 10 } },
             path: null,
-            expected: 'Cannot read properties of null (reading \'split\')',
+            expected: "Cannot read properties of null (reading 'split')",
         },
         {
             obj: null,
             path: null,
-            expected: 'Cannot read properties of null (reading \'split\')',
+            expected: "Cannot read properties of null (reading 'split')",
         },
         {
             obj: undefined,
             path: 'b.d.f.g',
-            expected: 'Cannot read properties of undefined (reading \'b\')',
+            expected: "Cannot read properties of undefined (reading 'b')",
         },
         {
             obj: { cake: { name: 'chocolate', price: 10 } },
             path: undefined,
-            expected: 'Cannot read properties of undefined (reading \'split\')',
+            expected: "Cannot read properties of undefined (reading 'split')",
         },
         {
             obj: undefined,
             path: undefined,
-            expected: 'Cannot read properties of undefined (reading \'split\')',
+            expected: "Cannot read properties of undefined (reading 'split')",
         },
     ];
-    cases.forEach((test) => {
+    cases.forEach(test => {
         t.throws(
             () => {
                 getProp(test.obj, test.path);
             },
-            { instanceOf: TypeError, message: test.expected }
+            { instanceOf: TypeError, message: test.expected },
         );
     });
 });
 
-test('🍏 populateEventData should populate event data correctly', async (t) => {
+test('🍏 populateEventData should populate event data correctly', async t => {
     const result = populateEventData(
         {
             cakeType: 'Cheese',
@@ -114,16 +114,16 @@ test('🍏 populateEventData should populate event data correctly', async (t) =>
                 exists: '{{cakeExists}}',
                 isLie: '{{cakeIsLie}}',
             },
-        }
+        },
     );
     t.is(
         JSON.stringify(result),
         JSON.stringify({
             cake: { name: 'Cheesecake', price: 50, exists: null, isLie: true },
-        })
+        }),
     );
 });
-test('🍎 populateEventData should handle missing properties in event', (t) => {
+test('🍎 populateEventData should handle missing properties in event', t => {
     const event = {
         id: '123',
         name: 'John Doe',
@@ -138,10 +138,10 @@ test('🍎 populateEventData should handle missing properties in event', (t) => 
     t.deepEqual(result, {
         fullName: 'John Doe',
         id: '123',
-        paid: 'cm'
+        paid: 'cm',
     });
 });
-test('🍏 populateEventData should handle nested properties', (t) => {
+test('🍏 populateEventData should handle nested properties', t => {
     const event = {
         person: {
             name: 'John Doe',
@@ -160,34 +160,34 @@ test('🍏 populateEventData should handle nested properties', (t) => {
         age: 25,
     });
 });
-test('🍏 populateEventData should handle static text', async (t) => {
+test('🍏 populateEventData should handle static text', async t => {
     const result = populateEventData(
         { cakeType: 'Cheese', cakePrice: 50 },
-        '{{cakeType}}'
+        '{{cakeType}}',
     );
     t.is(JSON.stringify(result), JSON.stringify('Cheese'));
 });
-test('🍎 populateEventData should handle mismatched {', async (t) => {
+test('🍎 populateEventData should handle mismatched {', async t => {
     const result = populateEventData(
         { cakeType: 'Cheese', cakePrice: 50 },
-        { cake: { name: '{{cakeType}', price: '{{cakePrice}}' } }
+        { cake: { name: '{{cakeType}', price: '{{cakePrice}}' } },
     );
     t.is(
         JSON.stringify(result),
-        JSON.stringify({ cake: { name: '{{cakeType}', price: 50 } })
+        JSON.stringify({ cake: { name: '{{cakeType}', price: 50 } }),
     );
 });
-test('🍎 populateEventData should handle mismatched }', async (t) => {
+test('🍎 populateEventData should handle mismatched }', async t => {
     const result = populateEventData(
         { cakeType: 'Cheese', cakePrice: 50 },
-        { cake: { name: '{{cakeType}}', price: '{cakePrice}}' } }
+        { cake: { name: '{{cakeType}}', price: '{cakePrice}}' } },
     );
     t.is(
         JSON.stringify(result),
-        JSON.stringify({ cake: { name: 'Cheese', price: '{cakePrice}}' } })
+        JSON.stringify({ cake: { name: 'Cheese', price: '{cakePrice}}' } }),
     );
 });
-test('🍎 populateEventData should handle a null event', async (t) => {
+test('🍎 populateEventData should handle a null event', async t => {
     const result = populateEventData(null, {
         cake: { name: '{{cakeType}}', price: '{cakePrice}}' },
     });
@@ -195,10 +195,10 @@ test('🍎 populateEventData should handle a null event', async (t) => {
         JSON.stringify(result),
         JSON.stringify({
             cake: { name: '{{cakeType}}', price: '{cakePrice}}' },
-        })
+        }),
     );
 });
-test('🍎 populateEventData should handle an undefined event', async (t) => {
+test('🍎 populateEventData should handle an undefined event', async t => {
     const result = populateEventData(undefined, {
         cake: { name: '{{cakeType}}', price: '{cakePrice}}' },
     });
@@ -206,27 +206,33 @@ test('🍎 populateEventData should handle an undefined event', async (t) => {
         JSON.stringify(result),
         JSON.stringify({
             cake: { name: '{{cakeType}}', price: '{cakePrice}}' },
-        })
+        }),
     );
 });
-test('🍎 populateEventData should handle a null object', async (t) => {
-    const result = populateEventData({ cakeType: 'Cheese', cakePrice: 50 }, null);
+test('🍎 populateEventData should handle a null object', async t => {
+    const result = populateEventData(
+        { cakeType: 'Cheese', cakePrice: 50 },
+        null,
+    );
     t.is(result, null);
 });
-test('🍎 populateEventData should handle an undefined object', async (t) => {
-    const result = populateEventData({ cakeType: 'Cheese', cakePrice: 50 }, undefined);
+test('🍎 populateEventData should handle an undefined object', async t => {
+    const result = populateEventData(
+        { cakeType: 'Cheese', cakePrice: 50 },
+        undefined,
+    );
     t.is(JSON.stringify(result), undefined);
 });
-test('🍎 populateEventData should handle the case when both event and object are null', async (t) => {
+test('🍎 populateEventData should handle the case when both event and object are null', async t => {
     const result = populateEventData(null, null);
     t.is(result, null);
 });
-test('🍎 populateEventData should handle the case when both event and object are undefined', async (t) => {
+test('🍎 populateEventData should handle the case when both event and object are undefined', async t => {
     const result = populateEventData(undefined, undefined);
     t.is(JSON.stringify(result), undefined);
 });
 
-test('🍏 parseCSV should parse headers and row into an object', (t) => {
+test('🍏 parseCSV should parse headers and row into an object', t => {
     const headers = 'name, age, city';
     const row = 'John Doe, 25, New York';
     const result = parseCSV(headers, row);
@@ -236,7 +242,7 @@ test('🍏 parseCSV should parse headers and row into an object', (t) => {
         city: 'New York',
     });
 });
-test('🍏 parseCSV should handle missing values in the row', (t) => {
+test('🍏 parseCSV should handle missing values in the row', t => {
     const headers = 'name, age, city';
     const row = 'John Doe, , New York';
     const result = parseCSV(headers, row);
@@ -246,16 +252,16 @@ test('🍏 parseCSV should handle missing values in the row', (t) => {
         city: 'New York',
     });
 });
-test('🍏 parseCSV should handle missing values at then end of the row', (t) => {
+test('🍏 parseCSV should handle missing values at then end of the row', t => {
     const headers = 'name, age, city';
     const row = 'John Doe, 25';
     const result = parseCSV(headers, row);
     t.deepEqual(result, {
         name: 'John Doe',
-        age: '25'
+        age: '25',
     });
 });
-test('🍏 parseCSV should ignore extra values in the row', (t) => {
+test('🍏 parseCSV should ignore extra values in the row', t => {
     const headers = 'name, age';
     const row = 'John Doe, 25, New York';
     const result = parseCSV(headers, row);
@@ -265,31 +271,31 @@ test('🍏 parseCSV should ignore extra values in the row', (t) => {
     });
 });
 
-test('🍏 parseCSV should handle empty headers and row', (t) => {
+test('🍏 parseCSV should handle empty headers and row', t => {
     const headers = '';
     const row = '';
     const result = parseCSV(headers, row);
     t.deepEqual(result, {});
 });
-test('🍎 parseCSV throws an error if header and row are both undefined', async (t) => {
+test('🍎 parseCSV throws an error if header and row are both undefined', async t => {
     t.throws(
         () => {
             parseCSV(undefined, undefined);
         },
         {
             instanceOf: TypeError,
-            message: 'Cannot read properties of undefined (reading \'split\')',
-        }
+            message: "Cannot read properties of undefined (reading 'split')",
+        },
     );
 });
-test('🍎 parseCSV throws an error if header and row are both null', async (t) => {
+test('🍎 parseCSV throws an error if header and row are both null', async t => {
     t.throws(
         () => {
             parseCSV(null, null);
         },
         {
             instanceOf: TypeError,
-            message: 'Cannot read properties of null (reading \'split\')',
-        }
+            message: "Cannot read properties of null (reading 'split')",
+        },
     );
 });

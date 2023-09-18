@@ -24,10 +24,15 @@ const runSQL = async (sqlCommand, input?) => {
     if (input) {
         for (const key of input) {
             const properties: Item = getProperties(key);
-            if (properties.type) request.input(properties.name, properties.type, properties.value);
+            if (properties.type)
+                request.input(
+                    properties.name,
+                    properties.type,
+                    properties.value,
+                );
             else request.input(properties.name, properties.value);
         }
-    }    
+    }
 
     const result = await request.query(sqlCommand);
     poolConnection.close();
@@ -37,11 +42,11 @@ const runSQL = async (sqlCommand, input?) => {
 export const mssqlHydrateOne = async (
     pattern: any,
     event: any,
-    isFirstEvent: boolean
+    isFirstEvent: boolean,
 ) => {
     const populatedParameters = populateEventData(
         event,
-        pattern.action.params.input
+        pattern.action.params.input,
     );
 
     let replacedSQL = replaceValues(event, pattern.action.params.sql);
@@ -58,9 +63,10 @@ export const getProperties = (item: Key) => {
         switch (item.type.toLowerCase()) {
             case 'bit': {
                 const parsed = +item.value;
-                if (isNaN(parsed))
-                {
-                    throw new Error(`Convertion of ${item.value} to ${item.type} failed`);
+                if (isNaN(parsed)) {
+                    throw new Error(
+                        `Convertion of ${item.value} to ${item.type} failed`,
+                    );
                 }
                 return {
                     name: item.name,
@@ -133,7 +139,8 @@ export const getProperties = (item: Key) => {
                     type: sql.SmallInt,
                     value: parsed,
                 };
-                if (!isNaN(parsed) && parsed > -32769 && parsed < 32768) return properties;
+                if (!isNaN(parsed) && parsed > -32769 && parsed < 32768)
+                    return properties;
                 else convertionFailed(item);
                 break;
             }
@@ -170,7 +177,8 @@ export const getProperties = (item: Key) => {
                     type: sql.TinyInt,
                     value: parsed,
                 };
-                if (!isNaN(parsed) && parsed > -1 && parsed < 256) return properties;
+                if (!isNaN(parsed) && parsed > -1 && parsed < 256)
+                    return properties;
                 else convertionFailed(item);
                 break;
             }
@@ -178,7 +186,7 @@ export const getProperties = (item: Key) => {
                 const properties: Item = {
                     name: item.name,
                     type: sql.Char(item.length ?? 100),
-                    value: String(item.value.substring(0,item.length ?? 100)),
+                    value: String(item.value.substring(0, item.length ?? 100)),
                 };
                 return properties;
             }
@@ -186,7 +194,7 @@ export const getProperties = (item: Key) => {
                 const properties: Item = {
                     name: item.name,
                     type: sql.NChar(item.length ?? 100),
-                    value: String(item.value.substring(0,item.length ?? 100)),
+                    value: String(item.value.substring(0, item.length ?? 100)),
                 };
                 return properties;
             }
@@ -210,7 +218,7 @@ export const getProperties = (item: Key) => {
                 const properties = {
                     name: item.name,
                     type: sql.VarChar(item.length ?? 100),
-                    value: String(item.value.substring(0,item.length ?? 100)),
+                    value: String(item.value.substring(0, item.length ?? 100)),
                 };
 
                 return properties;
@@ -219,14 +227,14 @@ export const getProperties = (item: Key) => {
                 const properties: Item = {
                     name: item.name,
                     type: sql.NVarChar(item.length ?? 100),
-                    value: String(item.value.substring(0,item.length ?? 100)),
+                    value: String(item.value.substring(0, item.length ?? 100)),
                 };
                 return properties;
             }
             case 'xml': {
                 const parsed = new DOMParser().parseFromString(
                     item.value,
-                    'text/xml'
+                    'text/xml',
                 );
                 const properties: Item = {
                     name: item.name,
@@ -239,7 +247,7 @@ export const getProperties = (item: Key) => {
             }
             case 'time': {
                 const parsed = moment(new Date(item.value)).format(
-                    item.format ?? 'HH:mm:ss'
+                    item.format ?? 'HH:mm:ss',
                 );
                 const properties: Item = {
                     name: item.name,
@@ -252,7 +260,7 @@ export const getProperties = (item: Key) => {
             }
             case 'date': {
                 const parsed = moment(new Date(item.value)).format(
-                    item.format ?? 'YYYY-MM-DD'
+                    item.format ?? 'YYYY-MM-DD',
                 );
                 const properties: Item = {
                     name: item.name,
@@ -265,7 +273,7 @@ export const getProperties = (item: Key) => {
             }
             case 'datetime': {
                 const parsed = moment(new Date(item.value)).format(
-                    item.format ?? 'YYYY-MM-DD HH:mm:ss'
+                    item.format ?? 'YYYY-MM-DD HH:mm:ss',
                 );
                 const properties: Item = {
                     name: item.name,
@@ -278,7 +286,7 @@ export const getProperties = (item: Key) => {
             }
             case 'datetime2': {
                 const parsed = moment(new Date(item.value)).format(
-                    item.format ?? 'YYYY-MM-DD HH:mm:ss.SSSSSS'
+                    item.format ?? 'YYYY-MM-DD HH:mm:ss.SSSSSS',
                 );
                 const properties: Item = {
                     name: item.name,
@@ -291,7 +299,7 @@ export const getProperties = (item: Key) => {
             }
             case 'datetimeoffset': {
                 const parsed = moment(new Date(item.value)).format(
-                    item.format ?? 'YYYY-MM-DD[T]HH:mm:ss.SSSZ'
+                    item.format ?? 'YYYY-MM-DD[T]HH:mm:ss.SSSZ',
                 );
                 const properties: Item = {
                     name: item.name,
@@ -304,7 +312,7 @@ export const getProperties = (item: Key) => {
             }
             case 'smalldatetime': {
                 const parsed = moment(new Date(item.value)).format(
-                    item.format ?? 'YYYY-MM-DD HH:mm:ss'
+                    item.format ?? 'YYYY-MM-DD HH:mm:ss',
                 );
                 const properties: Item = {
                     name: item.name,
@@ -317,7 +325,11 @@ export const getProperties = (item: Key) => {
             }
             case 'uniqueidentifier': {
                 if (item.value) {
-                    if ((/^(\{)?[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}(\})?$/).test(item.value)) {
+                    if (
+                        /^(\{)?[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}(\})?$/.test(
+                            item.value,
+                        )
+                    ) {
                         const properties: Item = {
                             name: item.name,
                             type: sql.UniqueIdentifier,
@@ -329,7 +341,8 @@ export const getProperties = (item: Key) => {
                 convertionFailed(item);
                 break;
             }
-            case 'variant': { // We don't convert this type
+            case 'variant': {
+                // We don't convert this type
                 const properties: Item = {
                     name: item.name,
                     type: sql.Variant,
@@ -353,35 +366,39 @@ export const getProperties = (item: Key) => {
                 };
                 return properties;
             }
-            case 'image': { // We don't convert this type
+            case 'image': {
+                // We don't convert this type
                 const properties: Item = {
                     name: item.name,
                     type: sql.Image,
-                    value: item.value, 
+                    value: item.value,
                 };
                 return properties;
             }
-            case 'udt': { // We don't convert this type
+            case 'udt': {
+                // We don't convert this type
                 const properties: Item = {
                     name: item.name,
                     type: sql.UDT,
-                    value: item.value, 
+                    value: item.value,
                 };
                 return properties;
             }
-            case 'geography': { // We don't convert this type
+            case 'geography': {
+                // We don't convert this type
                 const properties: Item = {
                     name: item.name,
                     type: sql.Geography,
-                    value: item.value, 
+                    value: item.value,
                 };
                 return properties;
             }
-            case 'geometry': { // We don't convert this type
+            case 'geometry': {
+                // We don't convert this type
                 const properties: Item = {
                     name: item.name,
                     type: sql.Geometry,
-                    value: item.value, 
+                    value: item.value,
                 };
                 return properties;
             }
@@ -400,13 +417,11 @@ export const getProperties = (item: Key) => {
     }
 };
 
-export const mssqlTableCreate = async (
-    action: any
-) => { 
+export const mssqlTableCreate = async (action: any) => {
     const tableName = `[${action.schema ?? 'dbo'}].[${action.table}]`;
-    
+
     let sql = `CREATE TABLE ${tableName} (`;
-    action.fields.forEach( (element) => {
+    action.fields.forEach(element => {
         sql += ` ${element.name} ${element.type} `;
         sql += element.nullable ? 'NULL ' : 'NOT NULL ';
         sql += element.unique ? 'UNIQUE ' : '';
@@ -415,21 +430,21 @@ export const mssqlTableCreate = async (
     });
     sql = sql.slice(0, -1) + ');';
 
-    if (action.primarykey) 
+    if (action.primarykey)
         sql += ` ALTER TABLE ${tableName} ADD CONSTRAINT PK_${action.primarykey} PRIMARY KEY (${action.primarykey});`;
 
-    action.constraint?.forEach( (element) => {
+    action.constraint?.forEach(element => {
         sql += ` ALTER TABLE ${tableName} ADD CONSTRAINT ${element.name} ${element.value};`;
     });
-    action.foreignkey?.forEach( (element) => {
+    action.foreignkey?.forEach(element => {
         sql += ` ALTER TABLE ${tableName} ADD CONSTRAINT FK_${element.name} FOREIGN KEY ${element.value};`;
     });
-    action.index?.forEach( (element) => {
+    action.index?.forEach(element => {
         sql += ' CREATE ';
         sql += element.unique ? 'UNIQUE ' : '';
         sql += element.clustered ? 'CLUSTERED ' : '';
         sql += `INDEX ${element.name} on ${tableName} ${element.value};`;
-    });    
+    });
 
     console.log(sql);
     await runSQL(sql);

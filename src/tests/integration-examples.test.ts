@@ -31,17 +31,17 @@ test.afterEach(() => {
     consoleTimeEndStub.restore();
 });
 
-test('🍏 Integration Tests', (t) => {
+test('🍏 Integration Tests', t => {
     t.pass();
 });
 
 if (process.env.GITHUB_ACTIONS) {
-    test.skip('🍏 Integration Tests for examples', (t) => t.pass());
+    test.skip('🍏 Integration Tests for examples', t => t.pass());
 } else {
     fs.readdirSync(EXAMPLES_LOCATION)
-        .filter((file) => path.extname(file) === '.yml')
-        .forEach((file) => {
-            test.serial.skip(`🍏 ${file} completes succesfully`, async (t) => {
+        .filter(file => path.extname(file) === '.yml')
+        .forEach(file => {
+            test.serial.skip(`🍏 ${file} completes succesfully`, async t => {
                 t.timeout(60000);
 
                 try {

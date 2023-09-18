@@ -15,7 +15,7 @@ const configSchema = object({
                 target: string(),
                 query: string(),
             }),
-        })
+        }),
     ),
 });
 

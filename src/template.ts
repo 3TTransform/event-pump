@@ -1,4 +1,4 @@
-const Handlebars = require('handlebars');
+import Handlebars from 'handlebars';
 
 Handlebars.registerHelper('removeLastChar', function (options: any) {
     const result = options.fn(this);

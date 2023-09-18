@@ -4,13 +4,13 @@ import {
     blankFileIfExists,
 } from '../utils';
 
-const ion = require('ion-js');
-const fs = require('fs');
+import ion from 'ion-js';
+import fs from 'fs';
 
 const ionHydrateOne = async (
     pattern: any,
     event: any,
-    isFirstEvent: boolean
+    isFirstEvent: boolean,
 ) => {
     if (isFirstEvent) {
         blankFileIfExists(pattern.action.file); // clear the file

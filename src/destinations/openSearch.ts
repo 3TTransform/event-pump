@@ -7,13 +7,13 @@ const {
     OS_URL: osURL,
     OS_USER: osUser,
     OS_PASS: osPassword,
-    OS_CERTIFICATE: osCertificate
+    OS_CERTIFICATE: osCertificate,
 } = process.env;
 const protocol = 'https';
 
 const client = new Client({
     node: protocol + '://' + osUser + ':' + osPassword + '@' + osURL,
-    ssl: osCertificate ? { ca: osCertificate } : undefined
+    ssl: osCertificate ? { ca: osCertificate } : undefined,
 });
 
 const openSearchReadPages = async function* (pattern: any) {
@@ -24,7 +24,7 @@ const openSearchReadPages = async function* (pattern: any) {
         index: pattern.source.table,
         scroll,
         body: {
-            query: pattern.source.get.query
+            query: pattern.source.get.query,
         },
         size,
     });
@@ -36,20 +36,18 @@ const openSearchReadPages = async function* (pattern: any) {
 
             response = await client.scroll({
                 scroll,
-                scroll_id
+                scroll_id,
             });
             scroll_id = response.body._scroll_id;
         }
-    }
-    finally {
+    } finally {
         await client.clearScroll({
-            scroll_id: scroll_id
+            scroll_id: scroll_id,
         });
     }
 };
 
 const openSearchHydrateOne = async (pattern: any, event: any) => {
-
     let response: any;
 
     const singleItem = populateEventData(event, pattern.action?.params.Item);
@@ -61,7 +59,7 @@ const openSearchHydrateOne = async (pattern: any, event: any) => {
     }
 
     if (!(await client.indices.exists({ index: index_name })).body) {
-    // create index
+        // create index
         await openSearchIndexCreate(index_name);
     }
 
@@ -77,7 +75,7 @@ const openSearchHydrateOne = async (pattern: any, event: any) => {
             break;
         default:
             throw new Error(
-                `Action target ${pattern.action.target} is not supported`
+                `Action target ${pattern.action.target} is not supported`,
             );
     }
 
@@ -105,13 +103,14 @@ async function osCreate(singleItem: any, index_name: string) {
 async function openSearchIndexCreate(
     index_name: string,
     number_of_shards = 1,
-    number_of_replicas = 0) {
+    number_of_replicas = 0,
+) {
     // Create an index with non-default settings
     const settings = {
         settings: {
             index: {
-                number_of_shards,  //4
-                number_of_replicas,  //3
+                number_of_shards, //4
+                number_of_replicas, //3
             },
         },
     };
@@ -157,12 +156,11 @@ async function osUpdate(singleItem: any, index_name: string) {
         id: singleItem.id,
         index: index_name,
         body: {
-            doc: document
-        }
+            doc: document,
+        },
     });
 
     return response;
 }
 
-
-export { openSearchReadPages, openSearchHydrateOne, openSearchIndexCreate};
+export { openSearchReadPages, openSearchHydrateOne, openSearchIndexCreate };

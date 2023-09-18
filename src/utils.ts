@@ -23,16 +23,13 @@ const populateEventData = (event: unknown, object: unknown) => {
             return getProp(event, prop);
         }
 
-        try{
+        try {
             // otherwise just make a string using Handlebars
             return replaceValues(event, value);
-        }
-        catch (error)
-        {
+        } catch (error) {
             // or don't change anything if there is an error
             return value;
         }
-
     });
 };
 const populateEventData2 = (event: unknown, object: unknown) => {
@@ -40,7 +37,6 @@ const populateEventData2 = (event: unknown, object: unknown) => {
         return object;
     }
     return JSON.parse(JSON.stringify(object), (key, value) => {
-
         if (typeof value !== 'string') {
             return value;
         }
@@ -60,8 +56,7 @@ const populateEventData2 = (event: unknown, object: unknown) => {
             const eventValue = getProp(event, prop);
             if (eventValue) {
                 value = value.replace(`{{${prop}}}`, eventValue);
-            }
-            else {
+            } else {
                 value = value.replace(`{{${prop}}}`, '');
             }
         }
@@ -70,8 +65,7 @@ const populateEventData2 = (event: unknown, object: unknown) => {
 };
 
 const createFolderFromPath = (filename: string) => {
-    if (!filename)
-    {
+    if (!filename) {
         return;
     }
 
