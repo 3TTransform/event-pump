@@ -16,7 +16,6 @@ import {
     openSearchIndexCreate,
 } from './destinations/openSearch';
 import { EPEventSource } from './EPEventSource';
-import { populateEventData } from './utils';
 
 // to parse csv files
 //import { parse } from '@fast-csv/parse';
