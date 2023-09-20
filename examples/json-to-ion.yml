@@ -1,5 +1,5 @@
 name: AWS Ion Example
-source: 
+source:
   type: json
   file: ./examples/events/competency.seed.json
 patterns:
@@ -9,7 +9,7 @@ patterns:
       verb: create
     action:
       target: ion
-      file: ./output/attestations.ion        
+      file: ./output/attestations.ion
       shape:
         pk: "attestation#{{id}}"
         sk: "attestation"

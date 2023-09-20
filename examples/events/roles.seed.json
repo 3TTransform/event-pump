@@ -1,59 +1,64 @@
 [
-  {
-    "verb": "create",
-    "noun": "role",
-    "id": "03c895bd-0240-4b5f-a626-1501a85e4e92",
-    "roleName": "Administrator",
-    "organisationId": "7c464356-374a-4c85-b871-13ed8bd92d46",
-    "allow": [
-      "orgs:update",
-      "orgs:get",
-      "roles:create",
-      "roles:update",
-      "roles:delete",
-      "roles:assign",
-      "roles:read",
-      "permissions:add",
-      "permissions:remove",
-      "permissions:read",
-      "profile:update",
-      "profile:read",
-      "user:invite",
-      "apikey:create",
-      "apikey:revoke"
-    ]
-  },
-  {
-    "verb": "create",
-    "noun": "role",
-    "id": "de5cd33e-2c96-44c2-ae08-25a9e842a66d",
-    "roleName": "User",
-    "organisationId": "7c464356-374a-4c85-b871-13ed8bd92d46"
-  },
-  {
-    "verb": "update",
-    "noun": "role",
-    "id": "de5cd33e-2c96-44c2-ae08-25a9e842a66d",
-    "roleName": "User",
-    "organisationId": "1234d33e-2c96-44c2-ae08-25a9e842a66d",
-    "allow": ["orgs:get", "profile:update", "profile:read", "permissions:read"]
-  },
-  {
-    "verb": "update",
-    "noun": "role",
-    "id": "de5cd33e-2c96-44c2-ae08-25a9e842a66d",
+    {
+        "verb": "create",
+        "noun": "role",
+        "id": "03c895bd-0240-4b5f-a626-1501a85e4e92",
+        "roleName": "Administrator",
+        "organisationId": "7c464356-374a-4c85-b871-13ed8bd92d46",
+        "allow": [
+            "orgs:update",
+            "orgs:get",
+            "roles:create",
+            "roles:update",
+            "roles:delete",
+            "roles:assign",
+            "roles:read",
+            "permissions:add",
+            "permissions:remove",
+            "permissions:read",
+            "profile:update",
+            "profile:read",
+            "user:invite",
+            "apikey:create",
+            "apikey:revoke"
+        ]
+    },
+    {
+        "verb": "create",
+        "noun": "role",
+        "id": "de5cd33e-2c96-44c2-ae08-25a9e842a66d",
+        "roleName": "User",
+        "organisationId": "7c464356-374a-4c85-b871-13ed8bd92d46"
+    },
+    {
+        "verb": "update",
+        "noun": "role",
+        "id": "de5cd33e-2c96-44c2-ae08-25a9e842a66d",
+        "roleName": "User",
+        "organisationId": "1234d33e-2c96-44c2-ae08-25a9e842a66d",
+        "allow": [
+            "orgs:get",
+            "profile:update",
+            "profile:read",
+            "permissions:read"
+        ]
+    },
+    {
+        "verb": "update",
+        "noun": "role",
+        "id": "de5cd33e-2c96-44c2-ae08-25a9e842a66d",
 
-    "allow": ["profile:update", "profile:read"]
-  },
-  {
-    "verb": "update",
-    "noun": "role",
-    "id": "de5cd33e-2c96-44c2-ae08-25a9e842a66d",
-    "roleName": "UserTest3"
-  },
-  {
-    "verb": "delete",
-    "noun": "role",
-    "id": "de5cd33e-2c96-44c2-ae08-25a9e842a66d"
-  }
+        "allow": ["profile:update", "profile:read"]
+    },
+    {
+        "verb": "update",
+        "noun": "role",
+        "id": "de5cd33e-2c96-44c2-ae08-25a9e842a66d",
+        "roleName": "UserTest3"
+    },
+    {
+        "verb": "delete",
+        "noun": "role",
+        "id": "de5cd33e-2c96-44c2-ae08-25a9e842a66d"
+    }
 ]

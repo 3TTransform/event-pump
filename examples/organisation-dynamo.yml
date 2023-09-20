@@ -1,5 +1,5 @@
 name: Event pump to DynamoDB
-source: 
+source:
   type: json
   file: ./examples/events/organisations.seed.json
 patterns:
@@ -26,7 +26,7 @@ patterns:
       type: update
       values:
         id: "{{id}}"
-        organisationName: "{{organisationName}}"         
+        organisationName: "{{organisationName}}"
       params:
         TableName: Example
         Key:

@@ -6,28 +6,28 @@ import {
 } from 'aws-sdk/clients/dynamodb';
 import { populateEventData } from '../utils';
 
-const AWS = require('aws-sdk');
+import AWS from 'aws-sdk';
 AWS.config.update({ region: process.env.AWS_DEFAULT_REGION || 'us-east-2' });
 
 class Dynamo {
     dyn: any;
     constructor() {
-    // allow local endpoints by specifying the ENDPOINT_OVERRIDE variable like this:
-    // export ENDPOINT_OVERRIDE=http://localhost:8000
-    // export AWS_DEFAULT_REGION=us-east-2
+        // allow local endpoints by specifying the ENDPOINT_OVERRIDE variable like this:
+        // export ENDPOINT_OVERRIDE=http://localhost:8000
+        // export AWS_DEFAULT_REGION=us-east-2
         const serviceConfigOptions: any = {};
         if (process.env.ENDPOINT_OVERRIDE) {
             serviceConfigOptions.endpoint = process.env.ENDPOINT_OVERRIDE;
             serviceConfigOptions.region =
-        process.env.AWS_DEFAULT_REGION || 'us-east-2';
+                process.env.AWS_DEFAULT_REGION || 'us-east-2';
         }
 
         this.dyn = new AWS.DynamoDB(serviceConfigOptions);
     }
     generateUpdateQuery = (fields: any): any => {
-    // take in an object and delete verything that is null
+        // take in an object and delete verything that is null
         if (fields) {
-            Object.keys(fields).forEach((key) => {
+            Object.keys(fields).forEach(key => {
                 if (fields[key] === undefined) {
                     delete fields[key];
                 }
@@ -35,9 +35,17 @@ class Dynamo {
 
             if (Object.keys(fields).length > 0) {
                 return {
-                    UpdateExpression: 'SET ' + Object.entries(fields).map(x => `#${x[0]} = :${x[0]}`).join(', '),
-                    ExpressionAttributeNames: Object.fromEntries(Object.entries(fields).map(x => [`#${x[0]}`, x[0]])),
-                    ExpressionAttributeValues: Object.fromEntries(Object.entries(fields).map(x => [`:${x[0]}`, x[1]])),
+                    UpdateExpression:
+                        'SET ' +
+                        Object.entries(fields)
+                            .map(x => `#${x[0]} = :${x[0]}`)
+                            .join(', '),
+                    ExpressionAttributeNames: Object.fromEntries(
+                        Object.entries(fields).map(x => [`#${x[0]}`, x[0]]),
+                    ),
+                    ExpressionAttributeValues: Object.fromEntries(
+                        Object.entries(fields).map(x => [`:${x[0]}`, x[1]]),
+                    ),
                 };
             }
 
@@ -48,10 +56,10 @@ class Dynamo {
             };
         }
     };
-    marshall = (item) => {
+    marshall = item => {
         return AWS.DynamoDB.Converter.marshall(item);
     };
-    unmarshall = (item) => {
+    unmarshall = item => {
         return AWS.DynamoDB.Converter.unmarshall(item);
     };
     scanTable = async (tableName: string, lastEvaluatedKey: any = null) => {
@@ -88,19 +96,24 @@ class Dynamo {
     dynamodbHydrateOne = async (
         pattern: any,
         event: any,
-        isFirstEvent: boolean
+        isFirstEvent: boolean,
     ) => {
-    // check that the table in this action exists before we action on it
-        if (!(await this.dynamodbTableExists(pattern.action.params.TableName))) {
+        // check that the table in this action exists before we action on it
+        if (
+            !(await this.dynamodbTableExists(pattern.action.params.TableName))
+        ) {
             throw new Error(
-                `Table '${pattern.action.params.TableName}' does not exist`
+                `Table '${pattern.action.params.TableName}' does not exist`,
             );
         }
 
         const thisActionType = pattern.action.type;
 
         if (thisActionType === 'put') {
-            const singleItem = populateEventData(event, pattern.action.params.Item);
+            const singleItem = populateEventData(
+                event,
+                pattern.action.params.Item,
+            );
             const newItem = this.marshall(singleItem);
             const params = { ...pattern.action.params };
             params.Item = newItem;
@@ -113,12 +126,15 @@ class Dynamo {
             updateQuery.TableName = pattern.action.params.TableName;
             updateQuery.Key = this.marshall(singleItem.params.Key);
             updateQuery.ExpressionAttributeValues = this.marshall(
-                updateQuery.ExpressionAttributeValues
+                updateQuery.ExpressionAttributeValues,
             );
             await this.dynamodbUpdate(updateQuery);
         }
         if (thisActionType === 'delete') {
-            const singleItem = populateEventData(event, pattern.action.params.Item);
+            const singleItem = populateEventData(
+                event,
+                pattern.action.params.Item,
+            );
             const newItem = this.marshall(singleItem);
             const params = { ...pattern.action.params };
             params.Item = newItem;
@@ -128,14 +144,11 @@ class Dynamo {
             await this.dynamodbDelete(params);
         }
     };
-
 }
 
-const dynamodbTableCreate = async (
-    action: any,
-) => {
-    const ddb = new AWS.DynamoDB({apiVersion: '2012-08-10'});
-    ddb.createTable(action, function(err, data) {
+const dynamodbTableCreate = async (action: any) => {
+    const ddb = new AWS.DynamoDB({ apiVersion: '2012-08-10' });
+    ddb.createTable(action, function (err, data) {
         if (err) {
             console.log('Error', err);
         } else {
@@ -144,7 +157,4 @@ const dynamodbTableCreate = async (
     });
 };
 
-export {
-    Dynamo,
-    dynamodbTableCreate
-};
+export { Dynamo, dynamodbTableCreate };

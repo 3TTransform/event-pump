@@ -1,4 +1,3 @@
-export interface EPEventSource
-{
-  readEvents: () => AsyncGenerator<any, void, unknown>;
+export interface EPEventSource {
+    readEvents: () => AsyncGenerator<any, void, unknown>;
 }

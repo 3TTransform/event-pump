@@ -5,7 +5,7 @@ source:
   get:
     query:
       bool:
-        must: 
+        must:
           - exists:
               field: detail.verb
           - match_phrase:
@@ -40,4 +40,3 @@ patterns:
           '{{detail.raw.dateOfBirth}}',
           '{{detail.sourceid}}',
           '{{detail.old_id}}')
-

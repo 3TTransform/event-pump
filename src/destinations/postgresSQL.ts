@@ -1,6 +1,9 @@
-import { Pool } from "pg";
-import { replaceValues } from "../template";
-require("dotenv").config();
+import { Pool } from 'pg';
+import dotenv from 'dotenv';
+
+import { replaceValues } from '../template';
+
+dotenv.config();
 
 let connection;
 
@@ -25,7 +28,7 @@ const getPool = () => {
 export const postgresSqlHydrateOne = async (
     pattern: any,
     event: any,
-    isFirstEvent: boolean
+    isFirstEvent: boolean,
 ) => {
     try {
         //console.log('🌈', pattern);
@@ -38,11 +41,9 @@ export const postgresSqlHydrateOne = async (
     }
 };
 
-export const postgresSqlTableCreate = async (
-    action: any,
-) => {
+export const postgresSqlTableCreate = async (action: any) => {
     let sql = `CREATE TABLE ${action.table} (`;
-    action.fields.forEach( (element) => {
+    action.fields.forEach(element => {
         sql += ` ${element.name} ${element.type} `;
         sql += element.nullable ? 'NULL ' : 'NOT NULL ';
         sql += element.unique ? 'UNIQUE ' : '';
@@ -50,17 +51,16 @@ export const postgresSqlTableCreate = async (
     });
     sql = sql.slice(0, -1) + ');';
 
-    if (action.primarykey) 
+    if (action.primarykey)
         sql += ` ALTER TABLE ${action.table} ADD CONSTRAINT PK_${action.primarykey} PRIMARY KEY (${action.primarykey});`;
 
-    action.constraint?.forEach( (element) => {
+    action.constraint?.forEach(element => {
         sql += ` ALTER TABLE ${action.table} ADD CONSTRAINT ${element.name} ${element.value};`;
     });
-    action.foreignkey?.forEach( (element) => {
+    action.foreignkey?.forEach(element => {
         sql += ` ALTER TABLE ${action.table} ADD CONSTRAINT FK_${element.name} FOREIGN KEY ${element.value};`;
     });
 
     console.log(sql);
     await getPool().query(sql);
 };
-

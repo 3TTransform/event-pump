@@ -5,9 +5,7 @@ source:
   path: _source
   get:
     query:
-      match_phrase: 
-        courseName: 
-           query: Raising
-           slop: 3
-
-
+      match_phrase:
+        courseName:
+          query: Raising
+          slop: 3

@@ -1,5 +1,5 @@
 name: DynamoDb to SQL
-source: 
+source:
   type: dynamodb
   table: Example
 patterns:
@@ -9,7 +9,7 @@ patterns:
     action:
       target: mssql
       params:
-        sql: >          
+        sql: >
           INSERT INTO tbl_events
           ([action], [context])
           VALUES (@action, @context)

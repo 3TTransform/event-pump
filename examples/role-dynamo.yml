@@ -1,5 +1,5 @@
 name: Event pump to DynamoDB
-source: 
+source:
   type: json
   file: ./examples/events/roles.seed.json
 patterns:
@@ -29,12 +29,12 @@ patterns:
       values:
         organisationId: "{{organisationId}}"
         allow: "{{allow}}"
-        roleName: "{{roleName}}"   
+        roleName: "{{roleName}}"
       params:
         TableName: Example
         Key:
           pk: "role#{{id}}"
-          sk: "role"          
+          sk: "role"
   - name: roleDelete
     rule:
       noun: role

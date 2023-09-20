@@ -1,34 +1,33 @@
 name: Event pump, Create PostgresSQL Table
 patterns:
-    - rule:
-        verb: table-create
-      action:
-        target: postgres
-        params:
-          schema: dbo
-          table: public.users
-          fields:
-            - name: ID
-              type: INT
-              nullable: false
-              unique: true
-            - name: UserName
-              type: VARCHAR(50)
-              nullable: false
-            - name: Email
-              type: VARCHAR(100)
-              nullable: true
-            - name: ReferenceID
-              type:  SERIAL
-              nullable: false
-            - name: Age
-              type: INT
-              nullable: false
-          primarykey: ID    
-          constraint:
-            - name: age_min 
-              value: CHECK ( Age > 17)
-          # foreignkey: 
-          #   - name: fk_name
-          #     value: FOREIGN KEY(fk_columns) REFERENCES parent_table(parent_key_columns)
-  
+  - rule:
+      verb: table-create
+    action:
+      target: postgres
+      params:
+        schema: dbo
+        table: public.users
+        fields:
+          - name: ID
+            type: INT
+            nullable: false
+            unique: true
+          - name: UserName
+            type: VARCHAR(50)
+            nullable: false
+          - name: Email
+            type: VARCHAR(100)
+            nullable: true
+          - name: ReferenceID
+            type: SERIAL
+            nullable: false
+          - name: Age
+            type: INT
+            nullable: false
+        primarykey: ID
+        constraint:
+          - name: age_min
+            value: CHECK ( Age > 17)
+        # foreignkey:
+        #   - name: fk_name
+        #     value: FOREIGN KEY(fk_columns) REFERENCES parent_table(parent_key_columns)

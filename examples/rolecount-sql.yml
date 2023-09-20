@@ -1,9 +1,9 @@
 name: Build a pie chart based on Organisation data
-source: 
+source:
   type: json
   file: ./examples/events/identity.seed.json
-patterns: 
-  - name: create_orgs 
+patterns:
+  - name: create_orgs
     rule:
       noun: organisation
       verb: create
@@ -17,10 +17,10 @@ patterns:
 
         input:
           - name: OrgName
-           # type: NVARCHAR()
+            # type: NVARCHAR()
             value: "{{organisationName}}"
           - name: OrgID
-          #  type: UNIQUEIDENTIFIER
+            #  type: UNIQUEIDENTIFIER
             value: "{{id}}"
           - name: OrgRoleCount
             value: "0"
@@ -54,5 +54,3 @@ patterns:
         input:
           - name: OrgID
             value: "{{organisationId}}"
-
-

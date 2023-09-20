@@ -5,8 +5,5 @@ source:
   path: _source
   get:
     query:
-      match_phrase: 
+      match_phrase:
         courseName: Raising and Rearing Hamsters
-  
-
-
