@@ -6,12 +6,14 @@ const getProp = (obj: unknown, path: string) => {
 };
 
 const replaceEnvVars = (text: string) => {
-    if (!text)
-    {
+    if (!text) {
         return text;
     }
     const regex = /\$\{([a-zA-Z_]+\w*)\}/g;
-    return text.replace(regex, (substring, ...args) => process.env[args[0]] ?? substring);
+    return text.replace(
+        regex,
+        (substring, ...args) => process.env[args[0]] ?? substring,
+    );
 };
 
 const populateEventData = (event: unknown, object: unknown) => {
