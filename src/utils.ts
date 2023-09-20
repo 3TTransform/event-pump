@@ -5,6 +5,11 @@ const getProp = (obj: unknown, path: string) => {
     return path.split('.').reduce((o, i) => o[i], obj);
 };
 
+const replaceEnvVars = (text: string) => {
+    const regex = /\$\{([a-zA-Z_]+\w*)\}/g;
+    return text.replace(regex, (substring, ...args) => process.env[args[0]] ?? substring);
+};
+
 const populateEventData = (event: unknown, object: unknown) => {
     if (!object || !event) {
         return object;
@@ -76,4 +81,5 @@ export {
     createFolderFromPath,
     blankFileIfExists,
     parseCSV,
+    replaceEnvVars,
 };
