@@ -1,11 +1,12 @@
-import { InvokeCommand, LambdaClient } from '@aws-sdk/client-lambda';
+import { LambdaClient } from '@aws-sdk/client-lambda';
 import { getProp, populateEventData, replaceEnvVars } from '../utils';
+import { invokeLambda } from './awstools';
 
-let lambdaClient1: LambdaClient;
+let lambdaClient: LambdaClient;
 
 export const invokeLambdaHydrateOne = async (pattern: any, event: unknown) => {
-    if (!lambdaClient1) {
-        lambdaClient1 = new LambdaClient({
+    if (!lambdaClient) {
+        lambdaClient = new LambdaClient({
             region: process.env.AWS_DEFAULT_REGION || 'us-east-2',
         });
     }
@@ -14,7 +15,7 @@ export const invokeLambdaHydrateOne = async (pattern: any, event: unknown) => {
     const functionName = replaceEnvVars(pattern.action.functionName);
 
     const lambdaResponse = await invokeLambda(
-        lambdaClient1,
+        lambdaClient,
         functionName,
         payload,
     );
@@ -39,17 +40,4 @@ export const invokeLambdaHydrateOne = async (pattern: any, event: unknown) => {
     }
 
     throw new Error('Lambda invokcation Failed: Could not resolve response');
-};
-
-export const invokeLambda = async (
-    client: LambdaClient,
-    functionName: string,
-    payload: unknown,
-) => {
-    const command = new InvokeCommand({
-        FunctionName: functionName,
-        Payload: Buffer.from(JSON.stringify(payload)),
-    });
-
-    return await client.send(command);
 };

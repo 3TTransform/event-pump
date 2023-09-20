@@ -1,8 +1,6 @@
 import { populateEventData, replaceEnvVars } from '../utils';
-import {
-    EventBridgeClient,
-    PutEventsCommand,
-} from '@aws-sdk/client-eventbridge';
+import { EventBridgeClient } from '@aws-sdk/client-eventbridge';
+import { sendEvent } from './awstools';
 
 let eventBusClient: EventBridgeClient;
 
@@ -24,24 +22,4 @@ export const eventBusHydrateOne = async (pattern: any, event: unknown) => {
         source,
         eventBusName,
     );
-};
-
-export const sendEvent = async (
-    client: EventBridgeClient,
-    payload: Record<string, unknown>[],
-    detailType: string,
-    source: string,
-    eventBusArn?: string,
-) => {
-    const params = {
-        Entries: [
-            {
-                Detail: JSON.stringify(payload),
-                DetailType: detailType,
-                Source: source,
-                EventBusName: eventBusArn,
-            },
-        ],
-    };
-    await client.send(new PutEventsCommand(params));
 };
