@@ -10,9 +10,15 @@ patterns:
     action:
       target: lambda
       functionName: ${LAMBDA_ARN}
-      detailType: Upsert Organisation
       shape:
-        noun: organisation
-        verb: create
-        id: "{{id}}"
-        organisationName: "{{organisationName}}"
+        DetailType: Create Organisation
+        Source: source
+        Detail:
+          noun: organisation
+          verb: create
+          organisationId: "{{id}}"
+          name: "{{organisationName}}"
+      response:
+        type: JSON
+        path: success
+        equalTo: true
