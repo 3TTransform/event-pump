@@ -1,5 +1,5 @@
 import { InvokeCommand, LambdaClient } from '@aws-sdk/client-lambda';
-import { populateEventData, replaceEnvVars } from '../utils';
+import { getProp, populateEventData, replaceEnvVars } from '../utils';
 
 let lambdaClient1: LambdaClient;
 
@@ -15,7 +15,31 @@ export const invokeLambdaHydrateOne = async (
     const payload = populateEventData(event, pattern.action.shape);
 
     const functionName = replaceEnvVars(pattern.action.functionName);
-    return await invokeLambda(lambdaClient1, functionName, payload);
+
+    const lambdaResponse = await invokeLambda(lambdaClient1, functionName, payload);
+
+    if (pattern.action.response?.type === 'JSON')
+    {
+        const result = JSON.parse(Buffer.from(lambdaResponse.Payload).toString());
+        const value = getProp(result, pattern.action.response.path) ?? true;
+        if (pattern.action.response.equalTo && pattern.action.response.equalTo == value)
+        {
+            return lambdaResponse;
+        }
+        throw new Error(`Lambda invocation Failed: ${JSON.stringify(result)}`);
+    }
+    else if (pattern.action.response?.type === 'PASS')
+    {
+        return true;
+    }
+    else if (pattern.action.response?.type === 'LOG')
+    {
+        console.info(Buffer.from(lambdaResponse.Payload).toString());
+        return true;
+    }
+
+    throw new Error('Lambda invokcation Failed: Could not resolve response');
+
 };
 
 export const invokeLambda = async (
@@ -28,6 +52,5 @@ export const invokeLambda = async (
         Payload: Buffer.from(JSON.stringify(payload)),
     });
 
-    await client.send(command);
+    return await client.send(command);
 };
-
