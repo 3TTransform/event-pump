@@ -3,7 +3,7 @@ import { getProp, populateEventData, replaceEnvVars } from '../utils';
 
 let lambdaClient1: LambdaClient;
 
-export const invokeLambdaHydrateOne = async (pattern: any, event: any) => {
+export const invokeLambdaHydrateOne = async (pattern: any, event: unknown) => {
     if (!lambdaClient1) {
         lambdaClient1 = new LambdaClient({
             region: process.env.AWS_DEFAULT_REGION || 'us-east-2',

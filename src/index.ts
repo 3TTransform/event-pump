@@ -29,7 +29,7 @@ export interface CliParams {
     yml: string;
 }
 
-const processEvent = async (doc: any, event: any, isFirstEvent = false) => {
+const processEvent = async (doc: any, event: unknown, isFirstEvent = false) => {
     let firstEvent = isFirstEvent;
 
     if (!doc.patterns) {
@@ -55,7 +55,11 @@ const processEvent = async (doc: any, event: any, isFirstEvent = false) => {
     }
 };
 
-const processPage = async (doc: any, events: any[], isFirstEvent = false) => {
+const processPage = async (
+    doc: any,
+    events: unknown[],
+    isFirstEvent = false,
+) => {
     for (const event of events) {
         await processEvent(doc, event, isFirstEvent);
     }
