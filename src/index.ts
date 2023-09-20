@@ -17,8 +17,10 @@ import {
 } from './destinations/openSearch';
 import { EPEventSource } from './EPEventSource';
 
+import { eventBusHydrateOne } from './destinations/eventBus';
+import { invokeLambdaHydrateOne } from './destinations/invokeLambda';
+
 // to parse csv files
-//import { parse } from '@fast-csv/parse';
 
 dotenv.config();
 const ddb = new Dynamo();
@@ -76,6 +78,12 @@ async function doHandler(event, pattern, isFirstEvent) {
             break;
         case 'postgres':
             await postgresSqlHydrateOne(pattern, event, isFirstEvent);
+            break;
+        case 'event-bus':
+            await eventBusHydrateOne(pattern, event);
+            break;
+        case 'lambda':
+            await invokeLambdaHydrateOne(pattern, event);
             break;
         default:
             throw new Error(
