@@ -1,0 +1,25 @@
+name: Read MSSQL Example
+source:
+  type: mssql
+  connectionString: >
+    Data Source=${SQL_SERV};
+    Initial Catalog=TEST_ATTESTATIONS;
+    User ID=${SQL_USER};
+    Password=${SQL_PASS};
+    Connection Timeout=1000;
+    TrustServerCertificate=true;
+  sql: >
+    SELECT
+        'organisation' AS noun,
+        'create' AS verb,
+        [id],
+        [name]
+    FROM [TEST_ATTESTATIONS].[dbo].[tbl_organisation]
+  recordSetIndex: 0
+patterns:
+  - name: Create Organisaation
+    rule:
+      noun: organisation
+      verb: create
+    action:
+      target: debug-info
