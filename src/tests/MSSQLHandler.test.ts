@@ -24,10 +24,13 @@ const makeDoc = (index?: number) => ({
         recordSetIndex: index,
     },
 });
+const recordsets = [
+    [{ results: 'First Result' }],
+    [{ results: 'Second Result' }],
+];
 
 test.serial('🍏 MSSQLHandler should create object and call runSQL', async t => {
     const doc = makeDoc(0);
-    const recordsets = [[{ results: 'test' }]];
 
     runSQLStub = sinon.stub(mssqltools, 'runSQL').resolves({ recordsets });
 
@@ -38,7 +41,7 @@ test.serial('🍏 MSSQLHandler should create object and call runSQL', async t =>
     const events = [];
     for await (const i of handler.readEvents()) events.push(i);
 
-    t.deepEqual(events, [{ results: 'test' }]);
+    t.deepEqual(events, [{ results: 'First Result' }]);
 
     t.true(runSQLStub.calledOnce);
 });
@@ -46,22 +49,13 @@ test.serial(
     '🍏 MSSQLHandler should retrive from specified recordset',
     async t => {
         const doc = makeDoc(1);
-        const recordsets = [
-            [{ results: 'Not This One' }],
-            [{ results: 'test' }],
-        ];
-
         runSQLStub = sinon.stub(mssqltools, 'runSQL').resolves({ recordsets });
 
         const handler = new MSSQLHandler(doc);
-
         t.truthy(handler);
-
         const events = [];
         for await (const i of handler.readEvents()) events.push(i);
-
-        t.deepEqual(events, [{ results: 'test' }]);
-
+        t.deepEqual(events, [{ results: 'Second Result' }]);
         t.true(runSQLStub.calledOnce);
     },
 );
@@ -69,22 +63,14 @@ test.serial(
     '🍏 MSSQLHandler should retrive from first recordset by default',
     async t => {
         const doc = makeDoc();
-
-        const recordsets = [
-            [{ results: 'test' }],
-            [{ results: 'Not This One' }],
-        ];
-
         runSQLStub = sinon.stub(mssqltools, 'runSQL').resolves({ recordsets });
 
         const handler = new MSSQLHandler(doc);
-
         t.truthy(handler);
-
         const events = [];
         for await (const i of handler.readEvents()) events.push(i);
 
-        t.deepEqual(events, [{ results: 'test' }]);
+        t.deepEqual(events, [{ results: 'First Result' }]);
 
         t.true(runSQLStub.calledOnce);
     },
