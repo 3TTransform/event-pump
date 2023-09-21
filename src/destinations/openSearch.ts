@@ -18,7 +18,7 @@ const client = new Client({
 
 const openSearchReadPages = async function* (pattern: any) {
     const size = pattern.source.size ?? 10000;
-    //console.log(JSON.stringify(pattern.source.get.query));
+
     const scroll = '1m';
     let response = await client.search({
         index: pattern.source.table,
