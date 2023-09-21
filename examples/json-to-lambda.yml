@@ -1,0 +1,24 @@
+name: JSON to Lambda Invoke example
+source:
+  type: json
+  file: ./examples/events/organisations.seed.json
+patterns:
+  - name: Lambda Example
+    rule:
+      noun: organisation
+      verb: create
+    action:
+      target: lambda
+      functionName: ${LAMBDA_ARN}
+      shape:
+        DetailType: Create Organisation
+        Source: source
+        Detail:
+          noun: organisation
+          verb: create
+          organisationId: "{{id}}"
+          name: "{{organisationName}}"
+      response:
+        type: JSON
+        path: success
+        equalTo: true
