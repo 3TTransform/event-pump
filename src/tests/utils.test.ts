@@ -1,5 +1,5 @@
 import test from 'ava';
-import { getProp, populateEventData, parseCSV } from '../utils';
+import { getProp, populateEventData, parseCSV, replaceEnvVars } from '../utils';
 
 test('🍏 getProp should return the values at the specified paths', async t => {
     const deepObj = {
@@ -299,3 +299,59 @@ test('🍎 parseCSV throws an error if header and row are both null', async t =>
         },
     );
 });
+
+test('🍏 replaceEnvVars replaces environment variables tokens in input', async t => {
+    const env_backup = { ... process.env};
+    process.env.TEST_123 = 'TEST_123_CONTENT';
+
+    const test_result = replaceEnvVars('${TEST_123}');
+
+    t.deepEqual(test_result, 'TEST_123_CONTENT');
+
+    process.env = { ... env_backup};
+});
+test('🍏 replaceEnvVars does not replace missing environment variables', async t => {
+    const env_backup = { ... process.env};
+    process.env.TEST_123 = 'TEST_123_CONTENT';
+
+    const test_result = replaceEnvVars('${TEST_1234}');
+
+    t.deepEqual(test_result, '${TEST_1234}');
+
+    process.env = { ... env_backup};
+});
+
+test('🍏 replaceEnvVars replaces partial string', async t => {
+    const env_backup = { ... process.env};
+    process.env.TEST_123 = 'TEST_123_CONTENT';
+    process.env.TEST_456 = 'TEST_456_CONTENT';
+
+    const test_result = replaceEnvVars('${TEST_123} and ${TEST_456}');
+
+    t.deepEqual(test_result, 'TEST_123_CONTENT and TEST_456_CONTENT');
+
+    process.env = { ... env_backup};
+});
+
+test('🍎 replaceEnvVars does not replace when supplied with null', async t => {
+    const env_backup = { ... process.env};
+    process.env.TEST_123 = 'TEST_123_CONTENT';
+
+    const test_result = replaceEnvVars(null);
+
+    t.deepEqual(test_result, null);
+
+    process.env = { ... env_backup};
+});
+
+test('🍎 replaceEnvVars does not replace when supplied with undefined', async t => {
+    const env_backup = { ... process.env};
+    process.env.TEST_123 = 'TEST_123_CONTENT';
+
+    const test_result = replaceEnvVars(undefined);
+
+    t.deepEqual(test_result, undefined);
+
+    process.env = { ... env_backup};
+});
+

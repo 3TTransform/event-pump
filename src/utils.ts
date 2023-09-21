@@ -9,7 +9,7 @@ const replaceEnvVars = (text: string) => {
     if (!text) {
         return text;
     }
-    const regex = /\$\{([a-zA-Z_]+\w*)\}/g;
+    const regex = /\$\{([a-zA-Z_]\w{0,250})\}/g;
     return text.replace(
         regex,
         (substring, ...args) => process.env[args[0]] ?? substring,
