@@ -1,0 +1,23 @@
+name: JSON to SQL
+source:
+  type: json
+  file: ./examples/events/organisations.seed.json
+patterns:
+  - name: fileReceived
+    rule:
+      noun: organisation
+      verb: create
+    action:
+      target: mssql
+      params:
+        sql: >
+          INSERT INTO tbl_organisation
+          ([id], [name])
+          VALUES (@id, @organisationName)
+        input:
+          - name: "id"
+            type: "UNIQUEIDENTIFIER"
+            value: "{{id}}"
+          - name: "organisationName"
+            type: "NVARCHAR"
+            value: "{{organisationName}}"
