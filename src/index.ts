@@ -89,6 +89,9 @@ async function doHandler(event, pattern, isFirstEvent) {
         case 'lambda':
             await invokeLambdaHydrateOne(pattern, event);
             break;
+        case 'debug-info':
+            console.info(event);
+            break;
         default:
             throw new Error(
                 `Action target ${pattern.action.target} is not supported`,
