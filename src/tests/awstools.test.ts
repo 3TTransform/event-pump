@@ -30,7 +30,11 @@ test.serial('🍏 sendEvent passes data to the client', async t => {
 });
 
 test.serial('🍏 invokeLambda passes data to the client', async t => {
-    await invokeLambda(mockILClient as LambdaClient, 'My Lambda Function', testPayload);
+    await invokeLambda(
+        mockILClient as LambdaClient,
+        'My Lambda Function',
+        testPayload,
+    );
     t.deepEqual(mockILClient?.send?.firstCall?.args[0]?.input, {
         FunctionName: 'My Lambda Function',
         Payload: Buffer.from(JSON.stringify(testPayload)),

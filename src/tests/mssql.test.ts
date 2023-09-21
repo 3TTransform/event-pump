@@ -63,23 +63,22 @@ test.serial(
     },
 );
 
-test.serial(
-    '🍎 mssqlHydrateOne log an error from runSQL',
-    async t => {
-        runSQLStub = sinon.stub(mssqltools, 'runSQL').rejects(new Error ('SQL Error'));
-        const pattern = {
-            action: {
-                params: {
-                    sql: testSQL,
-                },
+test.serial('🍎 mssqlHydrateOne log an error from runSQL', async t => {
+    runSQLStub = sinon
+        .stub(mssqltools, 'runSQL')
+        .rejects(new Error('SQL Error'));
+    const pattern = {
+        action: {
+            params: {
+                sql: testSQL,
             },
-        };
-        const event = {
-            id: '12345',
-        };
-        const isFirstEvent = true;
-        await mssqlHydrateOne(pattern, event, isFirstEvent);
-        t.true(runSQLStub.calledOnce);
-        t.true(consoleLogStub.called);
-    },
-);
+        },
+    };
+    const event = {
+        id: '12345',
+    };
+    const isFirstEvent = true;
+    await mssqlHydrateOne(pattern, event, isFirstEvent);
+    t.true(runSQLStub.calledOnce);
+    t.true(consoleLogStub.called);
+});

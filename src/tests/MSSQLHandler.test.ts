@@ -15,47 +15,37 @@ test.afterEach(() => {
     consoleLogStub.restore();
     runSQLStub.restore();
 });
-
-test.serial(
-    '🍏 MSSQLHandler should create object and call runSQL',
-    async t => {
-        const doc = {
-            name: 'Read MSSQL Example',
-            source: {
-                type: 'mssql',
-                connectionString: 'My Connection String',
-                sql: 'My SQL Query',
-                recordSetIndex: 0,
-            },
-        };
-        const recordsets = [[{ results: 'test' }]];
-
-        runSQLStub = sinon.stub(mssqltools, 'runSQL').resolves({ recordsets });
-
-        const handler = new MSSQLHandler(doc);
-
-        t.truthy(handler);
-
-        const events = [];
-        for await (const i of handler.readEvents()) events.push(i);
-
-        t.deepEqual(events, [{ results: 'test' }]);
-
-        t.true(runSQLStub.calledOnce);
+const makeDoc = (index?: number) => ({
+    name: 'Read MSSQL Example',
+    source: {
+        type: 'mssql',
+        connectionString: 'My Connection String',
+        sql: 'My SQL Query',
+        recordSetIndex: index,
     },
-);
+});
+
+test.serial('🍏 MSSQLHandler should create object and call runSQL', async t => {
+    const doc = makeDoc(0);
+    const recordsets = [[{ results: 'test' }]];
+
+    runSQLStub = sinon.stub(mssqltools, 'runSQL').resolves({ recordsets });
+
+    const handler = new MSSQLHandler(doc);
+
+    t.truthy(handler);
+
+    const events = [];
+    for await (const i of handler.readEvents()) events.push(i);
+
+    t.deepEqual(events, [{ results: 'test' }]);
+
+    t.true(runSQLStub.calledOnce);
+});
 test.serial(
     '🍏 MSSQLHandler should retrive from specified recordset',
     async t => {
-        const doc = {
-            name: 'Read MSSQL Example',
-            source: {
-                type: 'mssql',
-                connectionString: 'My Connection String',
-                sql: 'My SQL Query',
-                recordSetIndex: 1,
-            },
-        };
+        const doc = makeDoc(1);
         const recordsets = [
             [{ results: 'Not This One' }],
             [{ results: 'test' }],
@@ -78,14 +68,8 @@ test.serial(
 test.serial(
     '🍏 MSSQLHandler should retrive from first recordset by default',
     async t => {
-        const doc = {
-            name: 'Read MSSQL Example',
-            source: {
-                type: 'mssql',
-                connectionString: 'My Connection String',
-                sql: 'My SQL Query',
-            },
-        };
+        const doc = makeDoc();
+
         const recordsets = [
             [{ results: 'test' }],
             [{ results: 'Not This One' }],
@@ -105,37 +89,31 @@ test.serial(
         t.true(runSQLStub.calledOnce);
     },
 );
-test.serial('🍎 MSSQLHandler should handle SQL errors and clean-up correctly', async t => {
-    const fakePoolPromise = {
-        close: sinon.stub().resolves(),
-    };
+test.serial(
+    '🍎 MSSQLHandler should handle SQL errors and clean-up correctly',
+    async t => {
+        const fakePoolPromise = {
+            close: sinon.stub().resolves(),
+        };
+        const doc = makeDoc();
+        runSQLStub = sinon
+            .stub(mssqltools, 'runSQL')
+            .rejects(new Error('My SQL Error'));
 
-    const doc = {
-        name: 'Read MSSQL Example',
-        source: {
-            type: 'mssql',
-            connectionString: 'My Connection String',
-            sql: 'My SQL Query',
-        },
-    };
+        const handler = new MSSQLHandler(doc, fakePoolPromise);
 
-    runSQLStub = sinon
-        .stub(mssqltools, 'runSQL')
-        .rejects(new Error('My SQL Error'));
+        t.truthy(handler);
 
-    const handler = new MSSQLHandler(doc, fakePoolPromise);
+        const events = [];
+        const error = await t.throwsAsync(async () => {
+            for await (const i of handler.readEvents()) events.push(i);
+        });
 
-    t.truthy(handler);
+        t.true(error instanceof Error, 'Expected an error to be thrown');
 
-    const events = [];
-    const error = await t.throwsAsync(async () => {
-        for await (const i of handler.readEvents()) events.push(i);
-    });
+        t.deepEqual(events, []);
 
-    t.true(error instanceof Error, 'Expected an error to be thrown');
-
-    t.deepEqual(events, []);
-
-    t.true(runSQLStub.calledOnce);
-    t.true(fakePoolPromise.close.calledOnce);
-});
+        t.true(runSQLStub.calledOnce);
+        t.true(fakePoolPromise.close.calledOnce);
+    },
+);
