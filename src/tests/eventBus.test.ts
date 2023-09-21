@@ -48,10 +48,7 @@ test.serial('🍏 eventBusHydrateOne sends event successfully', async t => {
         .stub(awstools, 'sendEvent')
         .resolves('Event sent successfully');
     await eventBusHydrateOne(testPattern, testEvent);
-    t.true(
-        sendEventStub.calledOnce,
-        'sendEvent should be called once',
-    );
+    t.true(sendEventStub.calledOnce, 'sendEvent should be called once');
 
     sendEventStub.restore();
 });
