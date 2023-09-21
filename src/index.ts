@@ -16,6 +16,7 @@ import {
     openSearchIndexCreate,
 } from './destinations/openSearch';
 import { EPEventSource } from './EPEventSource';
+import MSSQLHandler from './handlers/MSSQLHandler';
 
 import { eventBusHydrateOne } from './destinations/eventBus';
 import { invokeLambdaHydrateOne } from './destinations/invokeLambda';
@@ -172,6 +173,17 @@ export async function processEvents(params: CliParams) {
                 console.info(`${count} records processed`);
             }
             break;
+
+        case 'mssql':
+            {
+                const source: EPEventSource = new MSSQLHandler(doc);
+                for await (const event of source.readEvents()) {
+                    await processEvent(doc, await event, isFirstEvent);
+                    isFirstEvent = false;
+                }
+            }
+            break;
+
         default:
             throw new Error(`Source ${doc.source.type} is not supported`);
     }
