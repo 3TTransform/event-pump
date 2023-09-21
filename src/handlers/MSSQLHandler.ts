@@ -11,10 +11,16 @@ export default class MSSQLHandler implements EPEventSource
     ) {}
 
     readEvents = async function* () {
-        const SQL = this.doc.source.sql;
-        const recordSetIndex = this.doc.source.recordSetIndex ?? 0;
-        const results = await runSQL(this.poolPromise, SQL);
-        yield* results.recordsets[recordSetIndex];
-        this.poolPromise.close();
+        try
+        {
+            const SQL = this.doc.source.sql;
+            const recordSetIndex = this.doc.source.recordSetIndex ?? 0;
+            const results = await runSQL(this.poolPromise, SQL);
+            yield* results.recordsets[recordSetIndex];
+        }
+        finally
+        {
+            this.poolPromise.close();
+        }
     };
 }
