@@ -1,0 +1,19 @@
+name: JSON to Event Bus example
+source:
+  type: json
+  file: ./examples/events/organisations.seed.json
+patterns:
+  - name: Event Bus Example
+    rule:
+      noun: organisation
+      verb: create
+    action:
+      target: event-bus
+      eventBusName: ${EVENT_BUS_ARN}
+      source: ${EVENT_SOURCE}
+      detailType: Create Organisation
+      shape:
+        noun: organisation
+        verb: create
+        id: "{{id}}"
+        organisationName: "{{organisationName}}"
