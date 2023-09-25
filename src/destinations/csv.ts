@@ -6,12 +6,13 @@ class CSV implements EPEventSource {
     constructor(private doc: any) {}
 
     readEvents = async function* () {
+        const delimiter = this.doc.source.delimiter ?? ',';
         const readInterface = readline.createInterface({
             input: fs.createReadStream(this.doc.source.file),
         });
         let headers;
         for await (const line of readInterface) {
-            const row = line.split(',');
+            const row = line.split(delimiter);
             if (!headers) {
                 headers = row;
                 continue;
