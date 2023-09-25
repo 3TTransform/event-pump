@@ -1,0 +1,12 @@
+name: Tab delimeted CSV to Log
+source:
+  type: csv
+  file: ./examples/events/pets.seed.tab.csv
+  delimiter: "\t"
+patterns:
+  - name: Pet Create
+    rule:
+      noun: pets
+      verb: create
+    action:
+      target: debug-info
