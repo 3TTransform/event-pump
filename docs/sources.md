@@ -41,6 +41,17 @@ source:
   file: ./examples/events/pets.seed.csv
 ```
 
+To use a different delimiter, specify this in the `delimiter` option
+
+_Example for Tab delimted text:_
+```yml
+source:
+  type: csv
+  file: ./examples/events/data.txt
+  delimiter: "\t"
+```
+
+
  ## OpenSearch
 
 > Data can be read via an OpenSearch Query.
