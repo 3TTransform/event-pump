@@ -1,0 +1,18 @@
+name: Get rows from MSSQL and create an event
+source:
+  type: csv
+  file: ./examples/events/results.csv
+patterns:
+  - name: orgCreate
+    # rule: 
+    #   IsLive: 1
+    action:
+      target: ion
+      file: ./output/results.ion
+      shape:
+        pk: "organisation#{{GUID}}"
+        sk: "organisation"
+        orgId: "{{GUID}}"
+        name: "{{Name}}"
+        hostName: "{{Hostname}}"
+

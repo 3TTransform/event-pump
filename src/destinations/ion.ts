@@ -4,7 +4,7 @@ import {
     blankFileIfExists,
 } from '../utils';
 
-import ion from 'ion-js';
+import * as ion from 'ion-js';
 import fs from 'fs';
 
 const ionHydrateOne = async (
