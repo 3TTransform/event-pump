@@ -10,6 +10,14 @@ test('🍏 replaceValues should replace values correctly (1)', async t => {
     t.assert(result, 'cakeType: 1, false');
 });
 
+test('🍏 sha256 should hash values correctly', async t => {
+    const result = replaceValues(
+        { cakeType: 1, cakeExists: false, cakeName: 'testName' },
+        'cakeType: {{sha256 cakeName}}',
+    );
+    t.assert(result === 'cakeType: 4278d90b65ee634b960c9e026e4295f8f4fd8d3f29785548552afdc71ef4b495');
+});
+
 test('🍏 replaceValues should replace values correctly (2)', t => {
     const data = {
         name: 'John Doe',
@@ -46,6 +54,14 @@ test('🍎 replaceValues should handle multiple occurrences of the same value', 
     const result = replaceValues(data, source);
 
     t.is(result, expected);
+});
+
+test('🍎 sha256 should fail if hash values incorrectly', async t => {
+    const result = replaceValues(
+        { cakeType: 1, cakeExists: false, cakeName: 'testName2' },
+        'cakeType: {{sha256 cakeName}}',
+    );
+    t.assert(result !== 'cakeType: 4278d90b65ee634b960c9e026e4295f8f4fd8d3f29785548552afdc71ef4b495');
 });
 
 test('🍏 Handlebars Helper: removeLastChar exists', async t => {
