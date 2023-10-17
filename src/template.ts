@@ -29,6 +29,11 @@ Handlebars.registerHelper('sha256', function (value) {
     }
 });
 
+// Register a custom Handlebars helper for uuidv4 creation
+Handlebars.registerHelper('randomUUID', function () {
+    return crypto.randomUUID();
+});
+
 function replaceValues(data: any, source: any) {
     const template = Handlebars.compile(source);
     return template(data);

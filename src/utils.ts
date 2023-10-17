@@ -28,7 +28,7 @@ const populateEventData = (event: unknown, object: unknown) => {
 
         // if the entire entry is a token {{?}} then replace
         // the whole thing preserving type from data
-        const fullMatch = value.match(/^{{([^{}]*?)}}$/g);
+        const fullMatch = value.match(/^{{([^{} ]+?)}}$/g);
         if (fullMatch && fullMatch.length === 1) {
             const prop = fullMatch[0].replace(/{{|}}/g, '');
             return getProp(event, prop);

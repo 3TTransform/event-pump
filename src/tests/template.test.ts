@@ -2,6 +2,8 @@ import test from 'ava';
 import Handlebars from 'handlebars';
 import { replaceValues } from '../template';
 
+export const UUID_PATTERN = /^[0-9a-fA-F]{8}-(?:[0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}$/g;
+
 test('🍏 replaceValues should replace values correctly (1)', async t => {
     const result = replaceValues(
         { cakeType: 1, cakeExists: false },
@@ -16,6 +18,14 @@ test('🍏 sha256 should hash values correctly', async t => {
         'cakeType: {{sha256 cakeName}}',
     );
     t.assert(result === 'cakeType: 4278d90b65ee634b960c9e026e4295f8f4fd8d3f29785548552afdc71ef4b495');
+});
+
+test('🍏 randomUUID should generate a random uuid', async t => {
+    const result = replaceValues(
+        { cakeType: 1, cakeExists: false, cakeName: 'testName' },
+        '{{randomUUID}}',
+    );
+    t.regex(result, UUID_PATTERN);
 });
 
 test('🍏 replaceValues should replace values correctly (2)', t => {
