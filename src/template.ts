@@ -35,7 +35,7 @@ Handlebars.registerHelper('randomUUID', function () {
     return crypto.randomUUID();
 });
 
-Handlebars.registerHelper('emailToUUID', function stringToUUID(value) {
+Handlebars.registerHelper('emailToUUID', function (value) {
     // Check if the value is provided
     if (typeof value === 'string') {
         // Create a SHA-256 hash
