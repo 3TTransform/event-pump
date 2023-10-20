@@ -1,5 +1,6 @@
 import Handlebars from 'handlebars';
 import crypto from 'crypto';
+import { v5 as uuidv5 } from 'uuid';
 
 Handlebars.registerHelper('removeLastChar', function (options: any) {
     const result = options.fn(this);
@@ -32,6 +33,21 @@ Handlebars.registerHelper('sha256', function (value) {
 // Register a custom Handlebars helper for uuidv4 creation
 Handlebars.registerHelper('randomUUID', function () {
     return crypto.randomUUID();
+});
+
+Handlebars.registerHelper('emailToUUID', function stringToUUID(value) {
+    // Check if the value is provided
+    if (typeof value === 'string') {
+        // Create a SHA-256 hash
+        const sha256Hash = crypto
+            .createHash('sha256')
+            .update(value)
+            .digest('hex');
+        const namespaceUUID = 'c1811956-6f34-11ee-b962-0242ac120002';
+        return uuidv5(sha256Hash, namespaceUUID);
+    } else {
+        return ''; // Return an empty string if the value is not provided or invalid
+    }
 });
 
 function replaceValues(data: any, source: any) {

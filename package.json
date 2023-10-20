@@ -1,7 +1,7 @@
 {
     "name": "@3t-transform/event-pump",
     "private": false,
-    "version": "1.0.14",
+    "version": "1.0.15",
     "description": "A tool to seed data-sources with events",
     "author": "3T Transform",
     "keywords": [
@@ -62,6 +62,7 @@
         "nanoid": "^4.0.1",
         "pg": "^8.11.0",
         "sqlite3": "^5.1.4",
+        "uuid": "^9.0.1",
         "yup": "^0.32.11"
     }
 }

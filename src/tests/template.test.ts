@@ -20,6 +20,15 @@ test('🍏 sha256 should hash values correctly', async t => {
     t.assert(result === 'cakeType: 4278d90b65ee634b960c9e026e4295f8f4fd8d3f29785548552afdc71ef4b495');
 });
 
+test('🍏 emailToUuid should convert to UUID correctly', async t => {
+    const result = replaceValues(
+        { cakeType: 1, cakeExists: false, cakeName: 'testName' },
+        'cakeType: {{emailToUUID cakeName}}',
+    );
+    t.log(result);
+    t.assert(result === 'cakeType: 64e16ce1-1f10-5087-acbf-eec022f74bbb');
+});
+
 test('🍏 randomUUID should generate a random uuid', async t => {
     const result = replaceValues(
         { cakeType: 1, cakeExists: false, cakeName: 'testName' },
