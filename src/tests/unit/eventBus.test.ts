@@ -1,8 +1,8 @@
 import test from 'ava';
 import sinon from 'sinon';
 
-import * as awstools from '../destinations/awstools';
-import { eventBusHydrateOne } from '../destinations/eventBus';
+import * as awstools from '../../destinations/awstools';
+import { eventBusHydrateOne } from '../../destinations/eventBus';
 
 let baseEnv;
 test.beforeEach(() => {

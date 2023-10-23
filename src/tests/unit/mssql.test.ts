@@ -1,7 +1,7 @@
 import test from 'ava';
 import sinon from 'sinon';
-import { mssqlHydrateOne } from '../destinations/mssql';
-import * as mssqltools from '../destinations/mssqltools';
+import { mssqlHydrateOne } from '../../destinations/mssql';
+import * as mssqltools from '../../destinations/mssqltools';
 
 const testSQL = 'SELECT 1, 2';
 const testParmsSQL = 'SELECT @Param1, @Param2';

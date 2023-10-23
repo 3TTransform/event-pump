@@ -1,7 +1,7 @@
 import test from 'ava';
 import sinon from 'sinon';
 
-import { sendEvent, invokeLambda } from '../destinations/awstools';
+import { sendEvent, invokeLambda } from '../../destinations/awstools';
 import { EventBridgeClient } from '@aws-sdk/client-eventbridge';
 import { LambdaClient } from '@aws-sdk/client-lambda';
 

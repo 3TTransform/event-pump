@@ -18,6 +18,18 @@
         "dist/**/*",
         "!dist/**/*.test.js"
     ],
+    "ava": {
+        "files": [
+            "src/tests/unit/**/*.test.ts"
+        ],
+        "extensions": [
+            "ts"
+        ],
+        "require": [
+            "ts-node/register"
+        ],
+        "failWithoutAssertions": false
+    },
     "scripts": {
         "dev": "ts-node ./src/cli.ts",
         "clean": "rimraf ./dist/ ./exec/",

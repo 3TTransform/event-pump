@@ -1,6 +1,6 @@
 import test from 'ava';
 import sinon from 'sinon';
-import { Dynamo } from '../destinations/dynamodb';
+import { Dynamo } from '../../destinations/dynamodb';
 
 const dynamoStub = {
     scan: sinon.stub().returns({ promise: () => ({}) }),

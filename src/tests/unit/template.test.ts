@@ -1,6 +1,6 @@
 import test from 'ava';
 import Handlebars from 'handlebars';
-import { replaceValues } from '../template';
+import { replaceValues } from '../../template';
 
 export const UUID_PATTERN = /^[0-9a-fA-F]{8}-(?:[0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}$/g;
 

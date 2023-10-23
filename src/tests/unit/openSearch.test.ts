@@ -1,4 +1,4 @@
-import { openSearchHydrateOne } from '../destinations/openSearch';
+import { openSearchHydrateOne } from '../../destinations/openSearch';
 import test from 'ava';
 test('🍏 JSON to OpenSearch', t => {
     t.pass();
