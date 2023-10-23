@@ -1,5 +1,4 @@
 import test from 'ava';
-import { beforeEach } from 'node:test';
 import proxyquire from 'proxyquire';
 import sinon from 'sinon';
 
