@@ -25,7 +25,6 @@ test('🍏 emailToUuid should convert to UUID correctly', async t => {
         { cakeType: 1, cakeExists: false, cakeName: 'testName' },
         'cakeType: {{emailToUUID cakeName}}',
     );
-    t.log(result);
     t.assert(result === 'cakeType: 64e16ce1-1f10-5087-acbf-eec022f74bbb');
 });
 
