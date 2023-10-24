@@ -1,5 +1,5 @@
 import test from 'ava';
-import { getProperties } from '../destinations/mssqltools';
+import { getProperties } from '../../destinations/mssqltools';
 
 [
     { type: 'Bit', value: 1, title: '' },

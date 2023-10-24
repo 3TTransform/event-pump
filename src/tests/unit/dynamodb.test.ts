@@ -1,6 +1,6 @@
 import test from 'ava';
 import sinon from 'sinon';
-import { Dynamo } from '../destinations/dynamodb';
+import { Dynamo } from '../../destinations/dynamodb';
 
 const dynamoStub = {
     scan: sinon.stub().returns({ promise: () => ({}) }),
@@ -162,7 +162,7 @@ test.serial(
     },
 );
 
-test.serial.skip(
+test.serial(
     '🍎 dynamodbHydrateOne should throw an error if the table does not exist',
     async t => {
         dynamoStub.listTables = sinon
@@ -178,7 +178,7 @@ test.serial.skip(
         };
 
         await t.throwsAsync(dynamo.dynamodbHydrateOne(pattern, {}, true), {
-            message: 'Table "nonexistentTable" does not exist',
+            message: "Table 'nonexistentTable' does not exist",
         });
 
         t.true(dynamoStub.listTables.calledOnceWithExactly());

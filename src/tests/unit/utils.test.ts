@@ -1,5 +1,5 @@
 import test from 'ava';
-import { getProp, populateEventData, parseCSV, replaceEnvVars } from '../utils';
+import { getProp, populateEventData, parseCSV, replaceEnvVars } from '../../utils';
 
 test('🍏 getProp should return the values at the specified paths', async t => {
     const deepObj = {

@@ -1,7 +1,7 @@
 import test from 'ava';
 import fs from 'fs';
 import sinon from 'sinon';
-import { createFolderFromPath, blankFileIfExists } from '../utils';
+import { createFolderFromPath, blankFileIfExists } from '../../utils';
 
 let existsSyncStub;
 let mkdirSyncStub;

@@ -1,8 +1,8 @@
 import test from 'ava';
 import sinon from 'sinon';
 
-import * as awstools from '../destinations/awstools';
-import { invokeLambdaHydrateOne } from '../destinations/invokeLambda';
+import * as awstools from '../../destinations/awstools';
+import { invokeLambdaHydrateOne } from '../../destinations/invokeLambda';
 
 let baseEnv;
 test.beforeEach(() => {

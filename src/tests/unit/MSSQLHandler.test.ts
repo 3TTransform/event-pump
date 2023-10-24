@@ -1,7 +1,7 @@
 import test from 'ava';
 import sinon from 'sinon';
-import * as mssqltools from '../destinations/mssqltools';
-import MSSQLHandler from '../handlers/MSSQLHandler';
+import * as mssqltools from '../../destinations/mssqltools';
+import MSSQLHandler from '../../handlers/MSSQLHandler';
 
 let consoleLogStub;
 let runSQLStub;

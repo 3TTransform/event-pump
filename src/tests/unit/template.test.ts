@@ -1,6 +1,6 @@
 import test from 'ava';
 import Handlebars from 'handlebars';
-import { replaceValues } from '../template';
+import { replaceValues } from '../../template';
 
 export const UUID_PATTERN = /^[0-9a-fA-F]{8}-(?:[0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}$/g;
 
@@ -25,7 +25,6 @@ test('🍏 emailToUuid should convert to UUID correctly', async t => {
         { cakeType: 1, cakeExists: false, cakeName: 'testName' },
         'cakeType: {{emailToUUID cakeName}}',
     );
-    t.log(result);
     t.assert(result === 'cakeType: 64e16ce1-1f10-5087-acbf-eec022f74bbb');
 });
 
