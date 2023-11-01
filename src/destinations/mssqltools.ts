@@ -115,5 +115,5 @@ export function stringToBinary(string, maxBytes) {
 }
 
 export function conversionFailed(key: Key) {
-    throw new Error(`Conversion of ${key.value} to ${key.type} failed`);
+    throw new Error(`Conversion of ${JSON.stringify(key.value)} to ${JSON.stringify(key.type)} failed`);
 }
