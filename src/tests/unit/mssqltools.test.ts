@@ -159,10 +159,10 @@ import { getProperties } from '../../destinations/mssqltools';
                 t.is(response.value, 'ABCDE');
             else if (field.type == 'VarChar' && field.options?.length == 8)
                 t.is(response.value, 'AÁBCDEÉF');
-            else if (field.type == 'NVarChar' && field.options?.length == 5)
-                t.is(response.value, 'ABCDE');
-            else if (field.type == 'NVarChar' && field.options?.length == 8)
-                t.is(response.value, 'AÁBCDEÉF');
+            else if (field.type == 'NVarChar')
+            {
+                t.is(response.value, (field.value as string).substring(0,field.options?.length));
+            }
             else if (field.type == 'Xml')
                 t.is(
                     response.value.documentElement.firstChild.data,
