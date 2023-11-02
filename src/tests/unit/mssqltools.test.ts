@@ -143,44 +143,63 @@ import { getProperties } from '../../destinations/mssqltools';
             }
             const response = getProperties(input);
             t.assert(response.type);
-            if (field.type == 'BigInt')
-                t.is(BigInt(response.value), BigInt(1234567891012345));
-            else if (field.type == 'Decimal') t.is(response.value, '3.4126');
-            else if (field.type == 'Money' || field.type == 'SmallMoney')
-                t.is(response.value, '£4,567.00');
-            else if (field.type == 'Numeric') t.is(response.value, '4567.5789');
-            else if (field.type == 'Char' && field.options?.length == 5)
-                t.is(response.value, 'ABCDE');
-            else if (field.type == 'NChar' && field.options?.length == 5)
-                t.is(response.value, 'ABCDE');
-            else if (field.type == 'NChar' && field.options?.length == 8)
-                t.is(response.value, 'AÁBCDEÉF');
-            else if (field.type == 'VarChar' && field.options?.length == 5)
-                t.is(response.value, 'ABCDE');
-            else if (field.type == 'VarChar' && field.options?.length == 8)
-                t.is(response.value, 'AÁBCDEÉF');
-            else if (field.type == 'NVarChar' && field.options?.length == 5)
-                t.is(response.value, 'ABCDE');
-            else if (field.type == 'NVarChar' && field.options?.length == 8)
-                t.is(response.value, 'AÁBCDEÉF');
-            else if (field.type == 'Xml')
-                t.is(
-                    response.value.documentElement.firstChild.data,
-                    'Beware of the leopard',
-                );
-            else if (field.type == 'Time') t.is(response.value, '12-15-00');
-            else if (field.type == 'Date') t.is(response.value, '2023/06/12');
-            else if (field.type == 'DateTime')
-                t.is(response.value, '2023/06/12 12-15-00');
-            else if (field.type == 'DateTime2')
-                t.is(response.value, '2023/06/12 12-15-00:000000');
-            else if (field.type == 'DateTimeOffset')
-                t.is(response.value, '2023/06/12T12:15:00.000+01:00');
-            else if (field.type == 'SmallDateTime')
-                t.is(response.value, '2023/06/12 12:15:00');
-            else if (field.type == 'Binary' || field.type == 'VarBinary')
-                t.is(response.value, '1000001 1000010 1000011 ');
-            else t.is(response.value, field.value);
+            switch (field.type) {
+                case 'BigInt':
+                    t.is(BigInt(response.value), BigInt(1234567891012345));
+                    break;
+                case 'Decimal':
+                    t.is(response.value, '3.4126');
+                    break;
+                case 'Money':
+                case 'SmallMoney':
+                    t.is(response.value, '£4,567.00');
+                    break;
+                case 'Numeric':
+                    t.is(response.value, '4567.5789');
+                    break;
+                case 'Char':
+                case 'NChar':
+                case 'VarChar':
+                case 'NVarChar':
+                    t.is(
+                        response.value,
+                        (field.value as string).substring(
+                            0,
+                            field.options?.length,
+                        ),
+                    );
+                    break;
+                case 'Xml':
+                    t.is(
+                        response.value.documentElement.firstChild.data,
+                        'Beware of the leopard',
+                    );
+                    break;
+                case 'Time':
+                    t.is(response.value, '12-15-00');
+                    break;
+                case 'Date':
+                    t.is(response.value, '2023/06/12');
+                    break;
+                case 'DateTime':
+                    t.is(response.value, '2023/06/12 12-15-00');
+                    break;
+                case 'DateTime2':
+                    t.is(response.value, '2023/06/12 12-15-00:000000');
+                    break;
+                case 'DateTimeOffset':
+                    t.is(response.value, '2023/06/12T12:15:00.000+01:00');
+                    break;
+                case 'SmallDateTime':
+                    t.is(response.value, '2023/06/12 12:15:00');
+                    break;
+                case 'Binary':
+                case 'VarBinary':
+                    t.is(response.value, '1000001 1000010 1000011 ');
+                    break;
+                default:
+                    t.is(response.value, field.value);
+            }
         },
     );
 });
@@ -282,16 +301,12 @@ import { getProperties } from '../../destinations/mssqltools';
             try {
                 getProperties(input);
             } catch (e) {
-                if (field.type == 'Xml')
-                    t.is(
-                        e.message,
-                        `Conversion of [object Object] to ${field.type} failed`,
-                    );
-                else
-                    t.is(
-                        e.message,
-                        `Conversion of ${field.value} to ${field.type} failed`,
-                    );
+                t.is(
+                    e.message,
+                    `Conversion of ${JSON.stringify(
+                        field.value,
+                    )} to ${JSON.stringify(field.type)} failed`,
+                );
             }
         },
     );
