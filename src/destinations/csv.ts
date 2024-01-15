@@ -10,13 +10,15 @@ class CSV implements EPEventSource {
         const readInterface = readline.createInterface({
             input: fs.createReadStream(this.doc.source.file),
         });
+
         let headers;
         for await (const line of readInterface) {
-            const row = line.split(delimiter);
+            const row = parseCSVLine(line, delimiter);
             if (!headers) {
                 headers = row;
                 continue;
             }
+
             yield Object.fromEntries(
                 headers
                     .map((header, index) => {
@@ -31,3 +33,26 @@ class CSV implements EPEventSource {
 }
 
 export default CSV;
+
+// Helper function to parse a CSV line with support for quoted values
+function parseCSVLine(line: string, delimiter: string): string[] {
+    const result = [];
+    let insideQuotes = false;
+    let currentValue = '';
+
+    for (const char of line) {
+        if (char === '"') {
+            insideQuotes = !insideQuotes;
+        } else if (char === delimiter && !insideQuotes) {
+            result.push(currentValue);
+            currentValue = '';
+        } else {
+            currentValue += char;
+        }
+    }
+
+    // Add the last value
+    result.push(currentValue);
+
+    return result;
+}

@@ -242,6 +242,16 @@ test('🍏 parseCSV should parse headers and row into an object', t => {
         city: 'New York',
     });
 });
+test('🍏 parseCSV should handle where a comma is inside double quotation marks', t => {
+    const headers = 'name, age, city';
+    const row = 'John Doe, 25 , "New York, Brooklyn"';
+    const result = parseCSV(headers, row);
+    t.deepEqual(result, {
+        name: 'John Doe',
+        age: '25',
+        city: 'New York, Brooklyn',
+    });
+});
 test('🍏 parseCSV should handle missing values in the row', t => {
     const headers = 'name, age, city';
     const row = 'John Doe, , New York';
@@ -284,7 +294,7 @@ test('🍎 parseCSV throws an error if header and row are both undefined', async
         },
         {
             instanceOf: TypeError,
-            message: "Cannot read properties of undefined (reading 'split')",
+            message: 'line is not iterable',
         },
     );
 });
@@ -295,7 +305,7 @@ test('🍎 parseCSV throws an error if header and row are both null', async t =>
         },
         {
             instanceOf: TypeError,
-            message: "Cannot read properties of null (reading 'split')",
+            message: 'line is not iterable',
         },
     );
 });

@@ -66,9 +66,8 @@ const blankFileIfExists = (filename: string): boolean => {
 };
 
 function parseCSV(headers, row) {
-    // Split the headers and row into arrays
-    const headerArr = headers.split(',');
-    const rowArr = row.split(',');
+    const headerArr = parseCSVLine(headers);
+    const rowArr = parseCSVLine(row);
 
     // Map the row data to the corresponding headers and create a new object
     const resultObj = {};
@@ -79,6 +78,29 @@ function parseCSV(headers, row) {
     });
 
     return resultObj;
+}
+
+// Helper function to parse a CSV line with support for quoted values
+function parseCSVLine(line) {
+    const result = [];
+    let insideQuotes = false;
+    let currentValue = '';
+
+    for (const char of line) {
+        if (char === '"') {
+            insideQuotes = !insideQuotes;
+        } else if (char === ',' && !insideQuotes) {
+            result.push(currentValue);
+            currentValue = '';
+        } else {
+            currentValue += char;
+        }
+    }
+
+    // Add the last value
+    result.push(currentValue);
+
+    return result;
 }
 
 export {

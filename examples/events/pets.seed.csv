@@ -2,7 +2,7 @@ id,noun,verb,name,owner
 7d22ef84e3b7,users,create,Alice
 5af5c0b5ceea,users,create,Bob
 1d2712c80fb8,roles,create,Admin
-ae7f125a308f,pets,create,Fluffy,5af5c0b5ceea
+ae7f125a308f,pets,create,"Fluffy, with comma",5af5c0b5ceea
 7d22ef84e3b7,users,update,Alice Jr.
 5af5c0b5ceea,users,update,Bobby
 1d2712c80fb8,roles,update,Administrator
