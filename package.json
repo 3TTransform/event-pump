@@ -1,7 +1,7 @@
 {
     "name": "@3t-transform/event-pump",
     "private": false,
-    "version": "1.0.17",
+    "version": "1.0.18",
     "description": "A tool to seed data-sources with events",
     "author": "3T Transform",
     "keywords": [
@@ -67,6 +67,7 @@
         "csv-parse": "^5.3.5",
         "dotenv": "^16.0.1",
         "handlebars": "^4.7.7",
+        "id128": "^1.6.6",
         "ion-js": "^5.2.0",
         "js-yaml": "^4.1.0",
         "moment": "^2.29.4",
