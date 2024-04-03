@@ -11,7 +11,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      NODE_AUTH_TOKEN: ${{secrets.npm_token}}
+      NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
       NAMESPACE_UUID: ${{secrets.NAMESPACE_UUID}}
     steps:
       - uses: actions/checkout@v3
@@ -32,8 +32,9 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     env:
-      NODE_AUTH_TOKEN: ${{secrets.npm_token}}
-      NAMESPACE_UUID: ${{ secrets.NAMESPACE_UUID }}
+      NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+      NAMESPACE_UUID: ${{secrets.NAMESPACE_UUID}}
+      NPM_TOKEN: ${{secrets.NPM_TOKEN}}
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
