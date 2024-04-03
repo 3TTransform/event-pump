@@ -24,6 +24,7 @@ jobs:
         uses: 'phips28/gh-action-bump-version@master'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NAMESPACE_UUID: ${{ secrets.NAMESPACE_UUID }}
   publish:
     needs: build
     runs-on: ubuntu-latest
