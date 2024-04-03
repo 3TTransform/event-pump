@@ -33,6 +33,14 @@ test('🍏 emailToUuid should convert to UUID correctly', async t => {
     t.assert(result === 'cakeType: 64e16ce1-1f10-5087-acbf-eec022f74bbb');
 });
 
+test('🍏 emailsInArrayToUUIDs should convert emails to UUIDs correctly in an array of obkects', async t => {
+    const result = replaceValues(
+        { cakeType: 1, cakeExists: false, cakeName: '[{"email":"fp@email.com","firstName":"First","lastName":"Person"},{"email":"sp@email.com","firstName":"Second","lastName":"Person"}]' },
+        "cakeType: {{emailsInArrayToUUIDs cakeName 'email' 'id'}}",
+    );
+    t.assert(result === 'cakeType: [{&quot;firstName&quot;:&quot;First&quot;,&quot;lastName&quot;:&quot;Person&quot;,&quot;id&quot;:&quot;0d3cf462-87fa-514e-9148-75d0dfe71e86&quot;},{&quot;firstName&quot;:&quot;Second&quot;,&quot;lastName&quot;:&quot;Person&quot;,&quot;id&quot;:&quot;a4f788a2-1442-526f-9d4e-a30a9d1b7848&quot;}]');
+});
+
 test('🍏 UUIDtoULID should convert to ULID correctly', async t => {
     const result = replaceValues(
         {

@@ -2,6 +2,9 @@ import Handlebars from 'handlebars';
 import crypto from 'crypto';
 import { v5 as uuidv5 } from 'uuid';
 import { Ulid } from 'id128';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 Handlebars.registerHelper('removeLastChar', function (options: any) {
     const result = options.fn(this);
@@ -50,9 +53,32 @@ Handlebars.registerHelper('emailToUUID', function (value) {
             .createHash('sha256')
             .update(value)
             .digest('hex');
-        const namespaceUUID = 'c1811956-6f34-11ee-b962-0242ac120002';
+        const namespaceUUID = process.env.NAMESPACE_UUID;
         return uuidv5(sha256Hash, namespaceUUID);
     } else {
+        return ''; // Return an empty string if the value is not provided or invalid
+    }
+});
+
+Handlebars.registerHelper('emailsInArrayToUUIDs', function (value, fromfield, tofield) {
+    try {
+        const arrayOfObjects = JSON.parse(value);
+        const namespaceUUID = process.env.NAMESPACE_UUID; // a base UUID like 'fd27523d-49e2-4526-9f1e-52dddebf6e98' saved in the .env file
+
+        arrayOfObjects.map(obj => {
+
+            const sha256Hash = crypto
+                .createHash('sha256')
+                .update(obj[fromfield])
+                .digest('hex');
+
+            obj[tofield] = uuidv5(sha256Hash, namespaceUUID);
+            delete obj[fromfield];
+        });
+
+        return JSON.stringify(arrayOfObjects);
+
+    } catch {
         return ''; // Return an empty string if the value is not provided or invalid
     }
 });
@@ -60,7 +86,7 @@ Handlebars.registerHelper('emailToUUID', function (value) {
 Handlebars.registerHelper('UUIDtoULID', function (value) {
     // Check if the value is provided
     if (typeof value === 'string') {
-        const ulid = Ulid.fromRaw(value.replace(/-/g, '')); 
+        const ulid = Ulid.fromRaw(value.replace(/-/g, ''));
         return ulid.toCanonical();
     } else {
         return ''; // Return an empty string if the value is not provided or invalid
