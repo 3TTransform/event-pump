@@ -28,6 +28,9 @@ jobs:
   publish:
     needs: build
     runs-on: ubuntu-latest
+    env:
+      NODE_AUTH_TOKEN: ${{secrets.npm_token}}
+      NAMESPACE_UUID: ${{ secrets.NAMESPACE_UUID }}
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
@@ -37,5 +40,4 @@ jobs:
       - run: npm i --legacy-peer-deps
       - run: npm run build
       - run: npm publish
-        env:
-          NODE_AUTH_TOKEN: ${{secrets.npm_token}}
+       
