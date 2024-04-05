@@ -38,8 +38,6 @@ test('🍏 emailToULID should convert to ULID correctly', async t => {
         { cakeType: 1, cakeExists: false, cakeName: 'testName' },
         'cakeType: {{emailToULID cakeName}}',
     );
-    
-    console.log(result);
     t.assert(result === 'cakeType: 34W5PE27RGA23TSFZER0HFEJXV');
 });
 
