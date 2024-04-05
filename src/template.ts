@@ -60,6 +60,24 @@ Handlebars.registerHelper('emailToUUID', function (value) {
     }
 });
 
+Handlebars.registerHelper('emailToULID', function (value) {
+    // Check if the value is provided
+    if (typeof value === 'string') {
+        // Create a SHA-256 hash
+        const sha256Hash = crypto
+            .createHash('sha256')
+            .update(value)
+            .digest('hex');
+        const namespaceUUID = process.env.NAMESPACE_UUID;
+        const uuid =  uuidv5(sha256Hash, namespaceUUID);
+        const ulid = Ulid.fromRaw(uuid.replace(/-/g, ''));
+        return ulid.toCanonical();
+    } else {
+        return ''; // Return an empty string if the value is not provided or invalid
+    }
+});
+
+
 Handlebars.registerHelper('emailsInArrayToUUIDs', function (value, fromfield, tofield) {
     try {
         const arrayOfObjects = JSON.parse(value);

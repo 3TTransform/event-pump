@@ -25,7 +25,7 @@ test('🍏 sha256 should hash values correctly', async t => {
     );
 });
 
-test('🍏 emailToUuid should convert to UUID correctly', async t => {
+test('🍏 emailToUUID should convert to UUID correctly', async t => {
     const result = replaceValues(
         { cakeType: 1, cakeExists: false, cakeName: 'testName' },
         'cakeType: {{emailToUUID cakeName}}',
@@ -33,12 +33,22 @@ test('🍏 emailToUuid should convert to UUID correctly', async t => {
     t.assert(result === 'cakeType: 64e16ce1-1f10-5087-acbf-eec022f74bbb');
 });
 
+test('🍏 emailToULID should convert to ULID correctly', async t => {
+    const result = replaceValues(
+        { cakeType: 1, cakeExists: false, cakeName: 'testName' },
+        'cakeType: {{emailToULID cakeName}}',
+    );
+    
+    console.log(result);
+    t.assert(result === 'cakeType: 34W5PE27RGA23TSFZER0HFEJXV');
+});
+
 test('🍏 emailsInArrayToUUIDs should convert emails to UUIDs correctly in an array of obkects', async t => {
     const result = replaceValues(
         { cakeType: 1, cakeExists: false, cakeName: '[{"email":"fp@email.com","firstName":"First","lastName":"Person"},{"email":"sp@email.com","firstName":"Second","lastName":"Person"}]' },
-        "cakeType: {{emailsInArrayToUUIDs cakeName 'email' 'id'}}",
+        "cakeType: {{{emailsInArrayToUUIDs cakeName 'email' 'id'}}}",
     );
-    t.assert(result === 'cakeType: [{&quot;firstName&quot;:&quot;First&quot;,&quot;lastName&quot;:&quot;Person&quot;,&quot;id&quot;:&quot;0d3cf462-87fa-514e-9148-75d0dfe71e86&quot;},{&quot;firstName&quot;:&quot;Second&quot;,&quot;lastName&quot;:&quot;Person&quot;,&quot;id&quot;:&quot;a4f788a2-1442-526f-9d4e-a30a9d1b7848&quot;}]');
+    t.assert(result === 'cakeType: [{"firstName":"First","lastName":"Person","id":"0d3cf462-87fa-514e-9148-75d0dfe71e86"},{"firstName":"Second","lastName":"Person","id":"a4f788a2-1442-526f-9d4e-a30a9d1b7848"}]');
 });
 
 test('🍏 UUIDtoULID should convert to ULID correctly', async t => {
