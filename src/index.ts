@@ -127,7 +127,7 @@ export async function processEvents(params: CliParams) {
             await processOpensearch(doc, processEvent);
             break;
         case 'mssql':
-            await processMSSQL(doc, processEvent);
+            await processMSSQL(doc, processEvent, doc.patterns[0].action?.delay);
             break;
         default:
             throw new Error(`Source ${doc.source.type} is not supported`);
