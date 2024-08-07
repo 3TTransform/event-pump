@@ -23,7 +23,9 @@ class CSV implements EPEventSource {
                 headers
                     .map((header, index) => {
                         if (row[index]) {
-                            return [header.trim(), row[index].trim()];
+                            const trimmedValue = row[index].trim(); 
+                            const isnum = /^\d+$/.test(row[index]);
+                            return [header.trim(), isnum ?  parseFloat(trimmedValue) : trimmedValue ];
                         }
                     })
                     .filter(x => x),
